@@ -11,6 +11,7 @@ e = 0.6 # eccentricity
 a=5  # semimajor axis
 b=4  # semiminor axis
 p = (b**2)/(3*a - ra - rp) # orbital parameter
+p = a*(1-e**2)
 t = np.linspace(0, 2*pi, 100)
 
 root = tkinter.Tk()
@@ -40,7 +41,6 @@ toolbar.update()
 
 
 def update_eccentricity(new_val):
-    # retrieve frequency
     f = float(new_val)
 
     # update data
