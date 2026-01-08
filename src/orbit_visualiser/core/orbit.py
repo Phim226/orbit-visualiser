@@ -1,4 +1,5 @@
 from typing import Callable
+from math import pi
 import numpy as np
 
 
@@ -48,11 +49,18 @@ class Orbit():
 
     @e.setter
     def e(self, value: float | int) -> None:
-        if (value > 1 and self._a > 0) or (value < 1 and self._a < 0):
+        e = float(value)
+        if e > 1:
+            self._asymptote_anomaly = np.arccos(-1/e)
+            if self._a > 0 :
+                self._a = -self._a
+                self._b = -self._b
+
+        if (e < 1 and self._a < 0):
             self._a = -self._a
             self._b = -self._b
 
-        self._e = float(value)
+        self._e = float(e)
 
     @property
     def a(self) -> float:
@@ -72,3 +80,10 @@ class Orbit():
 
     def orbit_eq(self) -> PerifocalOrbitEq:
         return PerifocalOrbitEq(self._e, self._a)
+
+    def orbital_angles(self):
+        if self._e <= 1:
+            return np.linspace(0, 2*pi, 1000)
+
+        delta = 0.0001
+        return np.linspace(-self._asymptote_anomaly + delta, self._asymptote_anomaly - delta, 1000)

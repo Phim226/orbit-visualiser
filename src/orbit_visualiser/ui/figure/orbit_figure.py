@@ -44,7 +44,7 @@ class OrbitFigure():
         self._ax.set_ylim(-10, 10)
 
     def _initialise_plot(self) -> None:
-        t = np.linspace(0, 2*pi, 100)
+        t = self._orbit.orbital_angles()
         orbit_eq = self._orbit.orbit_eq()
         self._line, = self._ax.plot(orbit_eq.x(t) , orbit_eq.y(t))
 
@@ -58,11 +58,10 @@ class OrbitFigure():
         toolbar.update()
         toolbar.pack(side = "bottom", fill = "x")
 
-    def update_eccentricity(self, new_val):
-        e_new = float(new_val)
-        self._orbit.e = e_new
+    def update_eccentricity(self, new_val: float) -> None:
+        self._orbit.e = new_val
 
-        t = np.linspace(0, 2*pi, 100)
+        t = self._orbit.orbital_angles()
         orbit_eq = self._orbit.orbit_eq()
         self._line.set_data(orbit_eq.x(t), orbit_eq.y(t))
 
