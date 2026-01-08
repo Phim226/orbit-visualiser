@@ -5,7 +5,6 @@ from orbit_visualiser.core import Orbit
 
 # TODO: Figure out nice way of displaying parabolic orbits (maybe have option to make some parameters constant).
 # TODO: Display point at pericenter (or the origin of the grid in this case since we are in the perifocal frame).
-# TODO: fix issue with semimajor axis slider not updating when eccentricity crosses 1.
 class OrbitFigure():
 
     def __init__(self, root: Tk, figure_frame_placement: tuple[str], orbit: Orbit):

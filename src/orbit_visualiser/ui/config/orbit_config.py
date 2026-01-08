@@ -3,7 +3,7 @@ from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit
 
 # TODO: Have options to display periapsis, apoapsis, semimajor/minor axes etc.
-# TODO: Have option to adjust semimajor axis.
+# TODO: Prevent semimajor axis slider from crossing 0 depending on value of eccentricity.
 class OrbitConfigurer():
 
 
