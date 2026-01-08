@@ -78,8 +78,17 @@ class Orbit():
     def b(self, value: float | int) -> None:
         self._b = float(value)
 
+    @property
+    def p(self) -> float:
+        return self._p
+
+    @p.setter
+    def p(self, value: float) -> None:
+        self._p = float(value)
+
+    @property
     def orbit_eq(self) -> PerifocalOrbitEq:
-        return PerifocalOrbitEq(self._e, self._a)
+        return PerifocalOrbitEq(self._e, self._p)
 
     def orbital_angles(self):
         if self._e <= 1:

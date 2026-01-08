@@ -42,7 +42,7 @@ class OrbitFigure():
 
     def _initialise_plot(self) -> None:
         t = self._orbit.orbital_angles()
-        orbit_eq = self._orbit.orbit_eq()
+        orbit_eq = self._orbit.orbit_eq
         self._line, = self._ax.plot(orbit_eq.x(t) , orbit_eq.y(t))
 
     def _build_canvas(self) -> None:
@@ -57,7 +57,7 @@ class OrbitFigure():
 
     def redraw_orbit(self) -> None:
         t = self._orbit.orbital_angles()
-        orbit_eq = self._orbit.orbit_eq()
+        orbit_eq = self._orbit.orbit_eq
         self._line.set_data(orbit_eq.x(t), orbit_eq.y(t))
 
         self._canvas.draw()
