@@ -1,6 +1,7 @@
 from tkinter import Tk
 from orbit_visualiser.core import Orbit
 from orbit_visualiser.ui import OrbitFigure
+from orbit_visualiser.ui import OrbitConfigurer
 
 class OrbitVisualiser():
 
@@ -11,8 +12,12 @@ class OrbitVisualiser():
         root.title("2D Orbit Visualiser")
 
         orbit: Orbit = Orbit()
+
         orbit_figure: OrbitFigure = OrbitFigure(root, self.figure_frame_placement, orbit)
         orbit_figure.build()
+
+        orbit_config: OrbitConfigurer = OrbitConfigurer(root, self.config_frame_placement, orbit_figure, orbit)
+        orbit_config.build()
 
 
 if __name__ == "__main__":
