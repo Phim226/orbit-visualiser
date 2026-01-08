@@ -8,7 +8,7 @@ from orbit_visualiser.core import Orbit
 
 class OrbitFigure():
 
-    def __init__(self, root: Tk, figure_frame_placement: str, orbit: Orbit):
+    def __init__(self, root: Tk, figure_frame_placement: tuple[str], orbit: Orbit):
         self._root = root
 
         self._orbit = orbit
@@ -55,3 +55,14 @@ class OrbitFigure():
         toolbar = NavigationToolbar2Tk(self._canvas, self._figure_frame, pack_toolbar = False)
         toolbar.update()
         toolbar.pack(side = "bottom", fill = "x")
+
+    def update_eccentricity(self, new_val):
+        e_new = float(new_val)
+        self._orbit.e = e_new
+
+        t = np.linspace(0, 2*pi, 100)
+        orbit_eq = self._orbit.orbit_eq()
+        self._line.set_data(orbit_eq.x(t), orbit_eq.y(t))
+
+        # required to update canvas and attached toolbar!
+        self._canvas.draw()
