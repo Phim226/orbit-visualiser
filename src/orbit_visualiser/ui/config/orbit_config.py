@@ -2,6 +2,8 @@ from tkinter import Tk, Frame, Scale
 from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit
 
+# TODO: Have options to display periapsis, apoapsis, semimajor/minor axes etc.
+# TODO: Have option to adjust semimajor axis.
 class OrbitConfigurer():
 
 
