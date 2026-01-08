@@ -19,7 +19,7 @@ class OrbitVisualiser():
         orbit_config: OrbitConfigurer = OrbitConfigurer(root, self.config_frame_placement, orbit_figure, orbit)
         orbit_config.build()
 
-
+# TODO: Write tests as I go.
 if __name__ == "__main__":
     root = Tk()
 
