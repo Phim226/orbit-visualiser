@@ -48,6 +48,9 @@ class Orbit():
 
     @e.setter
     def e(self, value: float | int) -> None:
+        if (value > 1 and self._a > 0) or (value < 1 and self._a < 0):
+            self._a = -self._a
+
         self._e = float(value)
 
     @property
