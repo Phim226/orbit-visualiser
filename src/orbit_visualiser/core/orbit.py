@@ -4,8 +4,8 @@ import numpy as np
 
 class PerifocalOrbitEq():
 
-    def __init__(self, rp: float, ra: float, e: float, a: float, b: float):
-        p: float = (b**2)/(3*a - ra - rp) # orbital parameter
+    def __init__(self, e: float, a: float):
+        p: float = a*(1 - e**2) # orbital parameter
         self._x: Callable[[float], float] = lambda t : p*(np.cos(t)/(1+e*np.cos(t)))
         self._y: Callable[[float], float] = lambda t : p*(np.sin(t)/(1+e*np.cos(t)))
 
@@ -67,4 +67,4 @@ class Orbit():
         self._b = float(value)
 
     def orbit_eq(self) -> PerifocalOrbitEq:
-        return PerifocalOrbitEq(self._rp, self._ra, self._e, self._a, self._b)
+        return PerifocalOrbitEq(self._e, self._a)
