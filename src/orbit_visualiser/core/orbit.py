@@ -60,15 +60,18 @@ class Orbit():
             self._a = -self._a
             self._b = -self._b
 
-        self._e = float(e)
+        self._e = e
+        self.p = self._orbital_param_ea(e, self._a)
 
     @property
     def a(self) -> float:
         return self._a
 
     @a.setter
-    def a(self, value: float | int) -> None:
-        self._a = float(value)
+    def a(self, a: float) -> None:
+        a = float(a)
+        self._a = a
+        self.p = self._orbital_param_ea(self._e, a)
 
     @property
     def b(self) -> float:
