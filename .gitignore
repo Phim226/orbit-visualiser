@@ -1,0 +1,9 @@
+# pycache
+__pycache__/
+*.pyc
+
+# vscode settings
+.vscode/
+
+# Build metadata
+*egg-info/
