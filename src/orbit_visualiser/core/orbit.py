@@ -50,6 +50,7 @@ class Orbit():
     def e(self, value: float | int) -> None:
         if (value > 1 and self._a > 0) or (value < 1 and self._a < 0):
             self._a = -self._a
+            self._b = -self._b
 
         self._e = float(value)
 
