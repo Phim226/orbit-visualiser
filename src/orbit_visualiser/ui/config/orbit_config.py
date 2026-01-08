@@ -17,7 +17,17 @@ class OrbitConfigurer():
         self._config_frame.pack(side = config_frame_placement[0], anchor = config_frame_placement[1])
 
     def build(self) -> None:
-        slider_update = Scale(self._root, from_ = 0, to = 2, resolution = 0.01, orient = "horizontal",
+        self._build_eccentricity_slider()
+        self._build_semimajor_axis_slider()
+
+    def _build_eccentricity_slider(self) -> None:
+        slider_update = Scale(self._root, from_ = 0, to = 2, resolution = 0.01, length  = 150, orient = "horizontal",
                               command = self._orbit_fig.update_eccentricity, label = "Eccentricity")
         slider_update.set(self._orbit.e)
-        slider_update.pack(side = "top")
+        slider_update.pack(side = "top", anchor = "nw")
+
+    def _build_semimajor_axis_slider(self) -> None:
+        slider_update = Scale(self._root, from_ = -10, to = 10, resolution = 0.01, length  = 150, orient = "horizontal",
+                              command = self._orbit_fig.update_semimajor_axis, label = "Semimajor axis")
+        slider_update.set(self._orbit.a)
+        slider_update.pack(side = "top", anchor = "nw")

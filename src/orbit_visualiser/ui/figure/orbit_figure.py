@@ -58,12 +58,17 @@ class OrbitFigure():
         toolbar.update()
         toolbar.pack(side = "bottom", fill = "x")
 
-    def update_eccentricity(self, new_val: float) -> None:
-        self._orbit.e = new_val
-
+    def _redraw_orbit(self) -> None:
         t = self._orbit.orbital_angles()
         orbit_eq = self._orbit.orbit_eq()
         self._line.set_data(orbit_eq.x(t), orbit_eq.y(t))
 
-        # required to update canvas and attached toolbar!
         self._canvas.draw()
+
+    def update_eccentricity(self, new_val: float) -> None:
+        self._orbit.e = new_val
+        self._redraw_orbit()
+
+    def update_semimajor_axis(self, new_val: float) -> None:
+        self._orbit.a = new_val
+        self._redraw_orbit()
