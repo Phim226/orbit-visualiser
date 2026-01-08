@@ -21,13 +21,22 @@ class OrbitConfigurer():
         self._build_semimajor_axis_slider()
 
     def _build_eccentricity_slider(self) -> None:
-        slider_update = Scale(self._root, from_ = 0, to = 2, resolution = 0.01, length  = 150, orient = "horizontal",
-                              command = self._orbit_fig.update_eccentricity, label = "Eccentricity")
-        slider_update.set(self._orbit.e)
-        slider_update.pack(side = "top", anchor = "nw")
+        self._e_slider = Scale(self._root, from_ = 0, to = 2, resolution = 0.01, length  = 150, orient = "horizontal",
+                              command = self._update_eccentricity, label = "Eccentricity")
+        self._e_slider.set(self._orbit.e)
+        self._e_slider.pack(side = "top", anchor = "nw")
 
     def _build_semimajor_axis_slider(self) -> None:
-        slider_update = Scale(self._root, from_ = -10, to = 10, resolution = 0.01, length  = 150, orient = "horizontal",
-                              command = self._orbit_fig.update_semimajor_axis, label = "Semimajor axis")
-        slider_update.set(self._orbit.a)
-        slider_update.pack(side = "top", anchor = "nw")
+        self._a_slider = Scale(self._root, from_ = -10, to = 10, resolution = 0.01, length  = 150, orient = "horizontal",
+                              command = self._update_semimajor_axis, label = "Semimajor axis")
+        self._a_slider.set(self._orbit.a)
+        self._a_slider.pack(side = "top", anchor = "nw")
+
+    def _update_eccentricity(self, new_val: float) -> None:
+        self._orbit.e = new_val
+        self._a_slider.set(self._orbit.a)
+        self._orbit_fig.redraw_orbit()
+
+    def _update_semimajor_axis(self, new_val: float) -> None:
+        self._orbit.a = new_val
+        self._orbit_fig.redraw_orbit()
