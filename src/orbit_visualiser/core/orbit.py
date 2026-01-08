@@ -5,8 +5,7 @@ import numpy as np
 
 class PerifocalOrbitEq():
 
-    def __init__(self, e: float, a: float):
-        p: float = a*(1 - e**2) # orbital parameter
+    def __init__(self, e: float, p: float):
         self._x: Callable[[float], float] = lambda t : p*(np.cos(t)/(1+e*np.cos(t)))
         self._y: Callable[[float], float] = lambda t : p*(np.sin(t)/(1+e*np.cos(t)))
 
