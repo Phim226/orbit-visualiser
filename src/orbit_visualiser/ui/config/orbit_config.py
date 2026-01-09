@@ -18,7 +18,7 @@ class OrbitConfigurer():
 
     def build(self) -> None:
         self._build_eccentricity_slider()
-        self._build_semimajor_axis_slider()
+        self._build_periapsis_slider()
 
     def _build_eccentricity_slider(self) -> None:
         self._e_slider = Scale(self._root, from_ = 0, to = 2, resolution = 0.01, length  = 150, orient = "horizontal",
@@ -26,17 +26,17 @@ class OrbitConfigurer():
         self._e_slider.set(self._orbit.e)
         self._e_slider.pack(side = "top", anchor = "nw")
 
-    def _build_semimajor_axis_slider(self) -> None:
-        self._a_slider = Scale(self._root, from_ = -10, to = 10, resolution = 0.01, length  = 150, orient = "horizontal",
-                              command = self._update_semimajor_axis, label = "Semimajor axis")
-        self._a_slider.set(self._orbit.a)
-        self._a_slider.pack(side = "top", anchor = "nw")
+    def _build_periapsis_slider(self) -> None:
+        self._rp_slider = Scale(self._root, from_ = 0, to = 10, resolution = 0.01, length  = 150, orient = "horizontal",
+                              command = self._update_periapsis, label = "Radius of periapsis")
+        self._rp_slider.set(self._orbit.rp)
+        self._rp_slider.pack(side = "top", anchor = "nw")
 
     def _update_eccentricity(self, new_val: float) -> None:
         self._orbit.e = new_val
-        self._a_slider.set(self._orbit.a)
+        self._rp_slider.set(self._orbit.rp)
         self._orbit_fig.redraw_orbit()
 
-    def _update_semimajor_axis(self, new_val: float) -> None:
-        self._orbit.a = new_val
+    def _update_periapsis(self, new_val: float) -> None:
+        self._orbit.rp = new_val
         self._orbit_fig.redraw_orbit()

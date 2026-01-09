@@ -21,8 +21,8 @@ class Orbit():
 
     def __init__(self):
         self._e: float = 0.6 # eccentricity
-        self._a: float = 5.0  # semimajor axis
-        self._update_orbital_params_ea(self._e, self._a)
+        self._rp: float = 2.0  # semimajor axis
+        self._update_orbital_params_erp(self._e, self._rp)
 
 
     @property
@@ -32,6 +32,9 @@ class Orbit():
     @e.setter
     def e(self, e: str) -> None:
         e = float(e)
+        self._e = e
+        self._update_orbital_params_erp(e, self._rp)
+
         if e > 1:
             self._asymptote_anomaly = np.arccos(-1/e)
             if self._a > 0 :
@@ -42,8 +45,17 @@ class Orbit():
             self._a = np.abs(self._a)
             self._b = np.abs(-self._b)
 
-        self._e = e
-        self._update_orbital_params_ea(e, self._a)
+
+
+    @property
+    def rp(self) -> float:
+        return self._rp
+
+    @rp.setter
+    def rp(self, rp: str) -> None:
+        rp = float(rp)
+        self._rp = rp
+        self._update_orbital_params_erp(self._e, rp)
 
     @property
     def a(self) -> float:
@@ -52,8 +64,7 @@ class Orbit():
     @a.setter
     def a(self, a: str) -> None:
         a = float(a)
-        self._a = a
-        self._update_orbital_params_ea(self._e, a)
+        self._a = float(a)
 
     @property
     def b(self) -> float:
@@ -71,13 +82,6 @@ class Orbit():
     def p(self, value: float) -> None:
         self._p = float(value)
 
-    @property
-    def rp(self) -> float:
-        return self._rp
-
-    @rp.setter
-    def rp(self, value: float | int) -> None:
-        self._rp = float(value)
 
     @property
     def ra(self) -> float:
@@ -98,27 +102,27 @@ class Orbit():
         delta = 0.0001
         return np.linspace(-self._asymptote_anomaly + delta, self._asymptote_anomaly - delta, 1000)
 
-    def _update_orbital_params_ea(self, e: float, a: float):
-        self._b: float = self._semiminor_axis_ea(e, a) # semiminor axis
-        self._p: float = self._orbital_param_ea(e, a) # orbital parameter
-        self._rp: float = self._periapsis_ep(e, self._p) # radius of periapsis
-        self._ra: float = self._apoapsis_ep(e, self._p) # radius of apoapsis
-        print(f"b = {self._b}")
+    def _update_orbital_params_erp(self, e: float, rp: float):
+        self._p: float = self._orbital_param_erp(e, rp)
+        self._a: float = self._semimajor_axis_erp(e, rp)
+        self._b: float = self._semiminor_axis_erp(e, rp)
+        self._ra: float = self._apoapsis_ep(e, self._p)
         print(f"p = {self._p}")
-        print(f"rp = {self._rp}")
+        print(f"a = {self._a}")
+        print(f"b = {self._b}")
         print(f"ra = {self._ra}")
 
-    def _semiminor_axis_ea(self, e: float, a: float) -> float:
+    def _orbital_param_erp(self, e: float, rp: float) -> float:
+        return rp*(1 + e)
+
+    def _semimajor_axis_erp(self, e: float, rp: float) -> float:
+        return rp/(1 - e)
+
+    def _semiminor_axis_erp(self, e: float, rp: float) -> float:
         if e > 1:
-            return a*np.sqrt(e**2 - 1)
+            return rp*np.sqrt(e**2 - 1)/(1 - e)
 
-        return a*np.sqrt(1 - e**2)
-
-    def _orbital_param_ea(self, e: float, a: float) -> float:
-        return a*(1 - e**2)
-
-    def _periapsis_ep(self, e: float, p: float) -> float:
-        return p*(1/(1 + e))
+        return rp*np.sqrt(1 - e**2)/(1 - e)
 
     def _apoapsis_ep(self, e: float, p: float) -> float:
         return p*(1/(1 - e))
