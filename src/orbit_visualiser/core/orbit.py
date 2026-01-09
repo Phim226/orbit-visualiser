@@ -23,6 +23,7 @@ class Orbit():
         self._e: float = 0.6 # eccentricity
         self._rp: float = 2.0  # semimajor axis
         self._update_orbital_params_erp(self._e, self._rp)
+        self._update_orbit_type(self._e)
 
 
     @property
@@ -34,18 +35,7 @@ class Orbit():
         e = float(e)
         self._e = e
         self._update_orbital_params_erp(e, self._rp)
-
-        if e > 1:
-            self._asymptote_anomaly = np.arccos(-1/e)
-            if self._a > 0 :
-                self._a = -np.abs(self._a)
-                self._b = -np.abs(self._b)
-
-        if (e < 1 and self._a < 0):
-            self._a = np.abs(self._a)
-            self._b = np.abs(-self._b)
-
-
+        self._update_orbit_type(e)
 
     @property
     def rp(self) -> float:
@@ -111,6 +101,16 @@ class Orbit():
         print(f"a = {self._a}")
         print(f"b = {self._b}")
         print(f"ra = {self._ra}")
+
+    def _update_orbit_type(self, e: float) -> None:
+        orbit_types: dict[str, bool] = {
+            "_circular" : e == 0,
+            "_elliptical": 0 < e < 1,
+            "_parabolic": e == 1,
+            "_hyperbolic": e > 1
+        }
+        for type, val in list(orbit_types.items()):
+            self.__setattr__(type, val)
 
     def _orbital_param_erp(self, e: float, rp: float) -> float:
         return rp*(1 + e)
