@@ -1,5 +1,6 @@
 from tkinter import Tk, Frame, Scale, Label, StringVar
 from functools import partial
+import numpy as np
 from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit
 
@@ -44,7 +45,10 @@ class OrbitConfigurer():
         setattr(self._orbit, parameter, new_val)
         self._orbit_fig.redraw_orbit()
 
-    def _build_display(self, parameter: str, display_str: str):
+        for param, display_str in list(self.orbital_parameters.items()):
+            self._update_display(param, display_str)
+
+    def _build_display(self, parameter: str, display_str: str) -> None:
         self.__setattr__(
             f"_{parameter}_str",
             StringVar(value = f"{display_str}{getattr(self._orbit, parameter)}")
@@ -53,4 +57,11 @@ class OrbitConfigurer():
         label = Label(self._root, textvariable = self.__getattribute__(f"_{parameter}_str"))
         label.pack(side = "top", anchor = "nw")
 
-    #def _format_display(self, )
+    def _update_display(self, parameter: str, display_str: str) -> None:
+        self.__getattribute__(f"_{parameter}_str").set(f"{display_str}{self._format_display_value(getattr(self._orbit, parameter))}")
+
+    def _format_display_value(self, value: float) -> str:
+        if value == np.inf:
+            return "∞"
+
+        return f"{value:.2f}"
