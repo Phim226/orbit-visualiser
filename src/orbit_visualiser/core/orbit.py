@@ -95,7 +95,7 @@ class Orbit():
         self._p: float = self._orbital_param_erp(e, rp)
         self._a: float = self._semimajor_axis_erp(e, rp)
         self._b: float = self._semiminor_axis_erp(e, rp)
-        self._ra: float = self._apoapsis_erp(e, self._p)
+        self._ra: float = self._apoapsis_erp(e, rp)
         self._asymptote_anomaly: float = self._asymptote_anomaly_e(e)
         print(f"p = {self._p}")
         print(f"a = {self._a}")
