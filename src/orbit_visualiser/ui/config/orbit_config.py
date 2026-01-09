@@ -31,11 +31,11 @@ class OrbitConfigurer():
         self._rp_slider.set(self._orbit.rp)
         self._rp_slider.pack(side = "top", anchor = "nw")
 
-    def _update_eccentricity(self, new_val: float) -> None:
+    def _update_eccentricity(self, new_val: str) -> None:
         self._orbit.e = new_val
         self._rp_slider.set(self._orbit.rp)
         self._orbit_fig.redraw_orbit()
 
-    def _update_periapsis(self, new_val: float) -> None:
+    def _update_periapsis(self, new_val: str) -> None:
         self._orbit.rp = new_val
         self._orbit_fig.redraw_orbit()
