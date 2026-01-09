@@ -51,34 +51,18 @@ class Orbit():
     def a(self) -> float:
         return self._a
 
-    @a.setter
-    def a(self, a: str) -> None:
-        self._a = float(a)
-
     @property
     def b(self) -> float:
         return self._b
-
-    @b.setter
-    def b(self, b: float | int) -> None:
-        self._b = float(b)
 
     @property
     def p(self) -> float:
         return self._p
 
-    @p.setter
-    def p(self, value: float) -> None:
-        self._p = float(value)
-
 
     @property
     def ra(self) -> float:
         return self._ra
-
-    @ra.setter
-    def ra(self, value: float | int) -> None:
-        self._ra = float(value)
 
     @property
     def orbit_eq(self) -> PerifocalOrbitEq:
@@ -89,14 +73,14 @@ class Orbit():
             return np.linspace(0, 2*pi, 1000)
 
         delta = 0.0001
-        return np.linspace(-self._asymptote_anomaly + delta, self._asymptote_anomaly - delta, 1000)
+        return np.linspace(-self._t_asymp + delta, self._t_asymp - delta, 1000)
 
     def _update_orbital_params_erp(self, e: float, rp: float):
         self._p: float = self._orbital_param_erp(e, rp)
         self._a: float = self._semimajor_axis_erp(e, rp)
         self._b: float = self._semiminor_axis_erp(e, rp)
         self._ra: float = self._apoapsis_erp(e, rp)
-        self._asymptote_anomaly: float = self._asymptote_anomaly_e(e)
+        self._t_asymp: float = self._asymptote_anomaly_e(e)
         print(f"p = {self._p}")
         print(f"a = {self._a}")
         print(f"b = {self._b}")
