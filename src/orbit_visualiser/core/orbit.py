@@ -97,6 +97,7 @@ class Orbit():
         self._a: float = self._semimajor_axis_erp(e, rp)
         self._b: float = self._semiminor_axis_erp(e, rp)
         self._ra: float = self._apoapsis_ep(e, self._p)
+        self._asymptote_anomaly: float = self._asymptote_anomaly_e(e)
         print(f"p = {self._p}")
         print(f"a = {self._a}")
         print(f"b = {self._b}")
@@ -126,3 +127,11 @@ class Orbit():
 
     def _apoapsis_ep(self, e: float, p: float) -> float:
         return p*(1/(1 - e))
+
+    def _asymptote_anomaly_e(self, e: float) -> float:
+        """Calculate the true anomaly of the asymptote for hyperbolic orbits using the eccentricity"""
+        if e > 1:
+            return np.arccos(-1/e)
+
+        return np.nan
+
