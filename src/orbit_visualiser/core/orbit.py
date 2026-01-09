@@ -96,7 +96,7 @@ class Orbit():
         self._p: float = self._orbital_param_erp(e, rp)
         self._a: float = self._semimajor_axis_erp(e, rp)
         self._b: float = self._semiminor_axis_erp(e, rp)
-        self._ra: float = self._apoapsis_ep(e, self._p)
+        self._ra: float = self._apoapsis_erp(e, self._p)
         self._asymptote_anomaly: float = self._asymptote_anomaly_e(e)
         print(f"p = {self._p}")
         print(f"a = {self._a}")
@@ -119,18 +119,27 @@ class Orbit():
 
     def _semimajor_axis_erp(self, e: float, rp: float) -> float:
         """Calculate the semimajor axis a using the eccentricity and radius of periapsis"""
-        return rp/(1 - e)
+        if e != 1:
+            return rp/(1 - e)
+
+        return np.inf
 
     def _semiminor_axis_erp(self, e: float, rp: float) -> float:
         """Calculate the semiminor axis b using the eccentricity and radius of periapsis"""
         if e > 1:
             return rp*np.sqrt(e**2 - 1)/(1 - e)
 
-        return rp*np.sqrt(1 - e**2)/(1 - e)
+        elif e < 1:
+            return rp*np.sqrt(1 - e**2)/(1 - e)
 
-    def _apoapsis_ep(self, e: float, p: float) -> float:
-        """Calculate the radius of apoapsis ra using the eccentricity and the orbital parameter"""
-        return p*(1/(1 - e))
+        return np.inf
+
+    def _apoapsis_erp(self, e: float, rp: float) -> float:
+        """Calculate the radius of apoapsis ra using the eccentricity and radius of periapsis"""
+        if e != 1:
+            return rp*((1 + e)/(1 - e))
+
+        return np.inf
 
     def _asymptote_anomaly_e(self, e: float) -> float:
         """Calculate the true anomaly of the asymptote for hyperbolic orbits using the eccentricity"""
