@@ -114,18 +114,22 @@ class Orbit():
             self.__setattr__(type, val)
 
     def _orbital_param_erp(self, e: float, rp: float) -> float:
+        """Calculate the orbital parameter p using the eccentricity and radius of periapsis"""
         return rp*(1 + e)
 
     def _semimajor_axis_erp(self, e: float, rp: float) -> float:
+        """Calculate the semimajor axis a using the eccentricity and radius of periapsis"""
         return rp/(1 - e)
 
     def _semiminor_axis_erp(self, e: float, rp: float) -> float:
+        """Calculate the semiminor axis b using the eccentricity and radius of periapsis"""
         if e > 1:
             return rp*np.sqrt(e**2 - 1)/(1 - e)
 
         return rp*np.sqrt(1 - e**2)/(1 - e)
 
     def _apoapsis_ep(self, e: float, p: float) -> float:
+        """Calculate the radius of apoapsis ra using the eccentricity and the orbital parameter"""
         return p*(1/(1 - e))
 
     def _asymptote_anomaly_e(self, e: float) -> float:
