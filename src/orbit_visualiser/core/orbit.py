@@ -69,7 +69,7 @@ class Orbit():
         return PerifocalOrbitEq(self._e, self._p)
 
     def orbital_angles(self):
-        if self._e <= 1:
+        if self._e < 1:
             return np.linspace(0, 2*pi, 1000)
 
         delta = 0.0001
@@ -81,10 +81,6 @@ class Orbit():
         self._b: float = self._semiminor_axis_erp(e, rp)
         self._ra: float = self._apoapsis_erp(e, rp)
         self._t_asymp: float = self._asymptote_anomaly_e(e)
-        print(f"p = {self._p}")
-        print(f"a = {self._a}")
-        print(f"b = {self._b}")
-        print(f"ra = {self._ra}")
 
     def _update_orbit_type(self, e: float) -> None:
         orbit_types: dict[str, bool] = {
@@ -126,7 +122,7 @@ class Orbit():
 
     def _asymptote_anomaly_e(self, e: float) -> float:
         """Calculate the true anomaly of the asymptote for hyperbolic orbits using the eccentricity"""
-        if e > 1:
+        if e >= 1:
             return np.arccos(-1/e)
 
         return np.nan
