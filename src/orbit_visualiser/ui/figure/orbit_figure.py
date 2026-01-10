@@ -12,7 +12,7 @@ class OrbitFigure():
         self._orbit = orbit
 
         self._figure_frame: Frame = Frame(root)
-        self._figure_frame.pack(side = figure_frame_placement[0], anchor = figure_frame_placement[1])
+        self._figure_frame.pack(side = figure_frame_placement[0], anchor = figure_frame_placement[1], padx = 8, pady = 6)
 
     def build(self) -> None:
         self._create_figure()
