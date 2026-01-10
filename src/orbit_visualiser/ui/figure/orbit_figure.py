@@ -43,11 +43,11 @@ class OrbitFigure():
         self._ax.text(
             0.98, 0.02,
             r"$\mathrm{km}$",
-            transform=self._ax.transAxes,
-            ha="right",
-            va="bottom",
-            fontsize=9,
-            color="gray"
+            transform = self._ax.transAxes,
+            ha = "right",
+            va = "bottom",
+            fontsize = 9,
+            color = "gray"
         )
 
         self._ax.tick_params(labelsize = 8)
