@@ -31,8 +31,7 @@ class Orbit():
         return self._e
 
     @e.setter
-    def e(self, e: str) -> None:
-        e = float(e)
+    def e(self, e: float) -> None:
         self._e = e
         self._update_orbital_params_erp(e, self._rp)
         self._update_orbit_type(e)
@@ -42,8 +41,7 @@ class Orbit():
         return self._rp
 
     @rp.setter
-    def rp(self, rp: str) -> None:
-        rp = float(rp)
+    def rp(self, rp: float) -> None:
         self._rp = rp
         self._update_orbital_params_erp(self._e, rp)
 

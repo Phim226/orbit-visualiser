@@ -26,7 +26,7 @@ class OrbitConfigurer():
 
     def build(self) -> None:
         self._build_slider("e", "Eccentricity", 2, 0.01)
-        self._build_slider("rp", "Radius of periapsis", 10000)
+        self._build_slider("rp", "Radius of periapsis (km)", 10000)
 
         self._display_frame.pack(side = "top", anchor = "nw", pady = (10, 0))
 
@@ -45,14 +45,14 @@ class OrbitConfigurer():
         slider.pack(side = "top", anchor = "nw")
 
     def _update_value(self, parameter: str, new_val: str) -> None:
-        setattr(self._orbit, parameter, new_val)
+        setattr(self._orbit, parameter, float(new_val))
         self._orbit_fig.redraw_orbit()
 
         for param in self.orbital_parameters:
             self._update_display(param)
 
     def _build_display(self, parameter: str, display_str: str, row: int) -> None:
-        var = StringVar(value = self._format_display_value(getattr(self._orbit, parameter)))
+        var = StringVar(value = f"{self._format_display_value(getattr(self._orbit, parameter))} km")
         self.__setattr__(f"_{parameter}_str", var)
 
         name_label = Label(self._display_frame, text = display_str + ":", anchor = "w", font=("Segoe UI", 9))
@@ -62,7 +62,7 @@ class OrbitConfigurer():
         value_label.grid(row = row, column = 1, sticky = "e", padx = (0, 6))
 
     def _update_display(self, parameter: str) -> None:
-        self.__getattribute__(f"_{parameter}_str").set(self._format_display_value(getattr(self._orbit, parameter)))
+        self.__getattribute__(f"_{parameter}_str").set(f"{self._format_display_value(getattr(self._orbit, parameter))} km")
 
     def _format_display_value(self, value: float) -> str:
         if value == np.inf:
