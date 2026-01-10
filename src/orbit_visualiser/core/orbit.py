@@ -57,10 +57,23 @@ class Orbit():
     def p(self) -> float:
         return self._p
 
-
     @property
     def ra(self) -> float:
         return self._ra
+
+    @property
+    def t_asymp(self, units: str = "degrees") -> float:
+        if units == "degrees":
+            return np.degrees(self._t_asymp)
+
+        return self._t_asymp
+
+    @property
+    def turn_angle(self, units: str = "degrees") -> float:
+        if units == "degrees":
+            return np.degrees(self._turn_angle)
+
+        return self._turn_angle
 
     @property
     def orbit_eq(self) -> PerifocalOrbitEq:
@@ -79,6 +92,7 @@ class Orbit():
         self._b: float = self._semiminor_axis_erp(e, rp)
         self._ra: float = self._apoapsis_erp(e, rp)
         self._t_asymp: float = self._asymptote_anomaly_e(e)
+        self._turn_angle: float = self._turning_angle_e(e)
 
     def _update_orbit_type(self, e: float) -> None:
         if e == 0:
@@ -128,3 +142,9 @@ class Orbit():
 
         return np.nan
 
+    def _turning_angle_e(self, e: float) -> float:
+        """Calculate the turning angle for hyperbolic orbits using the eccentricity"""
+        if e >= 1:
+            return 2*np.arcsin(1/e)
+
+        return np.nan
