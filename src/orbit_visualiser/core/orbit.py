@@ -21,7 +21,7 @@ class Orbit():
 
     def __init__(self):
         self._e: float = 0.6
-        self._rp: float = 2.0
+        self._rp: float = 2000
         self._update_orbital_params_erp(self._e, self._rp)
         self._update_orbit_type(self._e)
 

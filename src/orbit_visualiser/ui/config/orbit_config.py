@@ -26,19 +26,19 @@ class OrbitConfigurer():
         self._config_frame.pack(side = config_frame_placement[0], anchor = config_frame_placement[1], padx = 8, pady = 6)
 
     def build(self) -> None:
-        self._build_slider("e", "Eccentricity", 2)
-        self._build_slider("rp", "Radius of periapsis", 10)
+        self._build_slider("e", "Eccentricity", 2, 0.01)
+        self._build_slider("rp", "Radius of periapsis", 10000)
 
         self._display_frame.pack(side = "top", anchor = "nw", pady = (10, 0))
 
         for i, parameters in enumerate(list(self.orbital_parameters.items())):
             self._build_display(parameters[0], parameters[1], i)
 
-    def _build_slider(self, parameter: str, label: str, upper_lim: int) -> None:
+    def _build_slider(self, parameter: str, label: str, upper_lim: int, res: float = 1) -> None:
         slider_name = f"_{parameter}_slider"
         self.__setattr__(
             slider_name,
-            Scale(self._root, to = upper_lim, resolution = 0.01, length = 150, orient = "horizontal",
+            Scale(self._root, to = upper_lim, resolution = res, length = 150, orient = "horizontal",
                   command = partial(self._update_value, parameter), label = label, font = ("Segoe UI", 9))
         )
         slider: Scale = self.__getattribute__(slider_name)
@@ -59,7 +59,7 @@ class OrbitConfigurer():
         name_label = Label(self._display_frame, text = display_str + ":", anchor = "w", font=("Segoe UI", 9))
         name_label.grid(row = row, column = 0, sticky = "w", padx = (0, 6))
 
-        value_label = Label(self._display_frame, textvariable = var, anchor = "e", width = 5, font=("Segoe UI", 9))
+        value_label = Label(self._display_frame, textvariable = var, anchor = "e", width = 8, font=("Segoe UI", 9))
         value_label.grid(row = row, column = 1, sticky = "e", padx = (0, 6))
 
     def _update_display(self, parameter: str, display_str: str) -> None:
@@ -69,4 +69,4 @@ class OrbitConfigurer():
         if value == np.inf:
             return "∞"
 
-        return f"{value:6.2f}"
+        return f"{value:6.0f}"

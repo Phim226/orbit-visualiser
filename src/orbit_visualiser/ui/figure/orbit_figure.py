@@ -37,12 +37,12 @@ class OrbitFigure():
         self._ax.xaxis.set_ticks_position('bottom')
         self._ax.yaxis.set_ticks_position('left')
 
-        self._ax.set_xlim(-15, 15)
-        self._ax.set_ylim(-15, 15)
+        self._ax.set_xlim(-15000, 15000)
+        self._ax.set_ylim(-15000, 15000)
 
         self._ax.text(
             0.98, 0.02,
-            r"$\times 10^3\,\mathrm{km}$",
+            r"$\mathrm{km}$",
             transform=self._ax.transAxes,
             ha="right",
             va="bottom",
