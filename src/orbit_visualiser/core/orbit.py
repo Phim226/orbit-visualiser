@@ -81,14 +81,17 @@ class Orbit():
         self._t_asymp: float = self._asymptote_anomaly_e(e)
 
     def _update_orbit_type(self, e: float) -> None:
-        orbit_types: dict[str, bool] = {
-            "_circular" : e == 0,
-            "_elliptical": 0 < e < 1,
-            "_parabolic": e == 1,
-            "_hyperbolic": e > 1
-        }
-        for type, val in list(orbit_types.items()):
-            self.__setattr__(type, val)
+        if e == 0:
+            self._orbit_type = "circular"
+
+        elif 0 < e < 1:
+            self._orbit_type = "elliptical"
+
+        elif e == 1:
+            self._orbit_type = "parabolic"
+
+        else:
+            self._orbit_type = "hyperbolic"
 
     def _orbital_param_erp(self, e: float, rp: float) -> float:
         """Calculate the orbital parameter p using the eccentricity and radius of periapsis"""
