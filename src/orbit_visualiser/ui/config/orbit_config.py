@@ -18,7 +18,6 @@ class OrbitConfigurer():
 
         self._display_frame = LabelFrame(root, text = "Orbital parameters")
 
-
         self._orbit_fig = orbit_fig
         self._orbit = orbit
 
@@ -49,8 +48,8 @@ class OrbitConfigurer():
         setattr(self._orbit, parameter, new_val)
         self._orbit_fig.redraw_orbit()
 
-        for param, display_str in list(self.orbital_parameters.items()):
-            self._update_display(param, display_str)
+        for param in self.orbital_parameters:
+            self._update_display(param)
 
     def _build_display(self, parameter: str, display_str: str, row: int) -> None:
         var = StringVar(value = self._format_display_value(getattr(self._orbit, parameter)))
@@ -62,7 +61,7 @@ class OrbitConfigurer():
         value_label = Label(self._display_frame, textvariable = var, anchor = "e", width = 8, font=("Segoe UI", 9))
         value_label.grid(row = row, column = 1, sticky = "e", padx = (0, 6))
 
-    def _update_display(self, parameter: str, display_str: str) -> None:
+    def _update_display(self, parameter: str) -> None:
         self.__getattribute__(f"_{parameter}_str").set(self._format_display_value(getattr(self._orbit, parameter)))
 
     def _format_display_value(self, value: float) -> str:
