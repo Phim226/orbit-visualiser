@@ -12,7 +12,8 @@ class OrbitConfigurer():
         "ra": ("Radius of apoapsis", "km"),
         "p" : ("Semi-parameter", "km"),
         "t_asymp" : ("Asymptote anomaly", "°"),
-        "turn_angle" : ("Turning angle", "°")
+        "turn_angle" : ("Turning angle", "°"),
+        "aim_rad" : ("Aiming radius", "km")
     }
 
     def __init__(self, root: Tk, config_frame_placement: tuple[str], orbit_fig: OrbitFigure, orbit: Orbit):
@@ -55,22 +56,29 @@ class OrbitConfigurer():
             self._update_display(param)
 
     def _build_display(self, parameter: str, display_str: str, units: str, row: int) -> None:
-        var = StringVar(value = f"{self._format_display_value(getattr(self._orbit, parameter))} {units}")
+        var = StringVar(value = self._format_display_value(getattr(self._orbit, parameter), units))
         self.__setattr__(f"_{parameter}_str", var)
 
         name_label = Label(self._display_frame, text = display_str + ":", anchor = "w", font=("Segoe UI", 9))
         name_label.grid(row = row, column = 0, sticky = "w", padx = (0, 6))
 
-        value_label = Label(self._display_frame, textvariable = var, anchor = "e", width = 8, font=("Segoe UI", 9))
+        value_label = Label(self._display_frame, textvariable = var, anchor = "e", width = 10, font=("Segoe UI", 9))
         value_label.grid(row = row, column = 1, sticky = "e", padx = (0, 6))
 
     def _update_display(self, parameter: str) -> None:
         self.__getattribute__(
             f"_{parameter}_str"
-        ).set(f"{self._format_display_value(getattr(self._orbit, parameter))} {self.orbital_parameters[parameter][1]}")
+        ).set(self._format_display_value(getattr(self._orbit, parameter), self.orbital_parameters[parameter][1]))
 
-    def _format_display_value(self, value: float) -> str:
-        if value == np.inf:
-            return "∞"
+    def _format_display_value(self, value: float, units: str) -> str:
+        if np.isinf(value):
+            return f"∞ {units}"
 
-        return f"{value:6.0f}"
+        elif np.isnan(value):
+            return "n/a"
+
+        elif units == "km":
+            return f"{value:6.0f} km"
+
+        elif units == "°":
+            return f"{value:6.2f} °"

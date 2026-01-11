@@ -76,6 +76,10 @@ class Orbit():
         return self._turn_angle
 
     @property
+    def aim_rad(self) -> float:
+        return self._aim_rad
+
+    @property
     def orbit_eq(self) -> PerifocalOrbitEq:
         return PerifocalOrbitEq(self._e, self._p)
 
@@ -93,6 +97,7 @@ class Orbit():
         self._ra: float = self._apoapsis_erp(e, rp)
         self._t_asymp: float = self._asymptote_anomaly_e(e)
         self._turn_angle: float = self._turning_angle_e(e)
+        self._aim_rad: float = self._aiming_radius_erp(e, rp)
 
     def _update_orbit_type(self, e: float) -> None:
         if e == 0:
@@ -148,3 +153,10 @@ class Orbit():
             return 2*np.arcsin(1/e)
 
         return np.nan
+
+    def _aiming_radius_erp(self, e: float, rp: float) -> float:
+        if e > 1:
+            return rp*np.sqrt((e + 1)/(e - 1))
+
+        return np.nan
+
