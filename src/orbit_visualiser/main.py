@@ -10,6 +10,7 @@ class OrbitVisualiser():
 
     def __init__(self, root: Tk):
         root.title("2D Orbit Visualiser")
+        root.state("zoomed")
 
         orbit: Orbit = Orbit()
 
