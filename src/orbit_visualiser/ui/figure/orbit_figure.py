@@ -12,7 +12,7 @@ class OrbitFigure():
         self._orbit = orbit
 
         self._figure_frame: Frame = Frame(root)
-        self._figure_frame.pack(side = figure_frame_placement[0], anchor = figure_frame_placement[1], padx = 8, pady = 6)
+        self._figure_frame.pack(side = figure_frame_placement[0], anchor = figure_frame_placement[1], padx = 8, pady = 6, fill = "both", expand = True)
 
     def build(self) -> None:
         self._create_figure()
@@ -37,8 +37,8 @@ class OrbitFigure():
         self._ax.xaxis.set_ticks_position('bottom')
         self._ax.yaxis.set_ticks_position('left')
 
-        self._ax.set_xlim(-15000, 15000)
-        self._ax.set_ylim(-15000, 15000)
+        self._ax.set_xlim(-30000, 30000)
+        self._ax.set_ylim(-30000, 30000)
 
         self._ax.text(
             0.98, 0.02,
