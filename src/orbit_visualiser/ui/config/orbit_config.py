@@ -19,18 +19,20 @@ class OrbitConfigurer():
     def __init__(self, root: Tk, config_frame_placement: tuple[str], orbit_fig: OrbitFigure, orbit: Orbit):
         self._root = root
 
-        self._display_frame = LabelFrame(root, text = "Orbital parameters")
-
         self._orbit_fig = orbit_fig
         self._orbit = orbit
 
         self._config_frame = Frame(root)
         self._config_frame.pack(side = config_frame_placement[0], anchor = config_frame_placement[1], padx = 8, pady = 6)
 
+        self._slider_frame = Frame(self._config_frame)
+        self._display_frame = LabelFrame(self._config_frame, text = "Orbital parameters")
+
     def build(self) -> None:
         self._build_slider("e", "Eccentricity", 2, 0.01)
         self._build_slider("rp", "Radius of periapsis (km)", 10000)
 
+        self._slider_frame.pack(side = "top", anchor = "nw", pady = (10, 0))
         self._display_frame.pack(side = "top", anchor = "nw", pady = (10, 0))
 
         for i, parameters in enumerate(list(self.orbital_parameters.items())):
@@ -41,7 +43,7 @@ class OrbitConfigurer():
         slider_name = f"_{parameter}_slider"
         self.__setattr__(
             slider_name,
-            Scale(self._root, to = upper_lim, resolution = res, length = 150, orient = "horizontal",
+            Scale(self._slider_frame, to = upper_lim, resolution = res, length = 150, orient = "horizontal",
                   command = partial(self._update_value, parameter), label = label, font = ("Segoe UI", 9))
         )
         slider: Scale = self.__getattribute__(slider_name)
