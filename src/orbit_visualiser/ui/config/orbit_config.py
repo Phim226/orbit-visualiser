@@ -139,10 +139,11 @@ class OrbitConfigurer():
         value_label = Label(frame, textvariable = var, anchor = "e", width = 13, font = self.slider_font)
         value_label.grid(row = row, column = 1, sticky = "e", padx = (0, 6))
 
-    def _update_display(self, parameter: str, source_object: Orbit | Satellite) -> None:
+    def _update_display(self, parameter: str, source_object: Orbit | Satellite = None, value: float = None) -> None:
+        new_value = value if value is not None else getattr(source_object, parameter)
         self.__getattribute__(
             f"_{parameter}_str"
-        ).set(self._format_display_value(getattr(source_object, parameter), self.parameters[parameter][1]))
+        ).set(self._format_display_value(new_value, self.parameters[parameter][1]))
 
     def _format_display_value(self, value: float, units: str) -> str:
         if np.isinf(value):
