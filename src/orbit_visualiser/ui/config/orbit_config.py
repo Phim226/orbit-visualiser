@@ -61,7 +61,7 @@ class OrbitConfigurer():
         attracting_body_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
         sat_frame = LabelFrame(self._slider_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font)
-        self._nu_slider = self._build_slider(sat_frame, "nu", self._sat, "True anomaly (°)", 360)
+        self._nu_slider = self._build_slider(sat_frame, "nu", self._sat, "True anomaly (°)", 360, res = 0.01)
         sat_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
         self._slider_frame.pack(side = "left", anchor = "n", pady = (2, 0))
@@ -113,7 +113,7 @@ class OrbitConfigurer():
         self._orbit_fig.redraw_orbit()
 
         if parameter == "e":
-            if new_val > 1:
+            if new_val >= 1:
                 t_asymp = self._orbit.t_asymp
                 self._nu_slider.configure(from_ = -t_asymp, to = t_asymp)
             else:
@@ -130,7 +130,7 @@ class OrbitConfigurer():
         name_label = Label(frame, text = display_str + ":", anchor = "w", font = self.slider_font)
         name_label.grid(row = row, column = 0, sticky = "w", padx = (0, 6))
 
-        value_label = Label(frame, textvariable = var, anchor = "e", width = 10, font = self.slider_font)
+        value_label = Label(frame, textvariable = var, anchor = "e", width = 13, font = self.slider_font)
         value_label.grid(row = row, column = 1, sticky = "e", padx = (0, 6))
 
     def _update_display(self, parameter: str, source_object: Orbit | Satellite) -> None:
