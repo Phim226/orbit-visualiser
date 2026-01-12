@@ -16,7 +16,7 @@ class OrbitVisualiser():
         central_body: CentralBody = CentralBody()
         satellite: Satellite = Satellite(orbit)
 
-        orbit_figure: OrbitFigure = OrbitFigure(root, self.figure_frame_placement, orbit)
+        orbit_figure: OrbitFigure = OrbitFigure(root, self.figure_frame_placement, orbit, central_body)
         orbit_figure.build()
 
         orbit_config: OrbitConfigurer = OrbitConfigurer(root, self.config_frame_placement, orbit_figure, orbit, central_body, satellite)
