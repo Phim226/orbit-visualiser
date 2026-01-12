@@ -36,6 +36,14 @@ class Satellite():
         return self._v
 
     @property
+    def v_esc(self) -> float:
+        return self._v_esc
+
+    @property
+    def v_inf(self) -> float:
+        return self._v_inf
+
+    @property
     def r(self) -> float:
         return self._r
 
@@ -52,6 +60,8 @@ class Satellite():
         self._v = self._velocity(self._v_azim, self._v_radial)
         self._r = self._radius(h, mu, e, nu)
         self._eps = self._specific_energy(mu, h, e)
+        self._v_esc = self._escape_velocity(mu, self._r)
+        self._v_inf = self._excess_velocity(e, mu, abs(self._orbit.a))
 
     @staticmethod
     def _specific_ang_momentum(mu: float, rp: float, e: float) -> float:
@@ -78,3 +88,17 @@ class Satellite():
     @staticmethod
     def _specific_energy(mu: float, h: float, e: float) -> float:
         return -0.5*(mu/h)**2*(1 - e**2)
+
+    @staticmethod
+    def _escape_velocity(mu: float, r: float) -> float:
+        if r < 0:
+            return 0
+
+        return np.sqrt(2*mu/r)
+
+    @staticmethod
+    def _excess_velocity(e: float, mu: float, a: float) -> float:
+        if e < 1:
+            return np.nan
+
+        return np.sqrt(mu/a)

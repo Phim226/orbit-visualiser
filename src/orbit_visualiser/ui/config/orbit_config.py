@@ -25,9 +25,12 @@ class OrbitConfigurer():
 
     satellite_parameters: dict[str, tuple[str]] = {
         "r" : ("Radius", "km"),
+        "h" : ("Angular momentum", "km²/s"),
         "v" : ("Velocity", "km/s"),
         "v_azim" : ("Azimuthal velocity", "km/s"),
-        "v_radial": ("Radial velocity", "km/s"),
+        "v_radial" : ("Radial velocity", "km/s"),
+        "v_esc" : ("Escape velocity", "km/s"),
+        "v_inf" : ("Excess velocity", "km/s")
     }
 
     parameters: dict[str, tuple[str]] = orbital_parameters | satellite_parameters
@@ -145,6 +148,7 @@ class OrbitConfigurer():
         if np.isclose(abs(self._nu_slider.get()), self._orbit.t_asymp, rtol = 0.01):
             self._update_display("r", value = np.inf)
             self._update_display("v_azim", value = 0.00)
+            self._update_display("v_esc", value = 0.00)
 
 
 
