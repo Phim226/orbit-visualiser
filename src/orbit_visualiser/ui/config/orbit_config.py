@@ -91,6 +91,7 @@ class OrbitConfigurer():
             parameter_info = parameters[1]
             self._build_display(frame, parameters[0], source_object, parameter_info[0], parameter_info[1], i)
 
+        # Setting the weight allows the grid manager to stretch labels in _build_display into available space.
         frame.grid_columnconfigure(0, weight=0)
         frame.grid_columnconfigure(1, weight=1)
 
