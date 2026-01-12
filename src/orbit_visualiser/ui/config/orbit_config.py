@@ -66,7 +66,7 @@ class OrbitConfigurer():
         orbital_geom_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
         attracting_body_frame = LabelFrame(self._variables_frame, bd = 1, relief = "sunken", text = "Central body", font = self.subtitle_font)
-        self._mu_slider = self._build_slider(attracting_body_frame, "mu", self._central_body, "Gravitational parameter (km³/s²)", 1_000_000)
+        self._mu_slider = self._build_slider(attracting_body_frame, "mu", self._central_body, "Gravitational parameter (km³/s²)", 1_000_000, lower_lim = 1)
         attracting_body_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
         sat_frame = LabelFrame(self._variables_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font)
