@@ -44,7 +44,7 @@ class Satellite():
         return self._eps
 
     def update_satellite_properties(self) -> None:
-        nu, mu, e, rp = self._nu, self._central_body.mu, self._orbit.e, self._orbit.rp
+        nu, mu, e, rp = np.deg2rad(self._nu), self._central_body.mu, self._orbit.e, self._orbit.rp
         h = self._specific_ang_momentum(mu, rp, e)
         self._h = h
         self._v_azim = self._azimuthal_velocity(mu, h, e, nu)
@@ -71,6 +71,8 @@ class Satellite():
 
     @staticmethod
     def _radius(h: float, mu: float, e: float, nu: float) -> float:
+        if np.isclose(nu, -np.pi) or np.isclose(nu, np.pi):
+            return np.inf
         return (h**2/mu)/(1 + e*np.cos(nu))
 
     @staticmethod
