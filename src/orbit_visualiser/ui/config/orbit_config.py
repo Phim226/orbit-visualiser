@@ -1,6 +1,7 @@
 from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame
 from functools import partial
 import numpy as np
+from tkinter import ttk
 from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
@@ -8,6 +9,10 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 # TODO: Put dividers between parameters and sliders.
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
 class OrbitConfigurer():
+
+    title_font = ("Orbitron", 16, "bold")
+    subtitle_font = ("Orbitron", 11, "normal")
+    slider_font = ("Fira Mono", 9, "normal")
 
     orbital_parameters: dict[str, tuple[str]] = {
         "a" : ("Semi-major axis", "km"),
@@ -36,28 +41,58 @@ class OrbitConfigurer():
         self._config_frame = Frame(root)
         self._config_frame.pack(side = config_frame_placement[0], anchor = config_frame_placement[1], padx = 8, pady = 6)
 
-        self._slider_frame = Frame(self._config_frame)
-        self._display_frame = Frame(self._config_frame)
+        self._slider_frame = Frame(self._config_frame, padx = 2)
+        self._display_frame = Frame(self._config_frame, padx = 2)
 
     def build(self) -> None:
-        self._e_slider = self._build_slider("e", self._orbit, "Eccentricity", 2, res = 0.01)
-        self._rp_slider = self._build_slider("rp", self._orbit, "Radius of periapsis (km)", 100_000, lower_lim = self._central_body.r + 1)
-        self._mu_slider = self._build_slider("mu", self._central_body, "Gravitational parameter (km³/s²)", 1_000_000)
-        self._nu_slider = self._build_slider("nu", self._sat, "True anomaly (°)", 360)
+        self._build_separator(self._slider_frame, "Variables")
+        orbital_geom_frame = LabelFrame(self._slider_frame, bd = 1, relief = "sunken", text = "Orbital geometry", font = self.subtitle_font)
+        self._e_slider = self._build_slider(orbital_geom_frame, "e", self._orbit, "Eccentricity", 2, res = 0.01)
+        self._rp_slider = self._build_slider(orbital_geom_frame, "rp", self._orbit, "Radius of periapsis (km)", 100_000, lower_lim = self._central_body.r + 1)
+        orbital_geom_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
-        self._slider_frame.pack(side = "top", anchor = "nw", pady = (10, 0))
-        self._display_frame.pack(side = "top", anchor = "nw", pady = (10, 0))
+        attracting_body_frame = LabelFrame(self._slider_frame, bd = 1, relief = "sunken", text = "Attracting body", font = self.subtitle_font)
+        self._mu_slider = self._build_slider(attracting_body_frame, "mu", self._central_body, "Gravitational parameter (km³/s²)", 1_000_000)
+        attracting_body_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
-        for i, parameters in enumerate(list(self.parameters.items())):
+        sat_frame = LabelFrame(self._slider_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font)
+        self._nu_slider = self._build_slider(sat_frame, "nu", self._sat, "True anomaly (°)", 360)
+        sat_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
+
+        self._slider_frame.pack(side = "left", anchor = "n", pady = (2, 0))
+
+        sep = ttk.Separator(self._config_frame, orient="vertical")
+        sep.pack(side="left", fill="y", padx=6)
+
+        self._build_separator(self._display_frame, "Properties")
+        orbital_props_frame = LabelFrame(self._display_frame, bd = 1, relief = "sunken", text = "Orbital", font = self.subtitle_font)
+        self._populate_properties(orbital_props_frame, self.orbital_parameters)
+        orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
+
+        sat_props_frame = LabelFrame(self._display_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font)
+        self._populate_properties(sat_props_frame, self.satellite_parameters)
+        sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
+
+        self._display_frame.pack(side = "top", anchor = "n", pady = (2, 0))
+
+    def _populate_properties(self, frame: LabelFrame, parameters: dict[str, tuple[str]]) -> None:
+        for i, parameters in enumerate(list(parameters.items())):
             parameter_info = parameters[1]
-            self._build_display(parameters[0], parameter_info[0], parameter_info[1], i)
+            self._build_display(frame, parameters[0], parameter_info[0], parameter_info[1], i)
 
-    def _build_slider(self, parameter: str, source_object: Orbit | Satellite, label: str, upper_lim: int, res: float = 1, lower_lim: int = 0) -> Scale:
+    def _build_separator(self, root: Frame, text: str) -> None:
+        frame = Frame(root)
+        frame.pack(side = "top", fill = "x", pady = 4)
+
+        Label(frame, text = text, font = self.title_font).pack(side = "left", padx = (0, 6))
+        Frame(frame, height = 2, bd = 1, relief = "sunken").pack(side = "left", fill = "x", expand = True)
+
+    def _build_slider(self, root: Frame, parameter: str, source_object: Orbit | Satellite, label: str, upper_lim: int, res: float = 1, lower_lim: int = 0) -> Scale:
         slider_name = f"_{parameter}_slider"
         self.__setattr__(
             slider_name,
-            Scale(self._slider_frame, from_ = lower_lim, to = upper_lim, resolution = res, length = 195, orient = "horizontal",
-                  command = partial(self._update_value, parameter, source_object), label = label, font = ("Segoe UI", 9))
+            Scale(root, from_ = lower_lim, to = upper_lim, resolution = res, length = 195, orient = "horizontal",
+                  command = partial(self._update_value, parameter, source_object), label = label, font = self.slider_font)
         )
         slider: Scale = self.__getattribute__(slider_name)
         slider.set(getattr(source_object, parameter))
@@ -79,14 +114,14 @@ class OrbitConfigurer():
         for param in self.parameters:
             self._update_display(param)
 
-    def _build_display(self, parameter: str, display_str: str, units: str, row: int) -> None:
+    def _build_display(self, frame: LabelFrame, parameter: str, display_str: str, units: str, row: int) -> None:
         var = StringVar(value = self._format_display_value(getattr(self._orbit, parameter), units))
         self.__setattr__(f"_{parameter}_str", var)
 
-        name_label = Label(self._display_frame, text = display_str + ":", anchor = "w", font=("Segoe UI", 9))
+        name_label = Label(frame, text = display_str + ":", anchor = "w", font = self.slider_font)
         name_label.grid(row = row, column = 0, sticky = "w", padx = (0, 6))
 
-        value_label = Label(self._display_frame, textvariable = var, anchor = "e", width = 10, font=("Segoe UI", 9))
+        value_label = Label(frame, textvariable = var, anchor = "e", width = 10, font = self.slider_font)
         value_label.grid(row = row, column = 1, sticky = "e", padx = (0, 6))
 
     def _update_display(self, parameter: str) -> None:
