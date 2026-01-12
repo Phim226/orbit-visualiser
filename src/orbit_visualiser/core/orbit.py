@@ -23,8 +23,8 @@ class Orbit():
     def __init__(self):
         self._e: float = 0.6
         self._rp: float = 10_000
-        self._update_orbital_params_erp(self._e, self._rp)
-        self._update_orbit_type(self._e)
+        self._update_orbital_properties()
+        self._update_orbit_type()
 
 
     @property
@@ -34,8 +34,8 @@ class Orbit():
     @e.setter
     def e(self, e: float) -> None:
         self._e = e
-        self._update_orbital_params_erp(e, self._rp)
-        self._update_orbit_type(e)
+        self._update_orbital_properties()
+        self._update_orbit_type()
 
     @property
     def rp(self) -> float:
@@ -44,7 +44,7 @@ class Orbit():
     @rp.setter
     def rp(self, rp: float) -> None:
         self._rp = rp
-        self._update_orbital_params_erp(self._e, rp)
+        self._update_orbital_properties()
 
     @property
     def a(self) -> float:
@@ -91,7 +91,8 @@ class Orbit():
         delta = 0.0001
         return np.linspace(-self._t_asymp + delta, self._t_asymp - delta, 1000)
 
-    def _update_orbital_params_erp(self, e: float, rp: float):
+    def _update_orbital_properties(self):
+        e, rp = self._e, self._rp
         self._p: float = self._orbital_param_erp(e, rp)
         self._a: float = self._semimajor_axis_erp(e, rp)
         self._b: float = self._semiminor_axis_erp(e, rp)
@@ -100,7 +101,8 @@ class Orbit():
         self._turn_angle: float = self._turning_angle_e(e)
         self._aim_rad: float = self._aiming_radius_erp(e, rp)
 
-    def _update_orbit_type(self, e: float) -> None:
+    def _update_orbit_type(self) -> None:
+        e = self._e
         if e == 0:
             self._orbit_type = "circular"
 
