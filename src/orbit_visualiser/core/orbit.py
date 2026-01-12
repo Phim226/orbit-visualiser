@@ -60,22 +60,24 @@ class Orbit():
         return self._ra
 
     @property
-    def t_asymp(self, units: str = "degrees") -> float:
-        if units == "degrees":
-            return np.degrees(self._t_asymp)
-
-        return self._t_asymp
+    def t_asymp(self) -> float:
+        return np.degrees(self._t_asymp)
 
     @property
-    def turn_angle(self, units: str = "degrees") -> float:
-        if units == "degrees":
-            return np.degrees(self._turn_angle)
-
-        return self._turn_angle
+    def turn_angle(self) -> float:
+        return np.degrees(self._turn_angle)
 
     @property
     def aim_rad(self) -> float:
         return self._aim_rad
+
+    @property
+    def orbit_type(self) -> str:
+        return self._orbit_type
+
+    @property
+    def is_closed(self) -> bool:
+        return self._is_closed
 
     @property
     def orbit_eq(self) -> PerifocalOrbitEq:
@@ -102,15 +104,19 @@ class Orbit():
         e = self._e
         if e == 0:
             self._orbit_type = "circular"
+            self._is_closed = True
 
         elif 0 < e < 1:
             self._orbit_type = "elliptical"
+            self._is_closed = True
 
         elif e == 1:
             self._orbit_type = "parabolic"
+            self._is_closed = False
 
         else:
             self._orbit_type = "hyperbolic"
+            self._is_closed = False
 
     def _orbital_param_erp(self, e: float, rp: float) -> float:
         """Calculate the orbital parameter p using the eccentricity and radius of periapsis"""
