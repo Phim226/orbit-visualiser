@@ -34,7 +34,7 @@ class OrbitConfigurer():
         self._config_frame.pack(side = config_frame_placement[0], anchor = config_frame_placement[1], padx = 8, pady = 6)
 
         self._slider_frame = Frame(self._config_frame)
-        self._display_frame = LabelFrame(self._config_frame, text = "Parameters")
+        self._display_frame = Frame(self._config_frame)
 
     def build(self) -> None:
         self._e_slider = self._build_slider("e", self._orbit, "Eccentricity", 2, 0.01)
