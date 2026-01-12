@@ -105,8 +105,12 @@ class OrbitConfigurer():
             Scale(root, from_ = lower_lim, to = upper_lim, resolution = res, length = 195, orient = "horizontal",
                   command = partial(self._update_value, parameter, source_object), label = label, font = self.slider_font)
         )
+
         slider: Scale = self.__getattribute__(slider_name)
-        slider.set(getattr(source_object, parameter))
+        init_value: float = round(getattr(source_object, parameter), 2) if parameter == "nu" else getattr(source_object, parameter)
+        self.__setattr__(f"_prev_{parameter}", init_value)
+
+        slider.set(init_value)
         slider.pack(side = "top", anchor = "nw")
         return slider
 
@@ -118,16 +122,26 @@ class OrbitConfigurer():
         self._sat.update_satellite_properties()
         self._orbit_fig.redraw_orbit()
 
-        if parameter == "e":
-            if new_val >= 1:
-                t_asymp = self._orbit.t_asymp
-                self._nu_slider.configure(from_ = -t_asymp, to = t_asymp)
-            else:
-                self._nu_slider.configure(from_ = 0, to = 360)
-
         for param_object, params in list(self._parameter_objects.items()):
             for param in params:
                 self._update_display(param, param_object)
+
+        if parameter == "e":
+            if new_val >= 1:
+                t_asymp = round(self._orbit.t_asymp, 2)
+                self._prev_t_asymp = t_asymp
+                self._nu_slider.configure(from_ = -t_asymp, to = t_asymp)
+
+            else:
+                self._prev_t_asymp = np.nan
+                self._nu_slider.configure(from_ = 0, to = 360)
+
+        self.__setattr__(f"_prev_{parameter}", new_val)
+
+        if np.isclose(abs(self._nu_slider.get()), self._orbit.t_asymp, rtol = 0.01):
+            self._update_display("r", value = np.inf)
+
+
 
     def _build_display(self, frame: LabelFrame, parameter: str, source_object: Orbit | Satellite, display_str: str, units: str, row: int) -> None:
         var = StringVar(value = self._format_display_value(getattr(source_object, parameter), units))
