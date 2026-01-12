@@ -170,6 +170,9 @@ class OrbitConfigurer():
         ).set(self._format_display_value(new_value, self.parameters[parameter][1]))
 
     def _format_display_value(self, value: float, units: str) -> str:
+        if np.isclose(value, 0.00, rtol = 0.001):
+            value = 0.00
+
         if np.isinf(value):
             return f"∞ {units}"
 
