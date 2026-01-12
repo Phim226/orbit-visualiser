@@ -6,7 +6,6 @@ from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Display satellite parameters.
-# TODO: Put dividers between parameters and sliders.
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
 class OrbitConfigurer():
 
