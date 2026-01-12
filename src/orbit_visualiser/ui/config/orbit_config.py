@@ -7,7 +7,6 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Display satellite parameters.
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
-# TODO: Stop true anomaly wiggling when eccentricity (e > 1) is changed.
 class OrbitConfigurer():
 
     title_font = ("Orbitron", 16, "bold")
@@ -53,7 +52,7 @@ class OrbitConfigurer():
         self._build_variables_frame()
 
         sep = ttk.Separator(self._config_frame, orient="vertical")
-        sep.pack(side="left", fill="y", padx=6)
+        sep.pack(side="left", fill="y", padx=6, expand = True)
 
         self._build_properties_frame()
 
@@ -80,9 +79,9 @@ class OrbitConfigurer():
         self._populate_properties(orbital_props_frame, self.orbital_parameters, self._orbit)
         orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
 
-        sat_props_frame = LabelFrame(self._properties_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font)
+        sat_props_frame = LabelFrame(self._properties_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font, width = 244)
         self._populate_properties(sat_props_frame, self.satellite_parameters, self._sat)
-        sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
+        sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x")
 
         self._properties_frame.pack(side = "top", anchor = "n", pady = (2, 0))
 
@@ -90,6 +89,9 @@ class OrbitConfigurer():
         for i, parameters in enumerate(list(parameters.items())):
             parameter_info = parameters[1]
             self._build_display(frame, parameters[0], source_object, parameter_info[0], parameter_info[1], i)
+
+        frame.grid_columnconfigure(0, weight=0)
+        frame.grid_columnconfigure(1, weight=1)
 
     def _build_separator(self, root: Frame, text: str) -> None:
         frame = Frame(root)
@@ -152,7 +154,7 @@ class OrbitConfigurer():
         name_label.grid(row = row, column = 0, sticky = "w", padx = (0, 6))
 
         value_label = Label(frame, textvariable = var, anchor = "e", width = 13, font = self.slider_font)
-        value_label.grid(row = row, column = 1, sticky = "e", padx = (0, 6))
+        value_label.grid(row = row, column = 1, sticky = "ew", padx = (0, 6))
 
     def _update_display(self, parameter: str, source_object: Orbit | Satellite = None, value: float = None) -> None:
         new_value = value if value is not None else getattr(source_object, parameter)
