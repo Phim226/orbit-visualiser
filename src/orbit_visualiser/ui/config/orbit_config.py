@@ -45,9 +45,6 @@ class OrbitConfigurer():
         self._config_frame = Frame(root)
         self._config_frame.pack(side = config_frame_placement[0], anchor = config_frame_placement[1], padx = 8, pady = 6)
 
-        self._variables_frame = Frame(self._config_frame, padx = 2)
-        self._properties_frame = Frame(self._config_frame, padx = 2)
-
     def build(self) -> None:
         self._build_variables_frame()
 
@@ -57,6 +54,8 @@ class OrbitConfigurer():
         self._build_properties_frame()
 
     def _build_variables_frame(self) -> None:
+        self._variables_frame = Frame(self._config_frame, padx = 2)
+
         self._build_separator(self._variables_frame, "Variables")
         orbital_geom_frame = LabelFrame(self._variables_frame, bd = 1, relief = "sunken", text = "Orbital geometry", font = self.subtitle_font)
         self._e_slider = self._build_slider(orbital_geom_frame, "e", self._orbit, "Eccentricity", 2, res = 0.01)
@@ -74,6 +73,8 @@ class OrbitConfigurer():
         self._variables_frame.pack(side = "left", anchor = "n", pady = (2, 0))
 
     def _build_properties_frame(self) -> None:
+        self._properties_frame = Frame(self._config_frame, padx = 2)
+
         self._build_separator(self._properties_frame, "Properties")
         orbital_props_frame = LabelFrame(self._properties_frame, bd = 1, relief = "sunken", text = "Orbital", font = self.subtitle_font)
         self._populate_properties(orbital_props_frame, self.orbital_parameters, self._orbit)
