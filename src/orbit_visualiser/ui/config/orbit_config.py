@@ -56,8 +56,16 @@ class OrbitConfigurer():
         return slider
 
     def _update_value(self, parameter: str, source_object: Orbit | Satellite, new_val: str) -> None:
-        setattr(source_object, parameter, float(new_val))
+        new_val = float(new_val)
+        setattr(source_object, parameter, new_val)
         self._orbit_fig.redraw_orbit()
+
+        if parameter == "e":
+            if new_val > 1:
+                t_asymp = self._orbit.t_asymp
+                self._nu_slider.configure(from_ = -t_asymp, to = t_asymp)
+            else:
+                self._nu_slider.configure(from_ = 0, to = 360)
 
         for param in self.parameters:
             self._update_display(param)
