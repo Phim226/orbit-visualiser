@@ -7,6 +7,7 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Display satellite parameters.
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
+# TODO: Stop true anomaly wiggling when eccentricity (e > 1) is changed.
 class OrbitConfigurer():
 
     title_font = ("Orbitron", 16, "bold")
