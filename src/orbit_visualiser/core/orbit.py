@@ -1,4 +1,5 @@
 from typing import Callable
+from dataclasses import dataclass
 from math import pi
 import numpy as np
 
@@ -21,7 +22,7 @@ class Orbit():
 
     def __init__(self):
         self._e: float = 0.6
-        self._rp: float = 2000
+        self._rp: float = 10_000
         self._update_orbital_params_erp(self._e, self._rp)
         self._update_orbit_type(self._e)
 
@@ -160,3 +161,7 @@ class Orbit():
 
         return np.nan
 
+@dataclass
+class CentralBody():
+        mu = 398600 # gravitational parameter in km³/s² = Gm
+        r = 6378 # radius in km

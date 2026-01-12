@@ -1,3 +1,2 @@
-from .orbit import Orbit
+from .orbit import Orbit, CentralBody
 from .satellite import Satellite
-from .central_body import CentralBody
