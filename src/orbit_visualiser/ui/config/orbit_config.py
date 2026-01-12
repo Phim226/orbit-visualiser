@@ -31,10 +31,10 @@ class OrbitConfigurer():
         self._display_frame = LabelFrame(self._config_frame, text = "Parameters")
 
     def build(self) -> None:
-        self._build_slider("e", self._orbit, "Eccentricity", 2, 0.01)
-        self._build_slider("rp", self._orbit, "Radius of periapsis (km)", 10_000)
-        self._build_slider("mu", self._central_body, "Gravitational parameter (km³/s²)", 1_000_000)
-        self._build_slider("nu", self._sat, "True anomaly (°)", 360)
+        self._e_slider = self._build_slider("e", self._orbit, "Eccentricity", 2, 0.01)
+        self._rp_slider = self._build_slider("rp", self._orbit, "Radius of periapsis (km)", 10_000)
+        self._mu_slider = self._build_slider("mu", self._central_body, "Gravitational parameter (km³/s²)", 1_000_000)
+        self._nu_slider = self._build_slider("nu", self._sat, "True anomaly (°)", 360)
 
         self._slider_frame.pack(side = "top", anchor = "nw", pady = (10, 0))
         self._display_frame.pack(side = "top", anchor = "nw", pady = (10, 0))
@@ -43,7 +43,7 @@ class OrbitConfigurer():
             parameter_info = parameters[1]
             self._build_display(parameters[0], parameter_info[0], parameter_info[1], i)
 
-    def _build_slider(self, parameter: str, source_object: Orbit | Satellite, label: str, upper_lim: int, res: float = 1) -> None:
+    def _build_slider(self, parameter: str, source_object: Orbit | Satellite, label: str, upper_lim: int, res: float = 1) -> Scale:
         slider_name = f"_{parameter}_slider"
         self.__setattr__(
             slider_name,
@@ -53,6 +53,7 @@ class OrbitConfigurer():
         slider: Scale = self.__getattribute__(slider_name)
         slider.set(getattr(source_object, parameter))
         slider.pack(side = "top", anchor = "nw")
+        return slider
 
     def _update_value(self, parameter: str, source_object: Orbit | Satellite, new_val: str) -> None:
         setattr(source_object, parameter, float(new_val))
