@@ -1,15 +1,17 @@
 from tkinter import Tk, Frame
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
-from orbit_visualiser.core import Orbit
+from matplotlib.patches import Circle
+from orbit_visualiser.core import Orbit, CentralBody
 
 # TODO: Display point at pericenter (or the origin of the grid in this case since we are in the perifocal frame).
 class OrbitFigure():
 
-    def __init__(self, root: Tk, figure_frame_placement: tuple[str], orbit: Orbit):
+    def __init__(self, root: Tk, figure_frame_placement: tuple[str], orbit: Orbit, central_body: CentralBody):
         self._root = root
 
         self._orbit = orbit
+        self._body = central_body
 
         self._figure_frame: Frame = Frame(root)
         self._figure_frame.pack(side = figure_frame_placement[0], anchor = figure_frame_placement[1], padx = 8, pady = 6, fill = "both", expand = True)
@@ -37,8 +39,8 @@ class OrbitFigure():
         self._ax.xaxis.set_ticks_position('bottom')
         self._ax.yaxis.set_ticks_position('left')
 
-        self._ax.set_xlim(-30000, 30000)
-        self._ax.set_ylim(-30000, 30000)
+        self._ax.set_xlim(-100_000, 100_000)
+        self._ax.set_ylim(-100_000, 100_000)
 
         self._ax.text(
             0.98, 0.02,
@@ -56,6 +58,8 @@ class OrbitFigure():
         t = self._orbit.orbital_angles()
         orbit_eq = self._orbit.orbit_eq
         self._line, = self._ax.plot(orbit_eq.x(t) , orbit_eq.y(t))
+
+        self._ax.add_patch(Circle((0, 0), radius = self._body.r, fill = True, zorder = 10))
 
     def _build_canvas(self) -> None:
         self._canvas = FigureCanvasTkAgg(self._fig, master = self._figure_frame)
