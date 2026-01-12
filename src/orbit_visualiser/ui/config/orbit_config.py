@@ -6,7 +6,7 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 class OrbitConfigurer():
 
-    parameters: dict[str, tuple[str]] = {
+    orbital_parameters: dict[str, tuple[str]] = {
         "a" : ("Semi-major axis", "km"),
         "b" : ("Semi-minor axis", "km"),
         "ra": ("Radius of apoapsis", "km"),
@@ -15,6 +15,12 @@ class OrbitConfigurer():
         "turn_angle" : ("Turning angle", "°"),
         "aim_rad" : ("Aiming radius", "km")
     }
+
+    satellite_parameters: dict[str, tuple[str]] = {
+
+    }
+
+    parameters: dict[str, tuple[str]] = orbital_parameters | satellite_parameters
 
     def __init__(self, root: Tk, config_frame_placement: tuple[str], orbit_fig: OrbitFigure, orbit: Orbit, central_body: CentralBody, satellite: Satellite):
         self._root = root
