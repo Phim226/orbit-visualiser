@@ -26,6 +26,7 @@ class OrbitConfigurer():
     satellite_parameters: dict[str, tuple[str]] = {
         "r" : ("Radius", "km"),
         "h" : ("Angular momentum", "km²/s"),
+        "eps" : ("Mechanical energy", "km²/s²"),
         "v" : ("Velocity", "km/s"),
         "v_azim" : ("Azimuthal velocity", "km/s"),
         "v_radial" : ("Radial velocity", "km/s"),
@@ -175,8 +176,8 @@ class OrbitConfigurer():
         elif np.isnan(value):
             return "n/a"
 
-        elif units == "km":
-            return f"{value:6.0f} km"
+        elif units in ["km", "km²/s"]:
+            return f"{value:6.0f} {units}"
 
-        elif units in ["°", "km/s"]:
+        elif units in ["°", "km/s", "km²/s²"]:
             return f"{value:6.2f} {units}"
