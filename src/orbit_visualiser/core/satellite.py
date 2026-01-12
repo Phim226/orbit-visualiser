@@ -1,5 +1,6 @@
 from orbit_visualiser.core import Orbit
 
+# TODO: Write methods for calculating satellite state (velocity, distance from pericenter etc)
 class Satellite():
 
     def __init__(self, orbit: Orbit):
