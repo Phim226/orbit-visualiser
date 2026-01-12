@@ -24,7 +24,10 @@ class OrbitConfigurer():
     }
 
     satellite_parameters: dict[str, tuple[str]] = {
-
+        "r" : ("Radius", "km"),
+        "v" : ("Velocity", "km/s"),
+        "v_azim" : ("Azimuthal velocity", "km/s"),
+        "v_radial": ("Radial velocity", "km/s"),
     }
 
     parameters: dict[str, tuple[str]] = orbital_parameters | satellite_parameters
