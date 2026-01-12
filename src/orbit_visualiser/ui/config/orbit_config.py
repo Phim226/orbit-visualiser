@@ -40,6 +40,8 @@ class OrbitConfigurer():
         self._central_body = central_body
         self._sat = satellite
 
+        self._parameter_objects: dict[Orbit | Satellite, dict] = {orbit: self.orbital_parameters, satellite : self.satellite_parameters}
+
         self._config_frame = Frame(root)
         self._config_frame.pack(side = config_frame_placement[0], anchor = config_frame_placement[1], padx = 8, pady = 6)
 
@@ -68,19 +70,19 @@ class OrbitConfigurer():
 
         self._build_separator(self._display_frame, "Properties")
         orbital_props_frame = LabelFrame(self._display_frame, bd = 1, relief = "sunken", text = "Orbital", font = self.subtitle_font)
-        self._populate_properties(orbital_props_frame, self.orbital_parameters)
+        self._populate_properties(orbital_props_frame, self.orbital_parameters, self._orbit)
         orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
 
         sat_props_frame = LabelFrame(self._display_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font)
-        self._populate_properties(sat_props_frame, self.satellite_parameters)
+        self._populate_properties(sat_props_frame, self.satellite_parameters, self._sat)
         sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
 
         self._display_frame.pack(side = "top", anchor = "n", pady = (2, 0))
 
-    def _populate_properties(self, frame: LabelFrame, parameters: dict[str, tuple[str]]) -> None:
+    def _populate_properties(self, frame: LabelFrame, parameters: dict[str, tuple[str]], source_object: Orbit | Satellite) -> None:
         for i, parameters in enumerate(list(parameters.items())):
             parameter_info = parameters[1]
-            self._build_display(frame, parameters[0], parameter_info[0], parameter_info[1], i)
+            self._build_display(frame, parameters[0], source_object, parameter_info[0], parameter_info[1], i)
 
     def _build_separator(self, root: Frame, text: str) -> None:
         frame = Frame(root)
@@ -104,6 +106,9 @@ class OrbitConfigurer():
     def _update_value(self, parameter: str, source_object: Orbit | Satellite, new_val: str) -> None:
         new_val = float(new_val)
         setattr(source_object, parameter, new_val)
+        self._orbit.update_orbital_properties()
+        self._orbit.update_orbit_type()
+        self._sat.update_satellite_properties()
         self._orbit_fig.redraw_orbit()
 
         if parameter == "e":
@@ -113,11 +118,12 @@ class OrbitConfigurer():
             else:
                 self._nu_slider.configure(from_ = 0, to = 360)
 
-        for param in self.parameters:
-            self._update_display(param)
+        for param_object, params in list(self._parameter_objects.items()):
+            for param in params:
+                self._update_display(param, param_object)
 
-    def _build_display(self, frame: LabelFrame, parameter: str, display_str: str, units: str, row: int) -> None:
-        var = StringVar(value = self._format_display_value(getattr(self._orbit, parameter), units))
+    def _build_display(self, frame: LabelFrame, parameter: str, source_object: Orbit | Satellite, display_str: str, units: str, row: int) -> None:
+        var = StringVar(value = self._format_display_value(getattr(source_object, parameter), units))
         self.__setattr__(f"_{parameter}_str", var)
 
         name_label = Label(frame, text = display_str + ":", anchor = "w", font = self.slider_font)
@@ -126,10 +132,10 @@ class OrbitConfigurer():
         value_label = Label(frame, textvariable = var, anchor = "e", width = 10, font = self.slider_font)
         value_label.grid(row = row, column = 1, sticky = "e", padx = (0, 6))
 
-    def _update_display(self, parameter: str) -> None:
+    def _update_display(self, parameter: str, source_object: Orbit | Satellite) -> None:
         self.__getattribute__(
             f"_{parameter}_str"
-        ).set(self._format_display_value(getattr(self._orbit, parameter), self.parameters[parameter][1]))
+        ).set(self._format_display_value(getattr(source_object, parameter), self.parameters[parameter][1]))
 
     def _format_display_value(self, value: float, units: str) -> str:
         if np.isinf(value):
@@ -141,5 +147,5 @@ class OrbitConfigurer():
         elif units == "km":
             return f"{value:6.0f} km"
 
-        elif units == "°":
+        elif units in ["°", "km/s"]:
             return f"{value:6.2f} °"
