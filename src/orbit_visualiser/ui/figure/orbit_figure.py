@@ -4,7 +4,6 @@ from matplotlib.figure import Figure
 from matplotlib.patches import Circle
 from orbit_visualiser.core import Orbit, CentralBody
 
-# TODO: Display point at pericenter (or the origin of the grid in this case since we are in the perifocal frame).
 class OrbitFigure():
 
     def __init__(self, root: Tk, figure_frame_placement: tuple[str], orbit: Orbit, central_body: CentralBody):
