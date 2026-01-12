@@ -116,7 +116,6 @@ class OrbitConfigurer():
 
         slider: Scale = self.__getattribute__(slider_name)
         init_value: float = round(getattr(source_object, parameter), 2) if parameter == "nu" else getattr(source_object, parameter)
-        self.__setattr__(f"_prev_{parameter}", init_value)
 
         slider.set(init_value)
         slider.pack(side = "top", anchor = "nw")
@@ -125,8 +124,23 @@ class OrbitConfigurer():
     def _update_value(self, parameter: str, source_object: Orbit | Satellite, new_val: str) -> None:
         new_val = float(new_val)
         setattr(source_object, parameter, new_val)
+
         self._orbit.update_orbital_properties()
         self._orbit.update_orbit_type()
+
+        if parameter == "e":
+            if new_val >= 1:
+                t_asymp = round(self._orbit.t_asymp, 2)
+                self._nu_slider.configure(from_ = -t_asymp, to = t_asymp)
+                nu = self._sat.nu
+                if nu < -t_asymp:
+                    self._sat.nu = -t_asymp
+                elif nu > t_asymp:
+                    self._sat.nu = t_asymp
+
+            else:
+                self._nu_slider.configure(from_ = 0, to = 360)
+
         self._sat.update_satellite_properties()
         self._orbit_fig.redraw_orbit()
 
