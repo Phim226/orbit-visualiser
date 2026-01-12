@@ -52,53 +52,57 @@ class Satellite():
         return self._eps
 
     def update_satellite_properties(self) -> None:
-        nu, mu, e, rp = np.deg2rad(self._nu), self._central_body.mu, self._orbit.e, self._orbit.rp
-        h = self._specific_ang_momentum(mu, rp, e)
+        nu, mu, e, rp = self._nu, self._central_body.mu, self._orbit.e, self._orbit.rp
+        h, t_asymp = self._specific_ang_momentum(mu, rp, e), self._orbit.t_asymp
         self._h = h
-        self._v_azim = self._azimuthal_velocity(mu, h, e, nu)
+        self._v_azim = self._azimuthal_velocity(mu, h, e, nu, t_asymp)
         self._v_radial = self._radial_velocity(mu, h, e, nu)
         self._v = self._velocity(self._v_azim, self._v_radial)
-        self._r = self._radius(h, mu, e, nu)
+        self._r = self._radius(h, mu, e, nu, t_asymp)
         self._eps = self._specific_energy(mu, h, e)
-        self._v_esc = self._escape_velocity(mu, self._r)
-        self._v_inf = self._excess_velocity(e, mu, abs(self._orbit.a))
+        self._v_esc = self._escape_velocity(nu, mu, self._r, t_asymp)
+        self._v_inf = self._excess_velocity(mu, abs(self._orbit.a))
 
     @staticmethod
     def _specific_ang_momentum(mu: float, rp: float, e: float) -> float:
         return np.sqrt(mu*rp*(1 + e))
 
-    @staticmethod
-    def _azimuthal_velocity(mu: float, h: float, e: float, nu: float) -> float:
-        return (mu/h)*(1 + e*np.cos(nu))
+    def _azimuthal_velocity(self, mu: float, h: float, e: float, nu: float, t_asymp: float) -> float:
+        if np.isclose(abs(nu), t_asymp, atol = 0.005, rtol = 0):
+            return 0.0
 
-    @staticmethod
-    def _radial_velocity(mu: float, h: float, e: float, nu: float) -> float:
-        return (mu/h)*e*np.sin(nu)
+        return (mu/h)*(1 + e*np.cos(np.deg2rad(nu)))
 
-    @staticmethod
-    def _velocity(v_azim: float, v_radial: float) -> float:
+    def _radial_velocity(self, mu: float, h: float, e: float, nu: float) -> float:
+        if self._orbit.orbit_type == "circular":
+            return 0.0
+
+        return (mu/h)*e*np.sin(np.deg2rad(nu))
+
+    def _velocity(self, v_azim: float, v_radial: float) -> float:
         return np.sqrt(v_azim**2 + v_radial**2)
 
-    @staticmethod
-    def _radius(h: float, mu: float, e: float, nu: float) -> float:
-        if np.isclose(nu, -np.pi) or np.isclose(nu, np.pi):
+    def _radius(self, h: float, mu: float, e: float, nu: float, t_asymp: float) -> float:
+        if np.isclose(abs(nu), t_asymp, atol = 0.005, rtol = 0):
             return np.inf
-        return (h**2/mu)/(1 + e*np.cos(nu))
 
-    @staticmethod
-    def _specific_energy(mu: float, h: float, e: float) -> float:
+        return (h**2/mu)/(1 + e*np.cos(np.deg2rad(nu)))
+
+    def _specific_energy(self, mu: float, h: float, e: float) -> float:
+        if self._orbit.orbit_type == "parabolic":
+            return 0.0
+
         return -0.5*(mu/h)**2*(1 - e**2)
 
-    @staticmethod
-    def _escape_velocity(mu: float, r: float) -> float:
-        if r < 0:
-            return 0
+
+    def _escape_velocity(self, nu: float, mu: float, r: float, t_asymp: float) -> float:
+        if np.isclose(abs(nu), t_asymp, atol = 0.005, rtol = 0):
+            return 0.0
 
         return np.sqrt(2*mu/r)
 
-    @staticmethod
-    def _excess_velocity(e: float, mu: float, a: float) -> float:
-        if e < 1:
+    def _excess_velocity(self, mu: float, a: float) -> float:
+        if self._orbit.is_closed:
             return np.nan
 
         return np.sqrt(mu/a)
