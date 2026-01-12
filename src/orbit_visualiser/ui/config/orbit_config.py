@@ -155,4 +155,4 @@ class OrbitConfigurer():
             return f"{value:6.0f} km"
 
         elif units in ["°", "km/s"]:
-            return f"{value:6.2f} °"
+            return f"{value:6.2f} {units}"
