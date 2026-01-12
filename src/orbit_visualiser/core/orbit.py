@@ -21,8 +21,8 @@ class PerifocalOrbitEq():
 class Orbit():
 
     def __init__(self):
-        self._e: float = 0.6
-        self._rp: float = 10_000
+        self._e: float = 0.6 # Eccemtricity
+        self._rp: float = 10_000 # Radius of periapsis in km
         self.update_orbital_properties()
         self.update_orbit_type()
 
