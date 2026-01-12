@@ -19,7 +19,7 @@ class OrbitConfigurer():
         "b" : ("Semi-minor axis", "km"),
         "ra": ("Radius of apoapsis", "km"),
         "p" : ("Semi-parameter", "km"),
-        "t_asymp" : ("Asymptote anomaly", "°"),
+        "t_asymp" : ("Anomaly of asymptote", "°"),
         "turn_angle" : ("Turning angle", "°"),
         "aim_rad" : ("Aiming radius", "km")
     }
@@ -140,6 +140,7 @@ class OrbitConfigurer():
 
         if np.isclose(abs(self._nu_slider.get()), self._orbit.t_asymp, rtol = 0.01):
             self._update_display("r", value = np.inf)
+            self._update_display("v_azim", value = 0.00)
 
 
 
