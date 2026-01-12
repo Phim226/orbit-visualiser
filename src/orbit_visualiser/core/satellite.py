@@ -3,7 +3,7 @@ from orbit_visualiser.core import Orbit
 class Satellite():
 
     def __init__(self, orbit: Orbit):
-        self._orbit = Orbit
+        self._orbit = orbit
         self._nu: float = 0.0 # true anomaly in °
 
     @property
