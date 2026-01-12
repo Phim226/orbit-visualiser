@@ -46,39 +46,45 @@ class OrbitConfigurer():
         self._config_frame = Frame(root)
         self._config_frame.pack(side = config_frame_placement[0], anchor = config_frame_placement[1], padx = 8, pady = 6)
 
-        self._slider_frame = Frame(self._config_frame, padx = 2)
-        self._display_frame = Frame(self._config_frame, padx = 2)
+        self._variables_frame = Frame(self._config_frame, padx = 2)
+        self._properties_frame = Frame(self._config_frame, padx = 2)
 
     def build(self) -> None:
-        self._build_separator(self._slider_frame, "Variables")
-        orbital_geom_frame = LabelFrame(self._slider_frame, bd = 1, relief = "sunken", text = "Orbital geometry", font = self.subtitle_font)
-        self._e_slider = self._build_slider(orbital_geom_frame, "e", self._orbit, "Eccentricity", 2, res = 0.01)
-        self._rp_slider = self._build_slider(orbital_geom_frame, "rp", self._orbit, "Radius of periapsis (km)", 100_000, lower_lim = self._central_body.r + 1)
-        orbital_geom_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
-
-        attracting_body_frame = LabelFrame(self._slider_frame, bd = 1, relief = "sunken", text = "Central body", font = self.subtitle_font)
-        self._mu_slider = self._build_slider(attracting_body_frame, "mu", self._central_body, "Gravitational parameter (km³/s²)", 1_000_000)
-        attracting_body_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
-
-        sat_frame = LabelFrame(self._slider_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font)
-        self._nu_slider = self._build_slider(sat_frame, "nu", self._sat, "True anomaly (°)", 360, res = 0.01)
-        sat_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
-
-        self._slider_frame.pack(side = "left", anchor = "n", pady = (2, 0))
+        self._build_variables_frame()
 
         sep = ttk.Separator(self._config_frame, orient="vertical")
         sep.pack(side="left", fill="y", padx=6)
 
-        self._build_separator(self._display_frame, "Properties")
-        orbital_props_frame = LabelFrame(self._display_frame, bd = 1, relief = "sunken", text = "Orbital", font = self.subtitle_font)
+        self._build_properties_frame()
+
+    def _build_variables_frame(self) -> None:
+        self._build_separator(self._variables_frame, "Variables")
+        orbital_geom_frame = LabelFrame(self._variables_frame, bd = 1, relief = "sunken", text = "Orbital geometry", font = self.subtitle_font)
+        self._e_slider = self._build_slider(orbital_geom_frame, "e", self._orbit, "Eccentricity", 2, res = 0.01)
+        self._rp_slider = self._build_slider(orbital_geom_frame, "rp", self._orbit, "Radius of periapsis (km)", 100_000, lower_lim = self._central_body.r + 1)
+        orbital_geom_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
+
+        attracting_body_frame = LabelFrame(self._variables_frame, bd = 1, relief = "sunken", text = "Central body", font = self.subtitle_font)
+        self._mu_slider = self._build_slider(attracting_body_frame, "mu", self._central_body, "Gravitational parameter (km³/s²)", 1_000_000)
+        attracting_body_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
+
+        sat_frame = LabelFrame(self._variables_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font)
+        self._nu_slider = self._build_slider(sat_frame, "nu", self._sat, "True anomaly (°)", 360, res = 0.01)
+        sat_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
+
+        self._variables_frame.pack(side = "left", anchor = "n", pady = (2, 0))
+
+    def _build_properties_frame(self) -> None:
+        self._build_separator(self._properties_frame, "Properties")
+        orbital_props_frame = LabelFrame(self._properties_frame, bd = 1, relief = "sunken", text = "Orbital", font = self.subtitle_font)
         self._populate_properties(orbital_props_frame, self.orbital_parameters, self._orbit)
         orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
 
-        sat_props_frame = LabelFrame(self._display_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font)
+        sat_props_frame = LabelFrame(self._properties_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font)
         self._populate_properties(sat_props_frame, self.satellite_parameters, self._sat)
         sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
 
-        self._display_frame.pack(side = "top", anchor = "n", pady = (2, 0))
+        self._properties_frame.pack(side = "top", anchor = "n", pady = (2, 0))
 
     def _populate_properties(self, frame: LabelFrame, parameters: dict[str, tuple[str]], source_object: Orbit | Satellite) -> None:
         for i, parameters in enumerate(list(parameters.items())):
