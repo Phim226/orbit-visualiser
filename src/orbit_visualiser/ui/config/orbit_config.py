@@ -37,8 +37,8 @@ class OrbitConfigurer():
         self._display_frame = Frame(self._config_frame)
 
     def build(self) -> None:
-        self._e_slider = self._build_slider("e", self._orbit, "Eccentricity", 2, 0.01)
-        self._rp_slider = self._build_slider("rp", self._orbit, "Radius of periapsis (km)", 10_000)
+        self._e_slider = self._build_slider("e", self._orbit, "Eccentricity", 2, res = 0.01)
+        self._rp_slider = self._build_slider("rp", self._orbit, "Radius of periapsis (km)", 100_000, lower_lim = self._central_body.r)
         self._mu_slider = self._build_slider("mu", self._central_body, "Gravitational parameter (km³/s²)", 1_000_000)
         self._nu_slider = self._build_slider("nu", self._sat, "True anomaly (°)", 360)
 
@@ -49,11 +49,11 @@ class OrbitConfigurer():
             parameter_info = parameters[1]
             self._build_display(parameters[0], parameter_info[0], parameter_info[1], i)
 
-    def _build_slider(self, parameter: str, source_object: Orbit | Satellite, label: str, upper_lim: int, res: float = 1) -> Scale:
+    def _build_slider(self, parameter: str, source_object: Orbit | Satellite, label: str, upper_lim: int, res: float = 1, lower_lim: int = 0) -> Scale:
         slider_name = f"_{parameter}_slider"
         self.__setattr__(
             slider_name,
-            Scale(self._slider_frame, to = upper_lim, resolution = res, length = 175, orient = "horizontal",
+            Scale(self._slider_frame, from_ = lower_lim + 1, to = upper_lim, resolution = res, length = 195, orient = "horizontal",
                   command = partial(self._update_value, parameter, source_object), label = label, font = ("Segoe UI", 9))
         )
         slider: Scale = self.__getattribute__(slider_name)
