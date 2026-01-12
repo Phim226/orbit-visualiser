@@ -1,5 +1,5 @@
 from tkinter import Tk
-from orbit_visualiser.core import Orbit
+from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.ui import OrbitConfigurer
 
@@ -13,11 +13,13 @@ class OrbitVisualiser():
         root.state("zoomed")
 
         orbit: Orbit = Orbit()
+        central_body: CentralBody = CentralBody()
+        satellite: Satellite = Satellite(orbit)
 
         orbit_figure: OrbitFigure = OrbitFigure(root, self.figure_frame_placement, orbit)
         orbit_figure.build()
 
-        orbit_config: OrbitConfigurer = OrbitConfigurer(root, self.config_frame_placement, orbit_figure, orbit)
+        orbit_config: OrbitConfigurer = OrbitConfigurer(root, self.config_frame_placement, orbit_figure, orbit, central_body, satellite)
         orbit_config.build()
 
 # TODO: Write tests as I go.

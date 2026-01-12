@@ -2,11 +2,11 @@ from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame
 from functools import partial
 import numpy as np
 from orbit_visualiser.ui import OrbitFigure
-from orbit_visualiser.core import Orbit
+from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 class OrbitConfigurer():
 
-    orbital_parameters: dict[str, tuple[str]] = {
+    parameters: dict[str, tuple[str]] = {
         "a" : ("Semi-major axis", "km"),
         "b" : ("Semi-minor axis", "km"),
         "ra": ("Radius of apoapsis", "km"),
@@ -16,45 +16,49 @@ class OrbitConfigurer():
         "aim_rad" : ("Aiming radius", "km")
     }
 
-    def __init__(self, root: Tk, config_frame_placement: tuple[str], orbit_fig: OrbitFigure, orbit: Orbit):
+    def __init__(self, root: Tk, config_frame_placement: tuple[str], orbit_fig: OrbitFigure, orbit: Orbit, central_body: CentralBody, satellite: Satellite):
         self._root = root
 
         self._orbit_fig = orbit_fig
         self._orbit = orbit
+        self._central_body = central_body
+        self._sat = satellite
 
         self._config_frame = Frame(root)
         self._config_frame.pack(side = config_frame_placement[0], anchor = config_frame_placement[1], padx = 8, pady = 6)
 
         self._slider_frame = Frame(self._config_frame)
-        self._display_frame = LabelFrame(self._config_frame, text = "Orbital parameters")
+        self._display_frame = LabelFrame(self._config_frame, text = "Parameters")
 
     def build(self) -> None:
-        self._build_slider("e", "Eccentricity", 2, 0.01)
-        self._build_slider("rp", "Radius of periapsis (km)", 10000)
+        self._build_slider("e", self._orbit, "Eccentricity", 2, 0.01)
+        self._build_slider("rp", self._orbit, "Radius of periapsis (km)", 10_000)
+        self._build_slider("mu", self._central_body, "Gravitational parameter (km³/s²)", 1_000_000)
+        self._build_slider("nu", self._sat, "True anomaly (°)", 360)
 
         self._slider_frame.pack(side = "top", anchor = "nw", pady = (10, 0))
         self._display_frame.pack(side = "top", anchor = "nw", pady = (10, 0))
 
-        for i, parameters in enumerate(list(self.orbital_parameters.items())):
+        for i, parameters in enumerate(list(self.parameters.items())):
             parameter_info = parameters[1]
             self._build_display(parameters[0], parameter_info[0], parameter_info[1], i)
 
-    def _build_slider(self, parameter: str, label: str, upper_lim: int, res: float = 1) -> None:
+    def _build_slider(self, parameter: str, source_object: Orbit | Satellite, label: str, upper_lim: int, res: float = 1) -> None:
         slider_name = f"_{parameter}_slider"
         self.__setattr__(
             slider_name,
-            Scale(self._slider_frame, to = upper_lim, resolution = res, length = 150, orient = "horizontal",
-                  command = partial(self._update_value, parameter), label = label, font = ("Segoe UI", 9))
+            Scale(self._slider_frame, to = upper_lim, resolution = res, length = 175, orient = "horizontal",
+                  command = partial(self._update_value, parameter, source_object), label = label, font = ("Segoe UI", 9))
         )
         slider: Scale = self.__getattribute__(slider_name)
-        slider.set(getattr(self._orbit, parameter))
+        slider.set(getattr(source_object, parameter))
         slider.pack(side = "top", anchor = "nw")
 
-    def _update_value(self, parameter: str, new_val: str) -> None:
-        setattr(self._orbit, parameter, float(new_val))
+    def _update_value(self, parameter: str, source_object: Orbit | Satellite, new_val: str) -> None:
+        setattr(source_object, parameter, float(new_val))
         self._orbit_fig.redraw_orbit()
 
-        for param in self.orbital_parameters:
+        for param in self.parameters:
             self._update_display(param)
 
     def _build_display(self, parameter: str, display_str: str, units: str, row: int) -> None:
@@ -70,7 +74,7 @@ class OrbitConfigurer():
     def _update_display(self, parameter: str) -> None:
         self.__getattribute__(
             f"_{parameter}_str"
-        ).set(self._format_display_value(getattr(self._orbit, parameter), self.orbital_parameters[parameter][1]))
+        ).set(self._format_display_value(getattr(self._orbit, parameter), self.parameters[parameter][1]))
 
     def _format_display_value(self, value: float, units: str) -> str:
         if np.isinf(value):
