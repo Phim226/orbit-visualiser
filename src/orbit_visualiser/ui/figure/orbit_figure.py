@@ -5,6 +5,8 @@ from matplotlib.axes import Axes
 from matplotlib.patches import Circle
 from orbit_visualiser.core import Orbit, CentralBody, Satellite
 
+# TODO: Fix janky scroll zoom.
+# TODO: Fix bug where scroll zoom doesn't register as changing the view so the native matplotlib home button has unexpected (and often undesirable) behaviour.
 class OrbitFigure():
 
     def __init__(self, root: Tk, figure_frame_placement: tuple[str], orbit: Orbit, central_body: CentralBody, satellite : Satellite):
