@@ -29,6 +29,7 @@ The orbiting satellite is assumed to have negligible mass. All higher order pert
 - Simulate orbital motion
 - Include perturbations into the model
 - Expand modelling to R3BP or N-body system
+- Visualise gravitational field
 
 ## Python dependencies
 
