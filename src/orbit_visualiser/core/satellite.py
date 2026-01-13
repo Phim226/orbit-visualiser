@@ -1,7 +1,7 @@
 import numpy as np
+from math import pi
 from orbit_visualiser.core import Orbit, CentralBody
 
-# TODO: Write methods for flight angle, perifocal positions and characteristic energy.
 class Satellite():
 
 
@@ -60,18 +60,28 @@ class Satellite():
     def y(self) -> float:
         return self._y
 
+    @property
+    def gam(self) -> float:
+        return self._gam
+
+    @property
+    def c3(self) -> float:
+        return self._c3
+
     def update_satellite_properties(self) -> None:
         nu, mu, e, rp = self._nu, self._central_body.mu, self._orbit.e, self._orbit.rp
-        h, t_asymp = self._specific_ang_momentum(mu, rp, e), self._orbit.t_asymp
+        h, t_asymp, a = self._specific_ang_momentum(mu, rp, e), self._orbit.t_asymp, abs(self._orbit.a)
         self._h = h
         self._x, self._y = self._position(nu, t_asymp)
         self._v_azim = self._azimuthal_velocity(mu, h, e, nu, t_asymp)
         self._v_radial = self._radial_velocity(mu, h, e, nu)
-        self._v = self._velocity(self._v_azim, self._v_radial)
+        self._v = self._velocity(mu, h, e, nu)
         self._r = self._radius(h, mu, e, nu, t_asymp)
         self._eps = self._specific_energy(mu, h, e)
         self._v_esc = self._escape_velocity(nu, mu, self._r, t_asymp)
-        self._v_inf = self._excess_velocity(mu, abs(self._orbit.a))
+        self._v_inf = self._excess_velocity(mu, a)
+        self._gam = self._flight_angle(e, nu, t_asymp)
+        self._c3 = self._characteristic_energy(mu, a)
 
     @staticmethod
     def _specific_ang_momentum(mu: float, rp: float, e: float) -> float:
@@ -97,8 +107,8 @@ class Satellite():
 
         return (mu/h)*e*np.sin(nu)
 
-    def _velocity(self, v_azim: float, v_radial: float) -> float:
-        return np.sqrt(v_azim**2 + v_radial**2)
+    def _velocity(self, mu: float, h: float, e: float, nu: float) -> float:
+        return (mu/h)*np.sqrt(e**2 + 2*e*np.cos(nu) + 1)
 
     def _radius(self, h: float, mu: float, e: float, nu: float, t_asymp: float) -> float:
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
@@ -112,7 +122,6 @@ class Satellite():
 
         return -0.5*(mu/h)**2*(1 - e**2)
 
-
     def _escape_velocity(self, nu: float, mu: float, r: float, t_asymp: float) -> float:
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
             return 0.0
@@ -125,5 +134,21 @@ class Satellite():
 
         return np.sqrt(mu/a)
 
-    def _flight_angle(self, e: float, nu: float) -> float:
+    def _flight_angle(self, e: float, nu: float, t_asymp: float) -> float:
+        if np.isclose(nu, t_asymp, atol = 0.0001, rtol = 0):
+            return pi/2
+
+        elif np.isclose(nu, -t_asymp, atol = 0.0001, rtol = 0):
+            return -pi/2
+
         return np.arctan((e*np.sin(nu))/(1 + e*np.cos(nu)))
+
+    def _characteristic_energy(self, mu: float, a: float) -> float:
+        if self._orbit.orbit_type == "parabolic":
+            return 0.0
+
+        c3 = mu/a
+        if self._orbit.is_closed:
+            c3 *= -1
+
+        return c3

@@ -5,7 +5,6 @@ import numpy as np
 from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
-# TODO: Display satellite parameters.
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
 # TODO: Show the correct sign on the infinity symbol for x and y position.
 class OrbitConfigurer():
@@ -34,7 +33,9 @@ class OrbitConfigurer():
         "v_radial" : ("Radial velocity", "km/s"),
         "v_esc" : ("Escape velocity", "km/s"),
         "v_inf" : ("Excess velocity", "km/s"),
+        "gam" : ("Flight angle", "°"),
         "eps" : ("Mechanical energy", "km²/s²"),
+        "c3" : ("Characteristic energy", "km²/s²")
     }
 
     parameters: dict[str, tuple[str]] = orbital_parameters | satellite_parameters
