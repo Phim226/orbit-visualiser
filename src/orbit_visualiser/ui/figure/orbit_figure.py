@@ -31,14 +31,19 @@ class OrbitFigure():
         self._ax = self._fig.add_subplot()
 
     def _configure_axes(self) -> None:
+        axis_colour = "#4D4D4DFF"
+
         self._ax.spines['left'].set_position(('data', 0))
         self._ax.spines['bottom'].set_position(('data', 0))
 
+        self._ax.spines['left'].set_color(axis_colour)
+        self._ax.spines['bottom'].set_color(axis_colour)
         self._ax.spines['right'].set_color('none')
         self._ax.spines['top'].set_color('none')
 
         self._ax.xaxis.set_ticks_position('bottom')
         self._ax.yaxis.set_ticks_position('left')
+        self._ax.tick_params(colors = axis_colour)
 
         self._ax.set_xlim(-100_000, 100_000)
         self._ax.set_ylim(-100_000, 100_000)
@@ -59,13 +64,13 @@ class OrbitFigure():
         t = self._orbit.orbital_angles()
         orbit_eq = self._orbit.orbit_eq
         x, y = orbit_eq.x, orbit_eq.y
-        self._line, = self._ax.plot(x(t) , y(t), color = "black")
+        self._line, = self._ax.plot(x(t) , y(t), color = "#2F2F2F", alpha = 0.5, linewidth = 2)
 
         # Plotting the central body
-        self._ax.add_patch(Circle((0, 0), radius = self._body.r, fill = True, zorder = 10))
+        self._ax.add_patch(Circle((0, 0), radius = self._body.r, fill = True, zorder = 10, facecolor = "#4C6A92", edgecolor = "#3C5474"))
 
         # Plotting the satellite
-        self._sat_point, = self._ax.plot(self._orbit.rp, 0, ms = 10, marker = "o", zorder = 10)
+        self._sat_point, = self._ax.plot(self._orbit.rp, 0, ms = 10, marker = "o", zorder = 10, color = "#F28E2B")
 
         f = self._zoom_factory(self._ax, 1.1)
 
