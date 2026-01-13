@@ -18,7 +18,6 @@ class PerifocalOrbitEq():
     def y(self) -> Callable[[float], float]:
         return self._y
 
-# TODO: Change conversion of anomaly of the asymptote and turning to degrees to be in orbit_config
 class Orbit():
 
 
