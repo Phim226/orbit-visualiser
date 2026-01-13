@@ -1,7 +1,8 @@
 import numpy as np
 from orbit_visualiser.core import Orbit, CentralBody
 
-# TODO: Write methods for flight angle, perifocal positions and characteristic energy
+# TODO: Write methods for flight angle, perifocal positions and characteristic energy.
+# TODO: Refactor so that nu is in radians instead of degrees.
 class Satellite():
 
 
