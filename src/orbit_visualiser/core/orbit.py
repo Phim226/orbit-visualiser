@@ -20,9 +20,10 @@ class PerifocalOrbitEq():
 
 class Orbit():
 
-    def __init__(self):
-        self._e: float = 0.6 # Eccemtricity
-        self._rp: float = 10_000 # Radius of periapsis in km
+
+    def __init__(self, e: float = 0.0, rp: float = 10_000):
+        self._e: float = e # Eccentricity
+        self._rp: float = rp # Radius of periapsis in km
         self.update_orbital_properties()
         self.update_orbit_type()
 
@@ -168,5 +169,5 @@ class Orbit():
 
 @dataclass
 class CentralBody():
-        mu = 398600 # gravitational parameter in km³/s² = Gm
-        r = 6378 # radius in km
+        mu: float = 398600 # gravitational parameter in km³/s² = Gm
+        r: float = 6378 # radius in km

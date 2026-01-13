@@ -4,10 +4,11 @@ from orbit_visualiser.core import Orbit, CentralBody
 # TODO: Write methods for calculating satellite state (velocity, distance from pericenter etc)
 class Satellite():
 
-    def __init__(self, orbit: Orbit, central_body: CentralBody):
+
+    def __init__(self, orbit: Orbit, central_body: CentralBody, nu: float = 0.00):
         self._orbit = orbit
         self._central_body = central_body
-        self._nu: float = 0.0 # true anomaly in °
+        self._nu: float = nu # true anomaly in °
 
         self.update_satellite_properties()
 
