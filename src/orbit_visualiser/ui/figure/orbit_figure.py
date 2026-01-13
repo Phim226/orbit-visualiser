@@ -57,7 +57,7 @@ class OrbitFigure():
     def _initialise_plot(self) -> None:
         t = self._orbit.orbital_angles()
         orbit_eq = self._orbit.orbit_eq
-        self._line, = self._ax.plot(orbit_eq.x(t) , orbit_eq.y(t))
+        self._line, = self._ax.plot(orbit_eq.x(t) , orbit_eq.y(t), color = "black")
 
         self._ax.add_patch(Circle((0, 0), radius = self._body.r, fill = True, zorder = 10))
 
