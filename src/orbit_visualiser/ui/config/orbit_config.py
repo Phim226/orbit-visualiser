@@ -109,7 +109,7 @@ class OrbitConfigurer():
         self._properties_frame = props_frame
 
         self._build_separator(props_frame, "Properties")
-        orbital_props_frame = LabelFrame(props_frame, bd = 1, relief = "sunken", text = "Orbital", font = self.subtitle_font)
+        orbital_props_frame = LabelFrame(props_frame, bd = 1, relief = "sunken", text = "Orbit", font = self.subtitle_font)
         self._populate_properties(orbital_props_frame, self.orbital_parameters, self._orbit)
         orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
 
