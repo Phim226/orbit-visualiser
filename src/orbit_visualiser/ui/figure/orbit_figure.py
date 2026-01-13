@@ -3,16 +3,17 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 from matplotlib.patches import Circle
-from orbit_visualiser.core import Orbit, CentralBody
+from orbit_visualiser.core import Orbit, CentralBody, Satellite
 
 # TODO: Display satellite on orbit.
 class OrbitFigure():
 
-    def __init__(self, root: Tk, figure_frame_placement: tuple[str], orbit: Orbit, central_body: CentralBody):
+    def __init__(self, root: Tk, figure_frame_placement: tuple[str], orbit: Orbit, central_body: CentralBody, satellite : Satellite):
         self._root = root
 
         self._orbit = orbit
         self._body = central_body
+        self._sat = satellite
 
         self._figure_frame: Frame = Frame(root)
         self._figure_frame.pack(side = figure_frame_placement[0], anchor = figure_frame_placement[1], padx = 8, pady = 6, fill = "both", expand = True)
@@ -58,9 +59,15 @@ class OrbitFigure():
     def _initialise_plot(self) -> None:
         t = self._orbit.orbital_angles()
         orbit_eq = self._orbit.orbit_eq
-        self._line, = self._ax.plot(orbit_eq.x(t) , orbit_eq.y(t), color = "black")
+        x, y = orbit_eq.x, orbit_eq.y
+        self._line, = self._ax.plot(x(t) , y(t), color = "black")
 
+        # Plotting the central body
         self._ax.add_patch(Circle((0, 0), radius = self._body.r, fill = True, zorder = 10))
+
+        # Plotting the satellite
+        self._sat_point, = self._ax.plot(self._orbit.rp, 0, ms = 10, marker = "o", zorder = 10)
+
         f = self._zoom_factory(self._ax, 1.1)
 
     def _build_canvas(self) -> None:
@@ -77,6 +84,12 @@ class OrbitFigure():
         t = self._orbit.orbital_angles()
         orbit_eq = self._orbit.orbit_eq
         self._line.set_data(orbit_eq.x(t), orbit_eq.y(t))
+
+        self._canvas.draw()
+
+    def redraw_satellite(self) -> None:
+        x, y = self._sat.x, self._sat.y
+        self._sat_point.set_data((x,), (y,))
 
         self._canvas.draw()
 

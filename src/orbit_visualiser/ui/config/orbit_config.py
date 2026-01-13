@@ -107,6 +107,7 @@ class OrbitConfigurer():
         self._orbit.update_orbit_type()
         self._sat.update_satellite_properties()
         self._orbit_fig.redraw_orbit()
+        self._orbit_fig.redraw_satellite()
 
     def _build_properties_frame(self) -> None:
         props_frame = Frame(self._config_frame, padx = 2)
@@ -177,6 +178,7 @@ class OrbitConfigurer():
 
         self._sat.update_satellite_properties()
         self._orbit_fig.redraw_orbit()
+        self._orbit_fig.redraw_satellite()
 
         for param_object, params in list(self._parameter_objects.items()):
             for param in params:
