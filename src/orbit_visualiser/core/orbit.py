@@ -63,11 +63,11 @@ class Orbit():
 
     @property
     def t_asymp(self) -> float:
-        return np.degrees(self._t_asymp)
+        return self._t_asymp
 
     @property
     def turn_angle(self) -> float:
-        return np.degrees(self._turn_angle)
+        return self._turn_angle
 
     @property
     def aim_rad(self) -> float:

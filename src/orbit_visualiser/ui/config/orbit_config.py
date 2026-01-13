@@ -147,14 +147,14 @@ class OrbitConfigurer():
         )
 
         slider: Scale = self.__getattribute__(slider_name)
-        init_value: float = round(getattr(source_object, parameter), 2) if parameter == "nu" else getattr(source_object, parameter)
+        init_value: float = round(np.degrees(getattr(source_object, parameter)), 2) if parameter == "nu" else getattr(source_object, parameter)
 
         slider.set(init_value)
         slider.pack(side = "top", anchor = "nw")
         return slider
 
     def _update_value(self, parameter: str, source_object: Orbit | Satellite, new_val: str) -> None:
-        new_val = float(new_val)
+        new_val = np.deg2rad(float(new_val)) if parameter == "nu" else float(new_val)
         setattr(source_object, parameter, new_val)
 
         self._orbit.update_orbital_properties()
@@ -162,8 +162,9 @@ class OrbitConfigurer():
 
         if parameter == "e":
             if new_val >= 1:
-                t_asymp = round(self._orbit.t_asymp, 2)
-                self._nu_slider.configure(from_ = -t_asymp, to = t_asymp)
+                t_asymp = self._orbit.t_asymp
+                t_asymp_slider_lim = round(np.degrees(t_asymp), 2)
+                self._nu_slider.configure(from_ = -t_asymp_slider_lim, to = t_asymp_slider_lim)
                 nu = self._sat.nu
                 if nu < -t_asymp:
                     self._sat.nu = -t_asymp
@@ -193,6 +194,9 @@ class OrbitConfigurer():
 
     def _update_display(self, parameter: str, source_object: Orbit | Satellite = None, value: float = None) -> None:
         new_value = value if value is not None else getattr(source_object, parameter)
+        if self.parameters[parameter][1] == "°":
+            new_value = np.degrees(new_value)
+
         self.__getattribute__(
             f"_{parameter}_str"
         ).set(self._format_display_value(new_value, self.parameters[parameter][1]))
