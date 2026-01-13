@@ -1,7 +1,7 @@
 import numpy as np
 from orbit_visualiser.core import Orbit, CentralBody
 
-# TODO: Write methods for calculating satellite state (velocity, distance from pericenter etc)
+# TODO: Write methods for flight angle, perifocal positions and characteristic energy
 class Satellite():
 
 
