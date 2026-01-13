@@ -1,7 +1,7 @@
 from tkinter import Tk, Frame
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
+from matplotlib.axes import Axes
 from matplotlib.patches import Circle
 from orbit_visualiser.core import Orbit, CentralBody
 
@@ -81,7 +81,7 @@ class OrbitFigure():
         self._canvas.draw()
 
     @staticmethod
-    def _zoom_factory(ax, base_scale = 2.):
+    def _zoom_factory(ax: Axes, base_scale = 2.):
         def zoom_fun(event):
             # get the current x and y limits
             cur_xlim = ax.get_xlim()
