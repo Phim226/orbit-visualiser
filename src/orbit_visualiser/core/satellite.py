@@ -52,10 +52,19 @@ class Satellite():
     def eps(self) -> float:
         return self._eps
 
+    @property
+    def x(self) -> float:
+        return self._x
+
+    @property
+    def y(self) -> float:
+        return self._y
+
     def update_satellite_properties(self) -> None:
         nu, mu, e, rp = self._nu, self._central_body.mu, self._orbit.e, self._orbit.rp
         h, t_asymp = self._specific_ang_momentum(mu, rp, e), self._orbit.t_asymp
         self._h = h
+        self._x, self._y = self._position(nu, t_asymp)
         self._v_azim = self._azimuthal_velocity(mu, h, e, nu, t_asymp)
         self._v_radial = self._radial_velocity(mu, h, e, nu)
         self._v = self._velocity(self._v_azim, self._v_radial)
@@ -67,6 +76,14 @@ class Satellite():
     @staticmethod
     def _specific_ang_momentum(mu: float, rp: float, e: float) -> float:
         return np.sqrt(mu*rp*(1 + e))
+
+    def _position(self, nu: float, t_asymp: float) -> tuple[float]:
+        if np.isclose(abs(nu), t_asymp, atol = 0.005, rtol = 0):
+                return np.inf, np.inf
+
+        orbit_eq = self._orbit.orbit_eq
+        return orbit_eq.x(np.deg2rad(nu)), orbit_eq.y(np.deg2rad(nu))
+
 
     def _azimuthal_velocity(self, mu: float, h: float, e: float, nu: float, t_asymp: float) -> float:
         if np.isclose(abs(nu), t_asymp, atol = 0.005, rtol = 0):

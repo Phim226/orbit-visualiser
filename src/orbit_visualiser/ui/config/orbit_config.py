@@ -25,13 +25,15 @@ class OrbitConfigurer():
 
     satellite_parameters: dict[str, tuple[str]] = {
         "r" : ("Radius", "km"),
+        "x" : ("x position", "km"),
+        "y" : ("y position", "km"),
         "h" : ("Angular momentum", "km²/s"),
-        "eps" : ("Mechanical energy", "km²/s²"),
         "v" : ("Velocity", "km/s"),
         "v_azim" : ("Azimuthal velocity", "km/s"),
         "v_radial" : ("Radial velocity", "km/s"),
         "v_esc" : ("Escape velocity", "km/s"),
-        "v_inf" : ("Excess velocity", "km/s")
+        "v_inf" : ("Excess velocity", "km/s"),
+        "eps" : ("Mechanical energy", "km²/s²"),
     }
 
     parameters: dict[str, tuple[str]] = orbital_parameters | satellite_parameters
@@ -198,7 +200,10 @@ class OrbitConfigurer():
         if np.isclose(value, 0.00, rtol = 0.001):
             value = 0.00
 
-        if np.isinf(value):
+        if np.isneginf(value):
+            return f"-∞ {units}"
+
+        elif np.isinf(value):
             return f"∞ {units}"
 
         elif np.isnan(value):
