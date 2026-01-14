@@ -92,13 +92,21 @@ class OrbitFigure():
         orbit_eq = self._orbit.orbit_eq
         self._line.set_data(orbit_eq.x(t), orbit_eq.y(t))
 
-        self._canvas.draw()
+        self._canvas.draw_idle()
 
     def redraw_satellite(self) -> None:
         x, y = self._sat.x, self._sat.y
         self._sat_point.set_data((x,), (y,))
 
-        self._canvas.draw()
+        self._canvas.draw_idle()
+
+    def reset_axes(self) -> None:
+        self._ax.spines['left'].set_position(('data', 0))
+        self._ax.spines['bottom'].set_position(('data', 0))
+        self._ax.set_xlim(-100_000, 100_000)
+        self._ax.set_ylim(-100_000, 100_000)
+
+        self._canvas.draw_idle()
 
     @staticmethod
     def _zoom_factory(ax: Axes, base_scale = 2.):

@@ -108,6 +108,8 @@ class OrbitConfigurer():
         self._sat.update_satellite_properties()
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
+        self._orbit_fig.reset_axes()
+
 
     def _build_properties_frame(self) -> None:
         props_frame = Frame(self._config_frame, padx = 2)
