@@ -14,6 +14,7 @@ class OrbitConfigurer():
     slider_font = ("Fira Mono", 9, "normal")
 
     orbital_parameters: dict[str, tuple[str]] = {
+        "orbit_type" : ("Orbit type", None),
         "a" : ("Semi-major axis", "km"),
         "b" : ("Semi-minor axis", "km"),
         "ra": ("Radius of apoapsis", "km"),
@@ -206,7 +207,10 @@ class OrbitConfigurer():
             f"_{parameter}_str"
         ).set(self._format_display_value(new_value, self.parameters[parameter][1]))
 
-    def _format_display_value(self, value: float, units: str) -> str:
+    def _format_display_value(self, value: float | str, units: str | None) -> str:
+        if units is None:
+            return value.capitalize()
+
         if np.isclose(value, 0.00, rtol = 0.001):
             value = 0.00
 
