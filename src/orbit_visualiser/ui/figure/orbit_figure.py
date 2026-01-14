@@ -63,16 +63,17 @@ class OrbitFigure():
         self._ax.tick_params(labelsize = 8)
 
     def _initialise_plot(self) -> None:
+        # Plot the initial orbit
         t = self._orbit.orbital_angles()
         orbit_eq = self._orbit.orbit_eq
         x, y = orbit_eq.x, orbit_eq.y
-        self._line, = self._ax.plot(x(t) , y(t), color = "#2F2F2F", alpha = 0.5, linewidth = 2)
+        self._line, = self._ax.plot(x(t) , y(t), color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)
 
-        # Plotting the central body
+        # Plot the central body
         self._ax.add_patch(Circle((0, 0), radius = self._body.r, fill = True, zorder = 10, facecolor = "#4C6A92", edgecolor = "#3C5474"))
 
-        # Plotting the satellite
-        self._sat_point, = self._ax.plot(self._orbit.rp, 0, ms = 10, marker = "o", zorder = 10, color = "#F28E2B")
+        # Plot the satellite
+        self._sat_point, = self._ax.plot(self._orbit.rp, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B")
 
         f = self._zoom_factory(self._ax, 1.1)
 
