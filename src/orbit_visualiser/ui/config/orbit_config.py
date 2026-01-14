@@ -6,6 +6,8 @@ from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
+# TODO: Allow for manual input of variables.
+# TODO: Have buttons to increase/decrease variable values.
 # TODO: Show the correct sign on the infinity symbol for x and y position.
 class OrbitConfigurer():
 
