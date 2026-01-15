@@ -50,7 +50,7 @@ Clone the repository:
 git clone https://github.com/Phim226/orbit-visualiser.git
 ```
 
-Navigate to project repository:
+Navigate to project folder:
 
 ```bash
 cd orbit-visualiser
