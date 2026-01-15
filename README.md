@@ -1,6 +1,6 @@
 # Orbit Visualiser
 
-The Orbit Visualiser is a 2D Keplerian orbit visualisation tool for modelling the orbit of a satellite around a central body, written in Python. The focus of this tool is on orbital geometry and satellite kinematics. Currently there is no simulation-based functionality.
+The Orbit Visualiser is a 2D Keplerian orbit visualisation tool for modelling the motion of a satellite around a central body, written in Python. The focus of this tool is on orbital geometry and satellite kinematics. Currently there is no simulation-based functionality.
 
 ## Features
 
@@ -8,7 +8,7 @@ Orbits are modelled and visualised in the perifocal frame (the central body rema
   - Eccentricity
   - Radius of periapsis
 
-The central body has an adjustable gravitational parameter. The true anomaly of the orbiting satellite is also adjustable to evaluate the kinematic state at different orbital positions. Various orbital properties and kinematics quantities are 
+The central body has an adjustable gravitational parameter. The true anomaly of the orbiting satellite is also adjustable to evaluate the kinematic state at different orbital positions. Various orbital and kinematic quantities are 
 calculated and displayed, including:
   - Semi-major/minor axis
   - Radius of apoapsis
@@ -21,7 +21,7 @@ calculated and displayed, including:
 
 ## Notes on the physical model
 
-The orbiting satellite is assumed to have negligible mass. All higher order perturbations, such as atmospheric drag or oblateness, are ignored.
+The orbiting satellite is assumed to have negligible mass. All higher-order perturbations, such as atmospheric drag or oblateness, are ignored.
 
 ## Potential future improvements
 
@@ -31,7 +31,39 @@ The orbiting satellite is assumed to have negligible mass. All higher order pert
 - Expand modelling to R3BP or N-body system
 - Visualise gravitational field
 
-## Python dependencies
+## Requirements
 
-- Numpy
-- Matplotlib
+- Python 3.8 or later
+- Git (optional but recommended, for cloning the repository)
+
+## Python dependencies 
+
+- numpy
+- matplotlib
+
+These are also listed in the requirements.txt file.
+
+## How to use
+Clone the repository:
+
+```bash
+git clone https://github.com/Phim226/orbit-visualiser.git
+```
+
+Navigate to project repository:
+
+```bash
+cd orbit-visualiser
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the program:
+
+```bash
+python src/orbit_visualiser/main.py
+```
