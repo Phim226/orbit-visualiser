@@ -113,38 +113,6 @@ class OrbitConfigurer():
         self._orbit_fig.redraw_satellite()
         self._orbit_fig.reset_axes()
 
-
-    def _build_properties_frame(self) -> None:
-        props_frame = Frame(self._config_frame, padx = 2)
-        self._properties_frame = props_frame
-
-        self._build_separator(props_frame, "Properties")
-        orbital_props_frame = LabelFrame(props_frame, bd = 1, relief = "sunken", text = "Orbit", font = self.subtitle_font)
-        self._populate_properties(orbital_props_frame, self.orbital_parameters, self._orbit)
-        orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
-
-        sat_props_frame = LabelFrame(props_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font, width = 244)
-        self._populate_properties(sat_props_frame, self.satellite_parameters, self._sat)
-        sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x")
-
-        props_frame.pack(side = "top", anchor = "n", pady = (2, 0))
-
-    def _populate_properties(self, frame: LabelFrame, parameters: dict[str, tuple[str]], source_object: Orbit | Satellite) -> None:
-        for i, parameters in enumerate(list(parameters.items())):
-            parameter_info = parameters[1]
-            self._build_display(frame, parameters[0], source_object, parameter_info[0], parameter_info[1], i)
-
-        # Setting the weight allows the grid manager to stretch labels in _build_display into available space.
-        frame.grid_columnconfigure(0, weight=0)
-        frame.grid_columnconfigure(1, weight=1)
-
-    def _build_separator(self, root: Frame, text: str) -> None:
-        frame = Frame(root)
-        frame.pack(side = "top", fill = "x", pady = 4)
-
-        Label(frame, text = text, font = self.title_font).pack(side = "left", padx = (0, 6))
-        Frame(frame, height = 2, bd = 1, relief = "sunken").pack(side = "left", fill = "x", expand = True)
-
     def _build_slider(self, root: Frame, parameter: str, source_object: Orbit | Satellite, label: str, upper_lim: int, res: float = 1, lower_lim: int = 0) -> Scale:
         slider_name = f"_{parameter}_slider"
         self.__setattr__(
@@ -189,17 +157,6 @@ class OrbitConfigurer():
             for param in params:
                 self._update_display(param, param_object)
 
-
-    def _build_display(self, frame: LabelFrame, parameter: str, source_object: Orbit | Satellite, display_str: str, units: str, row: int) -> None:
-        var = StringVar(value = self._format_display_value(getattr(source_object, parameter), units))
-        self.__setattr__(f"_{parameter}_str", var)
-
-        name_label = Label(frame, text = display_str + ":", anchor = "w", font = self.slider_font)
-        name_label.grid(row = row, column = 0, sticky = "w", padx = (0, 6))
-
-        value_label = Label(frame, textvariable = var, anchor = "e", width = 13, font = self.slider_font)
-        value_label.grid(row = row, column = 1, sticky = "ew", padx = (0, 6))
-
     def _update_display(self, parameter: str, source_object: Orbit | Satellite = None, value: float = None) -> None:
         new_value = value if value is not None else getattr(source_object, parameter)
         if self.parameters[parameter][1] == "°":
@@ -230,3 +187,44 @@ class OrbitConfigurer():
 
         elif units in ["°", "km/s", "km²/s²"]:
             return f"{value:6.2f} {units}"
+
+    def _build_properties_frame(self) -> None:
+        props_frame = Frame(self._config_frame, padx = 2)
+        self._properties_frame = props_frame
+
+        self._build_separator(props_frame, "Properties")
+        orbital_props_frame = LabelFrame(props_frame, bd = 1, relief = "sunken", text = "Orbit", font = self.subtitle_font)
+        self._populate_properties(orbital_props_frame, self.orbital_parameters, self._orbit)
+        orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
+
+        sat_props_frame = LabelFrame(props_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font, width = 244)
+        self._populate_properties(sat_props_frame, self.satellite_parameters, self._sat)
+        sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x")
+
+        props_frame.pack(side = "top", anchor = "n", pady = (2, 0))
+
+    def _populate_properties(self, frame: LabelFrame, parameters: dict[str, tuple[str]], source_object: Orbit | Satellite) -> None:
+        for i, parameters in enumerate(list(parameters.items())):
+            parameter_info = parameters[1]
+            self._build_display(frame, parameters[0], source_object, parameter_info[0], parameter_info[1], i)
+
+        # Setting the weight allows the grid manager to stretch labels in _build_display into available space.
+        frame.grid_columnconfigure(0, weight=0)
+        frame.grid_columnconfigure(1, weight=1)
+
+    def _build_display(self, frame: LabelFrame, parameter: str, source_object: Orbit | Satellite, display_str: str, units: str, row: int) -> None:
+        var = StringVar(value = self._format_display_value(getattr(source_object, parameter), units))
+        self.__setattr__(f"_{parameter}_str", var)
+
+        name_label = Label(frame, text = display_str + ":", anchor = "w", font = self.slider_font)
+        name_label.grid(row = row, column = 0, sticky = "w", padx = (0, 6))
+
+        value_label = Label(frame, textvariable = var, anchor = "e", width = 13, font = self.slider_font)
+        value_label.grid(row = row, column = 1, sticky = "ew", padx = (0, 6))
+
+    def _build_separator(self, root: Frame, text: str) -> None:
+        frame = Frame(root)
+        frame.pack(side = "top", fill = "x", pady = 4)
+
+        Label(frame, text = text, font = self.title_font).pack(side = "left", padx = (0, 6))
+        Frame(frame, height = 2, bd = 1, relief = "sunken").pack(side = "left", fill = "x", expand = True)
