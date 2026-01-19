@@ -10,6 +10,7 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
 # TODO: Show the correct sign on the infinity symbol for x and y position.
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
+# TODO: Refactor variable property dictionaries into dataclasses.
 class OrbitConfigurer():
 
     title_font = ("Orbitron", 16, "bold")
@@ -58,7 +59,7 @@ class OrbitConfigurer():
             "object" : orbit,
             "init_value" : orbit.e,
             "slider_lims" : (0, 5),
-            "decimal_places" : 2,
+            "decimal_places" : 3,
             "units" : None,
             "entry_pos" : (85, 4)
         }
