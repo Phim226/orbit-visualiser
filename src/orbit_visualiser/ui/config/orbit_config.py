@@ -30,6 +30,7 @@ class OrbitConfigurer():
         "r" : ("Radius", "km"),
         "x" : ("x position", "km"),
         "y" : ("y position", "km"),
+        "t" : ("Orbital period", "s"),
         "h" : ("Angular momentum", "km²/s"),
         "v" : ("Velocity", "km/s"),
         "v_azim" : ("Azimuthal velocity", "km/s"),
@@ -182,7 +183,7 @@ class OrbitConfigurer():
         elif np.isnan(value):
             return "n/a"
 
-        elif units in ["km", "km²/s"]:
+        elif units in ["km", "km²/s", "s"]:
             return f"{value:6.0f} {units}"
 
         elif units in ["°", "km/s", "km²/s²"]:

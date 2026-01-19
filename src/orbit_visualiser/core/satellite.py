@@ -68,6 +68,10 @@ class Satellite():
     def c3(self) -> float:
         return self._c3
 
+    @property
+    def t(self) -> float:
+        return self._t
+
     def update_satellite_properties(self) -> None:
         nu, mu, e, rp = self._nu, self._central_body.mu, self._orbit.e, self._orbit.rp
         h, t_asymp, a = self._specific_ang_momentum(mu, rp, e), self._orbit.t_asymp, abs(self._orbit.a)
@@ -82,6 +86,7 @@ class Satellite():
         self._v_inf = self._excess_velocity(mu, a)
         self._gam = self._flight_angle(e, nu, t_asymp)
         self._c3 = self._characteristic_energy(mu, a)
+        self._t = self._orbital_period(mu, a)
 
     @staticmethod
     def _specific_ang_momentum(mu: float, rp: float, e: float) -> float:
@@ -152,3 +157,9 @@ class Satellite():
             c3 *= -1
 
         return c3
+
+    def _orbital_period(self, mu: float, a: float) -> float:
+        if self._orbit.is_closed:
+            return (2*pi/np.sqrt(mu))*np.sqrt(a)**3
+
+        return np.nan
