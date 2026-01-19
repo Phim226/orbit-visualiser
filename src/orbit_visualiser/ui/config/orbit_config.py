@@ -1,13 +1,12 @@
-from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame, Button
+from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame, Button, Entry, Event, messagebox
 from tkinter.ttk import Separator
+from typing import Any
 from functools import partial
 import numpy as np
 from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
-# TODO: Allow for manual input of variables.
-# TODO: Have buttons to increase/decrease variable values.
 # TODO: Show the correct sign on the infinity symbol for x and y position.
 class OrbitConfigurer():
 
@@ -52,18 +51,48 @@ class OrbitConfigurer():
         self._central_body = central_body
         self._sat = satellite
 
-        self._initial_state: dict[str, float] = {
-            "e" : orbit.e,
-            "rp" : orbit.rp,
-            "mu" : central_body.mu,
-            "nu" : satellite.nu
+        self._e_properties:  dict[str, Any] = {
+            "name" : "Eccentricity",
+            "object" : orbit,
+            "init_value" : orbit.e,
+            "slider_lims" : (0, 5),
+            "decimal_places" : 2,
+            "units" : None,
+            "entry_pos" : (85, 4)
+        }
+        self._rp_properties: dict[str, Any] = {
+            "name" : "Radius of periapsis",
+            "object" : orbit,
+            "init_value" : orbit.rp,
+            "slider_lims" : (central_body.r + 1, 200_000),
+            "decimal_places" : 0,
+            "units" : "km",
+            "entry_pos" : (160, 4)
+        }
+        self._mu_properties: dict[str, Any] = {
+            "name" : "Gravitational parameter",
+            "object" : central_body,
+            "init_value" : central_body.mu,
+            "slider_lims" : (central_body.r + 1, 1_000_000),
+            "decimal_places" : 0,
+            "units" : "km³/s²",
+            "entry_pos" : (198, 4)
+        }
+        self._nu_properties: dict[str, Any] = {
+            "name" : "True anomaly",
+            "object" : satellite,
+            "init_value" : satellite.nu,
+            "slider_lims" : (0, 360),
+            "decimal_places" : 2,
+            "units" : "°",
+            "entry_pos" : (115, 4)
         }
 
-        self._variable_objects: dict[str: Orbit | Satellite | CentralBody] = {
-            "e" : orbit,
-            "rp": orbit,
-            "mu" : central_body,
-            "nu" : satellite
+        self._variable_properties: dict[str, dict] = {
+            "e" : self._e_properties,
+            "rp" : self._rp_properties,
+            "mu" : self._mu_properties,
+            "nu" : self._nu_properties
         }
 
         self._parameter_objects: dict[Orbit | Satellite, dict] = {orbit: self.orbital_parameters, satellite : self.satellite_parameters}
@@ -84,54 +113,117 @@ class OrbitConfigurer():
         self._variables_frame = var_frame
 
         self._build_separator(var_frame, "Variables")
+
+        # Build orbital geometry frame
         orbital_geom_frame = LabelFrame(var_frame, bd = 1, relief = "sunken", text = "Orbital geometry", font = self.subtitle_font)
-        self._e_slider = self._build_slider(orbital_geom_frame, "e", self._orbit, "Eccentricity", 2, res = 0.01)
-        self._rp_slider = self._build_slider(orbital_geom_frame, "rp", self._orbit, "Radius of periapsis (km)", 100_000, lower_lim = self._central_body.r + 1)
+        self._e_slider, self._e_entry = self._build_input_frame(orbital_geom_frame, "e", self._variable_properties["e"])
+        self._rp_slider, self._rp_entry = self._build_input_frame(orbital_geom_frame, "rp", self._variable_properties["rp"])
         orbital_geom_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
-        attracting_body_frame = LabelFrame(var_frame, bd = 1, relief = "sunken", text = "Central body", font = self.subtitle_font)
-        self._mu_slider = self._build_slider(attracting_body_frame, "mu", self._central_body, "Gravitational parameter (km³/s²)", 1_000_000, lower_lim = 1)
-        attracting_body_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
+        # Building central body frame
+        central_body_frame = LabelFrame(var_frame, bd = 1, relief = "sunken", text = "Central body", font = self.subtitle_font)
+        self._mu_slider, self._mu_entry = self._build_input_frame(central_body_frame, "mu", self._variable_properties["mu"])
+        central_body_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
+        # Build satellite frame
         sat_frame = LabelFrame(var_frame, bd = 1, relief = "sunken", text = "Satellite", font = self.subtitle_font)
-        self._nu_slider = self._build_slider(sat_frame, "nu", self._sat, "True anomaly (°)", 360, res = 0.01)
+        self._nu_slider, self._nu_entry = self._build_input_frame(sat_frame, "nu", self._variable_properties["nu"])
         sat_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
+        # Build reset button
         reset_button = Button(var_frame, text = "Reset", command = self._reset_state)
         reset_button.pack(side = "top", anchor = "nw", pady = (4, 0))
 
         var_frame.pack(side = "left", anchor = "n", pady = (2, 0))
 
+    def _build_input_frame(self, root: Frame, parameter: str, param_props: dict[str, Any]) -> tuple[Scale, Entry]:
+        obj = param_props["object"]
+        units = param_props["units"]
+
+        frame = Frame(root, width = 265, height = 60)
+
+        slider = self._build_slider(
+            frame,
+            parameter,
+            obj,
+            f"{param_props["name"]}{"" if units is None else f" ({units})"} = ",
+            param_props["slider_lims"],
+            1/10**param_props["decimal_places"]
+        )
+
+        entry = Entry(frame, width = 10)
+        entry.insert(0, f"{param_props["init_value"]: 0.{param_props["decimal_places"]}f}".strip())
+        entry.bind("<Return>", partial(self._validate_manual_input, parameter, obj))
+        x, y = param_props["entry_pos"]
+        entry.place(x = x, y = y)
+
+        frame.pack(side = "top", anchor = "nw", pady = 2)
+
+        return slider, entry
+
     def _reset_state(self) -> None:
-        for name, value in list(self._initial_state.items()):
-            self.__getattribute__(f"_{name}_slider").set(value)
-            setattr(self._variable_objects[name], name, value)
+        for name, value in list(self._variable_properties.items()):
+            init_value = value["init_value"]
+            self.__getattribute__(f"_{name}_slider").set(init_value)
+
+            entry = self.__getattribute__(f"_{name}_entry")
+            entry.delete(0, 1000)
+            entry.insert(0, f"{init_value: 0.{value["decimal_places"]}f}".strip())
+
+            setattr(self._variable_properties[name]["object"], name, init_value)
 
         self._orbit.update_orbital_properties()
         self._orbit.update_orbit_type()
         self._sat.update_satellite_properties()
+
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
         self._orbit_fig.reset_axes()
 
-    def _build_slider(self, root: Frame, parameter: str, source_object: Orbit | Satellite, label: str, upper_lim: int, res: float = 1, lower_lim: int = 0) -> Scale:
+    def _build_slider(self, root: Frame, parameter: str, source_object: Orbit | Satellite, label: str, lims: tuple[int], res: float) -> Scale:
         slider_name = f"_{parameter}_slider"
         self.__setattr__(
             slider_name,
-            Scale(root, from_ = lower_lim, to = upper_lim, resolution = res, length = 195, orient = "horizontal",
-                  command = partial(self._update_value, parameter, source_object), label = label, font = self.slider_font)
+            Scale(root, from_ = lims[0], to = lims[1], resolution = res, length = 260, orient = "horizontal",
+                  command = partial(self._update_value, parameter, source_object, "slider"), label = label, font = self.slider_font)
         )
 
         slider: Scale = self.__getattribute__(slider_name)
         init_value: float = round(np.degrees(getattr(source_object, parameter)), 2) if parameter == "nu" else getattr(source_object, parameter)
 
         slider.set(init_value)
-        slider.pack(side = "top", anchor = "nw")
+        slider.place(x = 0, y = 0, anchor = "nw")
         return slider
 
-    def _update_value(self, parameter: str, source_object: Orbit | Satellite, new_val: str) -> None:
-        new_val = np.deg2rad(float(new_val)) if parameter == "nu" else float(new_val)
+    def _validate_manual_input(self, parameter: str, source_object: Orbit | Satellite | CentralBody, event: Event) -> None:
+        new_val = self.__getattribute__(f"_{parameter}_entry").get().strip()
+
+        try:
+            new_val = float(new_val)
+
+            if new_val < 0:
+                raise ValueError
+
+        except ValueError:
+            messagebox.showwarning("Warning", "Invalid input")
+            return
+
+        self._update_value(parameter, source_object, "entry", new_val)
+
+    def _update_value(self, parameter: str, source_object: Orbit | Satellite, input_type: str, new_val: str | float) -> None:
+        new_val = float(new_val)
+        if input_type == "slider":
+            entry: Entry = self.__getattribute__(f"_{parameter}_entry")
+            entry.delete(0, 1000)
+            entry.insert(0, f"{new_val: 0.{self._variable_properties[parameter]["decimal_places"]}f}".strip())
+        elif input_type == "entry":
+            self.__getattribute__(f"_{parameter}_slider").set(new_val)
+
+        if parameter == "nu":
+            new_val = np.deg2rad(float(new_val))
+
         setattr(source_object, parameter, new_val)
+
 
         self._orbit.update_orbital_properties()
         self._orbit.update_orbit_type()
@@ -151,6 +243,7 @@ class OrbitConfigurer():
                 self._nu_slider.configure(from_ = 0, to = 360)
 
         self._sat.update_satellite_properties()
+
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
 
