@@ -25,6 +25,7 @@ The orbiting satellite is assumed to have negligible mass. All higher-order pert
 
 ## Potential future improvements
 
+- Introduce argument of periapsis as an orbital geometry parameter
 - Calculate time since periapsis
 - Simulate orbital motion
 - Include perturbations into the model
