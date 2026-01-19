@@ -2,13 +2,13 @@ from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame, Button, Entr
 from tkinter.ttk import Separator
 from typing import Any
 from functools import partial
+from math import copysign
 import numpy as np
 from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
 # TODO: Show the correct sign on the infinity symbol for x and y position.
-# TODO: Reduces values of true anomaly (-inf, 0) + (360, inf) to values in (0, 360).
 class OrbitConfigurer():
 
     title_font = ("Orbitron", 16, "bold")
@@ -202,12 +202,24 @@ class OrbitConfigurer():
         try:
             new_val = float(new_val)
 
-            if new_val < 0:
+            if new_val < 0 and parameter != "nu":
                 raise ValueError
 
         except ValueError:
             messagebox.showwarning("Warning", "Invalid input")
             return
+
+        if parameter == "nu":
+            if self._orbit.e < 1:
+                while new_val < 0 or new_val > 360:
+                    new_val += copysign(1, -new_val)*360
+
+            else:
+                t_asymp = np.rad2deg(self._orbit.t_asymp)
+                if new_val < -t_asymp:
+                    new_val = -t_asymp
+                elif new_val > t_asymp:
+                    new_val = t_asymp
 
         self._update_value(parameter, source_object, "entry", new_val)
 
