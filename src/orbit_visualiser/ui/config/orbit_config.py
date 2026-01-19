@@ -215,7 +215,8 @@ class OrbitConfigurer():
         # When e < 1 then the orbit is periodic, and so the true anomaly is as well.
         if parameter == "nu":
             if self._orbit.e < 1 and (new_val_float < 0 or new_val_float > 360):
-                # float(new_val) will kill off any decimal points when new_val has extremely large absolute value. The Decimal class retains that information.
+                # float(new_val) will kill off any decimal points when new_val has extremely large absolute value (around 16 digits
+                # due to limitations of 64bit double precision for python floats). The Decimal class retains that information.
                 # If the angle is negative then float(Decimal(new_val))%360 reduces it to (-360, 0), then + 360 to the range we want.
                 new_val_float = (float(Decimal(new_val))%360 + 360)%360
 
