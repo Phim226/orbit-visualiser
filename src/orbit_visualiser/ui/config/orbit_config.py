@@ -8,6 +8,7 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
 # TODO: Show the correct sign on the infinity symbol for x and y position.
+# TODO: Reduces values of true anomaly (-inf, 0) + (360, inf) to values in (0, 360).
 class OrbitConfigurer():
 
     title_font = ("Orbitron", 16, "bold")
