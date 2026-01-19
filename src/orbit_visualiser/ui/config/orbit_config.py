@@ -2,6 +2,7 @@ from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame, Button, Entr
 from tkinter.ttk import Separator
 from typing import Any
 from functools import partial
+from decimal import Decimal, ROUND_FLOOR
 from math import copysign
 import numpy as np
 from orbit_visualiser.ui import OrbitFigure
@@ -202,9 +203,9 @@ class OrbitConfigurer():
         new_val = self.__getattribute__(f"_{parameter}_entry").get().strip()
 
         try:
-            new_val = float(new_val)
+            new_val_float = float(new_val)
 
-            if new_val < 0 and parameter != "nu":
+            if new_val_float < 0 and parameter != "nu":
                 raise ValueError
 
         except ValueError:
@@ -213,18 +214,20 @@ class OrbitConfigurer():
 
         # When e < 1 then the orbit is periodic, and so the true anomaly is as well.
         if parameter == "nu":
-            if self._orbit.e < 1:
-                while new_val < 0 or new_val > 360:
-                    new_val += copysign(1, -new_val)*360
+            if self._orbit.e < 1 and (new_val_float < 0 or new_val_float > 360):
+                new_val = Decimal(new_val)
+                new_val_int = new_val.to_integral_value(rounding = ROUND_FLOOR)
+                new_val_frac = new_val - new_val_int
+                new_val_float = new_val_int%360 + new_val_frac
 
             else:
                 t_asymp = np.degrees(self._orbit.t_asymp)
-                if new_val < -t_asymp:
-                    new_val = -t_asymp
-                elif new_val > t_asymp:
-                    new_val = t_asymp
+                if new_val_float < -t_asymp:
+                    new_val_float = -t_asymp
+                elif new_val_float > t_asymp:
+                    new_val_float = t_asymp
 
-        self._update_value(parameter, source_object, "entry", new_val)
+        self._update_value(parameter, source_object, "entry", new_val_float)
 
     def _update_value(self, parameter: str, source_object: Orbit | Satellite, input_type: str, new_val: str | float) -> None:
         new_val = float(new_val)
