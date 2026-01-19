@@ -76,7 +76,7 @@ class OrbitConfigurer():
             "name" : "Gravitational parameter",
             "object" : central_body,
             "init_value" : central_body.mu,
-            "slider_lims" : (central_body.r + 1, 1_000_000),
+            "slider_lims" : (1, 1_000_000),
             "decimal_places" : 0,
             "units" : "km³/s²",
             "entry_pos" : (198, 4)
@@ -211,13 +211,14 @@ class OrbitConfigurer():
             messagebox.showwarning("Warning", "Invalid input")
             return
 
+        # When e < 1 then the orbit is periodic, and so the true anomaly is as well.
         if parameter == "nu":
             if self._orbit.e < 1:
                 while new_val < 0 or new_val > 360:
                     new_val += copysign(1, -new_val)*360
 
             else:
-                t_asymp = np.rad2deg(self._orbit.t_asymp)
+                t_asymp = np.degrees(self._orbit.t_asymp)
                 if new_val < -t_asymp:
                     new_val = -t_asymp
                 elif new_val > t_asymp:
@@ -227,6 +228,8 @@ class OrbitConfigurer():
 
     def _update_value(self, parameter: str, source_object: Orbit | Satellite, input_type: str, new_val: str | float) -> None:
         new_val = float(new_val)
+
+        # This if-elif block lets the sliders and manual inputs update one another.
         if input_type == "slider":
             entry: Entry = self.__getattribute__(f"_{parameter}_entry")
             entry.delete(0, 1000)
@@ -243,6 +246,7 @@ class OrbitConfigurer():
         self._orbit.update_orbital_properties()
         self._orbit.update_orbit_type()
 
+        # The value of the eccentricity determines the range of possible true anomaly values, which this if block checks for.
         if parameter == "e":
             if new_val >= 1:
                 t_asymp = self._orbit.t_asymp
