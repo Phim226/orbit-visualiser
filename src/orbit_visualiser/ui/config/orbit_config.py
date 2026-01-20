@@ -2,8 +2,7 @@ from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame, Button, Entr
 from tkinter.ttk import Separator
 from typing import Any
 from functools import partial
-from decimal import Decimal, ROUND_FLOOR
-from math import copysign
+from decimal import Decimal
 import numpy as np
 from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
