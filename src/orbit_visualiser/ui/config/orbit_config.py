@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame, Button, Entry, Event, messagebox
+from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame, Button, Entry, Event, messagebox, DoubleVar
 from tkinter.ttk import Separator
 from typing import Any
 from functools import partial
@@ -184,17 +184,20 @@ class OrbitConfigurer():
         self._orbit_fig.reset_axes()
 
     def _build_slider(self, root: Frame, parameter: str, source_object: Orbit | Satellite, label: str, lims: tuple[int], res: float) -> Scale:
+        slider_var: DoubleVar = DoubleVar()
+        self.__setattr__(f"_{parameter}_var", slider_var)
+
         slider_name = f"_{parameter}_slider"
         self.__setattr__(
             slider_name,
-            Scale(root, from_ = lims[0], to = lims[1], resolution = res, length = 260, orient = "horizontal",
+            Scale(root, from_ = lims[0], to = lims[1], resolution = res, length = 260, orient = "horizontal", variable = slider_var,
                   command = partial(self._update_value, parameter, source_object, "slider"), label = label, font = self.slider_font)
         )
 
-        slider: Scale = self.__getattribute__(slider_name)
         init_value: float = round(np.degrees(getattr(source_object, parameter)), 2) if parameter == "nu" else getattr(source_object, parameter)
+        slider_var.set(init_value)
 
-        slider.set(init_value)
+        slider: Scale = self.__getattribute__(slider_name)
         slider.place(x = 0, y = 0, anchor = "nw")
         return slider
 
@@ -228,7 +231,7 @@ class OrbitConfigurer():
 
         self._update_value(parameter, source_object, "entry", new_val_float)
 
-    def _update_value(self, parameter: str, source_object: Orbit | Satellite, input_type: str, new_val: str | float) -> None:
+    def _update_value(self, parameter: str, source_object: Orbit | Satellite | CentralBody, input_type: str, new_val: str | float) -> None:
         new_val = float(new_val)
 
         # This if-elif block lets the sliders and manual inputs update one another.
@@ -237,7 +240,8 @@ class OrbitConfigurer():
             entry.delete(0, 1000)
             entry.insert(0, f"{new_val: 0.{self._variable_properties[parameter]["decimal_places"]}f}".strip())
         elif input_type == "entry":
-            self.__getattribute__(f"_{parameter}_slider").set(new_val)
+            slider_var: DoubleVar = self.__getattribute__(f"_{parameter}_var")
+            slider_var.set(new_val)
 
         if parameter == "nu":
             new_val = np.deg2rad(float(new_val))
