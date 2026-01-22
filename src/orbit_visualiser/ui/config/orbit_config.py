@@ -170,7 +170,7 @@ class OrbitConfigurer():
             init_value = value["init_value"]
             self.__getattribute__(f"_{name}_slider").set(init_value)
 
-            entry = self.__getattribute__(f"_{name}_entry")
+            entry: Entry = self.__getattribute__(f"_{name}_entry")
             entry.delete(0, 1000)
             entry.insert(0, f"{init_value: 0.{value["decimal_places"]}f}".strip())
 
