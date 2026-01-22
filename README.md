@@ -8,7 +8,7 @@ Orbits are modelled and visualised in the perifocal frame (the central body rema
   - Eccentricity
   - Radius of periapsis
 
-The central body has a radius of 6738km and has an adjustable gravitational parameter. The radius of periapsis therefore has a lower limit of 6739km (meaning that we are assuming this Earth sized body has no atmosphere). The true anomaly of the orbiting satellite is also adjustable to evaluate the kinematic state at different orbital positions. Various orbital and kinematic quantities are 
+The central body has a radius of 6738km and has an adjustable gravitational parameter. The radius of periapsis has therefore been given a lower limit of 6739km (meaning that we are assuming this Earth sized body has no atmosphere). The true anomaly of the orbiting satellite is also adjustable to evaluate the kinematic state at different orbital positions. Various orbital and kinematic quantities are 
 calculated and displayed, including:
   - Semi-major/minor axis
   - Radius of apoapsis
