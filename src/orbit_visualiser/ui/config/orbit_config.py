@@ -1,16 +1,26 @@
 from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame, Button, Entry, Event, messagebox, DoubleVar
 from tkinter.ttk import Separator
-from typing import Any
 from functools import partial
 from decimal import Decimal
+from dataclasses import dataclass
 import numpy as np
 from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
+@dataclass
+class VarProperties():
+    name: str
+    obj: Orbit | Satellite | CentralBody
+    init_value: float
+    slider_lims: tuple[int]
+    decimal_places: int
+    units: str | None
+    entry_pos: tuple[int]
+
+
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
 # TODO: Show the correct sign on the infinity symbol for x and y position.
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
-# TODO: Refactor variable property dictionaries into dataclasses.
 # TODO: Allow for fractional manual inputs.
 class OrbitConfigurer():
 
@@ -55,44 +65,44 @@ class OrbitConfigurer():
         self._central_body = central_body
         self._sat = satellite
 
-        self._e_properties:  dict[str, Any] = {
-            "name" : "Eccentricity",
-            "object" : orbit,
-            "init_value" : orbit.e,
-            "slider_lims" : (0, 5),
-            "decimal_places" : 3,
-            "units" : None,
-            "entry_pos" : (85, 4)
-        }
-        self._rp_properties: dict[str, Any] = {
-            "name" : "Radius of periapsis",
-            "object" : orbit,
-            "init_value" : orbit.rp,
-            "slider_lims" : (central_body.r + 1, 200_000),
-            "decimal_places" : 0,
-            "units" : "km",
-            "entry_pos" : (160, 4)
-        }
-        self._mu_properties: dict[str, Any] = {
-            "name" : "Gravitational parameter",
-            "object" : central_body,
-            "init_value" : central_body.mu,
-            "slider_lims" : (1, 1_000_000),
-            "decimal_places" : 0,
-            "units" : "km³/s²",
-            "entry_pos" : (198, 4)
-        }
-        self._nu_properties: dict[str, Any] = {
-            "name" : "True anomaly",
-            "object" : satellite,
-            "init_value" : satellite.nu,
-            "slider_lims" : (0, 360),
-            "decimal_places" : 2,
-            "units" : "°",
-            "entry_pos" : (115, 4)
-        }
+        self._e_properties: VarProperties = VarProperties(
+            "Eccentricity",
+            orbit,
+            orbit.e,
+            (0, 5),
+            3,
+            None,
+            (85, 4)
+        )
+        self._rp_properties: VarProperties = VarProperties(
+            "Radius of periapsis",
+            orbit,
+            orbit.rp,
+            (central_body.r + 1, 200_000),
+            0,
+            "km",
+            (160, 4)
+        )
+        self._mu_properties: VarProperties = VarProperties(
+            "Gravitational parameter",
+            central_body,
+            central_body.mu,
+            (1, 1_000_000),
+            0,
+            "km³/s²",
+            (198, 4)
+        )
+        self._nu_properties: VarProperties = VarProperties(
+            "True anomaly",
+            satellite,
+            satellite.nu,
+            (0, 360),
+            2,
+            "°",
+            (115, 4)
+        )
 
-        self._variable_properties: dict[str, dict] = {
+        self._variable_properties: dict[str, VarProperties] = {
             "e" : self._e_properties,
             "rp" : self._rp_properties,
             "mu" : self._mu_properties,
@@ -140,9 +150,9 @@ class OrbitConfigurer():
 
         var_frame.pack(side = "left", anchor = "n", pady = (2, 0))
 
-    def _build_input_frame(self, root: Frame, parameter: str, param_props: dict[str, Any]) -> tuple[Scale, Entry]:
-        obj = param_props["object"]
-        units = param_props["units"]
+    def _build_input_frame(self, root: Frame, parameter: str, param_props: VarProperties) -> tuple[Scale, Entry]:
+        obj = param_props.obj
+        units = param_props.units
 
         frame = Frame(root, width = 265, height = 60)
 
@@ -150,15 +160,15 @@ class OrbitConfigurer():
             frame,
             parameter,
             obj,
-            f"{param_props["name"]}{"" if units is None else f" ({units})"} = ",
-            param_props["slider_lims"],
-            1/10**param_props["decimal_places"]
+            f"{param_props.name}{"" if units is None else f" ({units})"} = ",
+            param_props.slider_lims,
+            1/10**param_props.decimal_places
         )
 
         entry = Entry(frame, width = 10)
-        entry.insert(0, f"{param_props["init_value"]: 0.{param_props["decimal_places"]}f}".strip())
+        entry.insert(0, f"{param_props.init_value: 0.{param_props.decimal_places}f}".strip())
         entry.bind("<Return>", partial(self._validate_manual_input, parameter, obj))
-        x, y = param_props["entry_pos"]
+        x, y = param_props.entry_pos
         entry.place(x = x, y = y)
 
         frame.pack(side = "top", anchor = "nw", pady = 2)
@@ -167,14 +177,15 @@ class OrbitConfigurer():
 
     def _reset_state(self) -> None:
         for name, value in list(self._variable_properties.items()):
-            init_value = value["init_value"]
+            value: VarProperties
+            init_value = value.init_value
             self.__getattribute__(f"_{name}_slider").set(init_value)
 
             entry: Entry = self.__getattribute__(f"_{name}_entry")
             entry.delete(0, 1000)
-            entry.insert(0, f"{init_value: 0.{value["decimal_places"]}f}".strip())
+            entry.insert(0, f"{init_value: 0.{value.decimal_places}f}".strip())
 
-            setattr(self._variable_properties[name]["object"], name, init_value)
+            setattr(self._variable_properties[name].obj, name, init_value)
 
         self._orbit.update_orbital_properties()
         self._orbit.update_orbit_type()
@@ -239,7 +250,7 @@ class OrbitConfigurer():
         if input_type == "slider":
             entry: Entry = self.__getattribute__(f"_{parameter}_entry")
             entry.delete(0, 1000)
-            entry.insert(0, f"{new_val: 0.{self._variable_properties[parameter]["decimal_places"]}f}".strip())
+            entry.insert(0, f"{new_val: 0.{self._variable_properties[parameter].decimal_places}f}".strip())
         elif input_type == "entry":
             slider_var: DoubleVar = self.__getattribute__(f"_{parameter}_var")
             slider_var.set(new_val)
