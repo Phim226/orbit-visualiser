@@ -11,6 +11,7 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 # TODO: Show the correct sign on the infinity symbol for x and y position.
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
 # TODO: Refactor variable property dictionaries into dataclasses.
+# TODO: Allow for fractional manual inputs.
 class OrbitConfigurer():
 
     title_font = ("Orbitron", 16, "bold")
