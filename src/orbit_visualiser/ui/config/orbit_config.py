@@ -22,6 +22,7 @@ class VarProperties():
 # TODO: Show the correct sign on the infinity symbol for x and y position.
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
 # TODO: Allow for fractional manual inputs.
+# TODO: Remove any leading 0s from manual inputs.
 class OrbitConfigurer():
 
     title_font = ("Orbitron", 16, "bold")
