@@ -40,7 +40,7 @@ class OrbitConfigurer():
         "v_esc" : ("Escape velocity", "km/s"),
         "v_inf" : ("Excess velocity", "km/s"),
         "gam" : ("Flight angle", "°"),
-        "eps" : ("Mechanical energy", "km²/s²"),
+        "eps" : ("Specific energy", "km²/s²"),
         "c3" : ("Characteristic energy", "km²/s²")
     }
 
