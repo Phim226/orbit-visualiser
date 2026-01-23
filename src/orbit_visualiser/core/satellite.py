@@ -72,25 +72,48 @@ class Satellite():
     def t(self) -> float:
         return self._t
 
+    @property
+    def n(self) ->float:
+        return self._n
+
+    @property
+    def t_p(self) -> float:
+        return self._t_p
+
     def update_satellite_properties(self) -> None:
-        nu, mu, e, rp = self._nu, self._central_body.mu, self._orbit.e, self._orbit.rp
-        h, t_asymp, a = self._specific_ang_momentum(mu, rp, e), self._orbit.t_asymp, abs(self._orbit.a)
-        self._h = h
+        nu, mu, e, p = self._nu, self._central_body.mu, self._orbit.e, self._orbit.p
+        self._h, t_asymp, a = self._specific_ang_momentum(mu, p), self._orbit.t_asymp, self._orbit.a
+
+        # Helper quantities
+        den = 1 + e*np.cos(nu)
+        mu_over_h = mu/self._h
+
+        # Geometry
         self._x, self._y = self._position(nu, t_asymp)
-        self._v_azim = self._azimuthal_velocity(mu, h, e, nu, t_asymp)
-        self._v_radial = self._radial_velocity(mu, h, e, nu)
-        self._v = self._velocity(mu, h, e, nu)
-        self._r = self._radius(h, mu, e, nu, t_asymp)
-        self._eps = self._specific_energy(mu, h, e)
+        self._r = self._radius(nu, t_asymp, p, den)
+
+        # Kinematics
+        v_azim = self._azimuthal_velocity(nu, t_asymp, mu_over_h, den)
+        self._v_azim = v_azim
+        v_radial = self._radial_velocity(mu_over_h, e, nu)
+        self._v_radial = v_radial
+        self._v = self._velocity(v_azim, v_radial)
         self._v_esc = self._escape_velocity(nu, mu, self._r, t_asymp)
-        self._v_inf = self._excess_velocity(mu, a)
-        self._gam = self._flight_angle(e, nu, t_asymp)
-        self._c3 = self._characteristic_energy(mu, a)
+        self._v_inf = self._excess_velocity(mu, abs(a))
+        self._gam = self._flight_angle(e, nu, t_asymp, den)
+
+        # Energy
+        self._eps = self._specific_energy(mu, a)
+        self._c3 = self._characteristic_energy(mu, abs(a))
+
+        # Time
         self._t = self._orbital_period(mu, a)
+        self._n = self._mean_motion(self._t)
+        self._t_p = self._time_since_periapsis(nu, self._t)
 
     @staticmethod
-    def _specific_ang_momentum(mu: float, rp: float, e: float) -> float:
-        return np.sqrt(mu*rp*(1 + e))
+    def _specific_ang_momentum(mu: float, p: float) -> float:
+        return np.sqrt(mu*p)
 
     def _position(self, nu: float, t_asymp: float) -> tuple[float]:
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
@@ -100,32 +123,32 @@ class Satellite():
         return orbit_eq.x(nu), orbit_eq.y(nu)
 
 
-    def _azimuthal_velocity(self, mu: float, h: float, e: float, nu: float, t_asymp: float) -> float:
+    def _azimuthal_velocity(self, nu: float, t_asymp: float, mu_over_h: float, den: float) -> float:
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
             return 0.0
 
-        return (mu/h)*(1 + e*np.cos(nu))
+        return mu_over_h*den
 
-    def _radial_velocity(self, mu: float, h: float, e: float, nu: float) -> float:
+    def _radial_velocity(self, mu_over_h: float, e: float, nu: float) -> float:
         if self._orbit.orbit_type == "circular":
             return 0.0
 
-        return (mu/h)*e*np.sin(nu)
+        return mu_over_h*e*np.sin(nu)
 
-    def _velocity(self, mu: float, h: float, e: float, nu: float) -> float:
-        return (mu/h)*np.sqrt(e**2 + 2*e*np.cos(nu) + 1)
+    def _velocity(self, v_azim: float, v_radial: float) -> float:
+        return np.hypot(v_azim, v_radial)
 
-    def _radius(self, h: float, mu: float, e: float, nu: float, t_asymp: float) -> float:
+    def _radius(self, nu: float, t_asymp: float, p: float, den: float) -> float:
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
             return np.inf
 
-        return (h**2/mu)/(1 + e*np.cos(nu))
+        return p/den
 
-    def _specific_energy(self, mu: float, h: float, e: float) -> float:
+    def _specific_energy(self, mu: float, a: float) -> float:
         if self._orbit.orbit_type == "parabolic":
             return 0.0
 
-        return -0.5*(mu/h)**2*(1 - e**2)
+        return -mu/(2*a)
 
     def _escape_velocity(self, nu: float, mu: float, r: float, t_asymp: float) -> float:
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
@@ -139,14 +162,14 @@ class Satellite():
 
         return np.sqrt(mu/a)
 
-    def _flight_angle(self, e: float, nu: float, t_asymp: float) -> float:
+    def _flight_angle(self, e: float, nu: float, t_asymp: float, den: float) -> float:
         if np.isclose(nu, t_asymp, atol = 0.0001, rtol = 0):
             return pi/2
 
         elif np.isclose(nu, -t_asymp, atol = 0.0001, rtol = 0):
             return -pi/2
 
-        return np.arctan((e*np.sin(nu))/(1 + e*np.cos(nu)))
+        return np.arctan2(e*np.sin(nu), den)
 
     def _characteristic_energy(self, mu: float, a: float) -> float:
         if self._orbit.orbit_type == "parabolic":
