@@ -2,6 +2,9 @@ import numpy as np
 from math import pi
 from orbit_visualiser.core import Orbit, CentralBody
 
+# TODO: Write equations for eccentric anomaly of hyperbolic trajectories.
+# TODO: Write equations for mean anomaly of open trajectories.
+# TODO: Write equations for time since periapsis for elliptical and open trajectories.
 class Satellite():
 
 
@@ -184,5 +187,44 @@ class Satellite():
     def _orbital_period(self, mu: float, a: float) -> float:
         if self._orbit.is_closed:
             return (2*pi/np.sqrt(mu))*np.sqrt(a)**3
+
+        return np.nan
+
+    def _mean_motion(self, t: float) -> float:
+        if self._orbit.is_closed:
+            return 2*pi/t
+
+        return np.nan
+
+    def _eccentric_anomaly(self, e: float, nu: float):
+        orbit_type = self._orbit.orbit_type
+        if orbit_type == "circular":
+            return nu
+
+        elif orbit_type == "elliptical":
+            return 2*np.arctan(np.sqrt((1- e)/(1 + e))*np.tan(nu/2))
+
+        elif orbit_type == "hyperbolic":
+            return np.nan
+
+        return np.nan
+
+    def _mean_anomaly(self, e: float, nu: float, E: float):
+        orbit_type = self._orbit.orbit_type
+        if orbit_type == "circular":
+            return nu
+
+        elif orbit_type == "elliptical":
+            return E - e*np.sin(E)
+
+        elif orbit_type == "parabolic":
+            return np.nan
+
+        elif orbit_type == "hyperbolic":
+            return np.nan
+
+    def _time_since_periapsis(self, nu: float, t: float) -> float:
+        if self._orbit.orbit_type == "circular":
+            return t*nu/(2*pi)
 
         return np.nan

@@ -45,6 +45,8 @@ class OrbitConfigurer():
         "x" : ("x position", "km"),
         "y" : ("y position", "km"),
         "t" : ("Orbital period", "s"),
+        "n" : ("Mean motion", "°/s"),
+        "t_p" : ("Time since periapsis", "s"),
         "h" : ("Angular momentum", "km²/s"),
         "v" : ("Velocity", "km/s"),
         "v_azim" : ("Azimuthal velocity", "km/s"),
@@ -294,18 +296,19 @@ class OrbitConfigurer():
 
     def _update_display(self, parameter: str, source_object: Orbit | Satellite = None, value: float = None) -> None:
         new_value = value if value is not None else getattr(source_object, parameter)
-        if self.parameters[parameter][1] == "°":
+        unit = self.parameters[parameter][1]
+        if unit is not None and "°" in unit:
             new_value = np.degrees(new_value)
 
         self.__getattribute__(
             f"_{parameter}_str"
-        ).set(self._format_display_value(new_value, self.parameters[parameter][1]))
+        ).set(self._format_display_value(new_value, unit))
 
     def _format_display_value(self, value: float | str, units: str | None) -> str:
         if units is None:
             return value.capitalize()
 
-        if np.isclose(value, 0.00, rtol = 0.001):
+        if np.isclose(value, 0):
             value = 0.00
 
         if np.isneginf(value):
@@ -322,6 +325,9 @@ class OrbitConfigurer():
 
         elif units in ["°", "km/s", "km²/s²"]:
             return f"{value:6.2f} {units}"
+
+        elif units in ["°/s"]:
+            return f"{value:6.6f} {units}"
 
     def _build_properties_frame(self) -> None:
         props_frame = Frame(self._config_frame, padx = 2)
@@ -348,7 +354,11 @@ class OrbitConfigurer():
         frame.grid_columnconfigure(1, weight=1)
 
     def _build_display(self, frame: LabelFrame, parameter: str, source_object: Orbit | Satellite, display_str: str, units: str, row: int) -> None:
-        var = StringVar(value = self._format_display_value(getattr(source_object, parameter), units))
+        init_value = getattr(source_object, parameter)
+        if units is not None and "°" in units:
+            init_value = np.degrees(init_value)
+
+        var = StringVar(value = self._format_display_value(init_value, units))
         self.__setattr__(f"_{parameter}_str", var)
 
         name_label = Label(frame, text = display_str + ":", anchor = "w", font = self.slider_font)
