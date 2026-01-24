@@ -4,7 +4,7 @@ from orbit_visualiser.core import Orbit, CentralBody
 
 # TODO: Write equations for eccentric anomaly of hyperbolic trajectories.
 # TODO: Write equations for mean anomaly of open trajectories.
-# TODO: Write equations for time since periapsis for elliptical and open trajectories.
+# TODO: Write equations for time since periapsis for open trajectories.
 class Satellite():
 
 
