@@ -24,6 +24,7 @@ class VarProperties():
 # TODO: Allow for fractional manual inputs.
 # TODO: Remove any leading 0s from manual inputs.
 # TODO: Refactor to a lazy/cached recalculation model. Currently everything is recalculated on every variable change.
+# TODO: Refactor this class to separate concerns (controller, builder split for example).
 class OrbitConfigurer():
 
     title_font = ("Orbitron", 16, "bold")
