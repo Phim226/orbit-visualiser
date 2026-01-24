@@ -93,11 +93,12 @@ class Satellite():
 
     def update_satellite_properties(self) -> None:
         nu, mu, e, p = self._nu, self._central_body.mu, self._orbit.e, self._orbit.p
-        self._h, t_asymp, a = self._specific_ang_momentum(mu, p), self._orbit.t_asymp, self._orbit.a
+        h, t_asymp, a = self._specific_ang_momentum(mu, p), self._orbit.t_asymp, self._orbit.a
+        self._h = h
 
         # Helper quantities
         den = 1 + e*np.cos(nu)
-        mu_over_h = mu/self._h
+        mu_over_h = mu/h
 
         # Geometry
         self._x, self._y = self._position(nu, t_asymp)
@@ -123,9 +124,9 @@ class Satellite():
         self._n = self._mean_motion(period)
         e_anomaly = self._eccentric_anomaly(e, nu)
         self._e_anomaly = e_anomaly
-        m_anomaly = self._mean_anomaly(e, nu, e_anomaly)
+        m_anomaly = self._mean_anomaly(e, nu, e_anomaly, t_asymp)
         self._m_anomaly = m_anomaly
-        self._t_p = self._time_since_periapsis(m_anomaly, period)
+        self._t_p = self._time_since_periapsis(m_anomaly, period, p, h)
 
     @staticmethod
     def _specific_ang_momentum(mu: float, p: float) -> float:
@@ -226,7 +227,7 @@ class Satellite():
 
         return np.nan
 
-    def _mean_anomaly(self, e: float, nu: float, e_anomaly: float):
+    def _mean_anomaly(self, e: float, nu: float, e_anomaly: float, t_asymp: float):
         orbit_type = self._orbit.orbit_type
         if orbit_type == "circular":
             return nu
@@ -234,14 +235,25 @@ class Satellite():
         elif orbit_type == "elliptical":
             return e_anomaly - e*np.sin(e_anomaly)
 
+        if not self._orbit.is_closed and np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
+            return np.inf
+
         elif orbit_type == "parabolic":
-            return np.nan
+            return 0.5*np.tan(nu/2) + (1/6)*(np.tan(nu/2))**3
 
         elif orbit_type == "hyperbolic":
             return np.nan
 
-    def _time_since_periapsis(self, m_anomaly: float, t: float) -> float:
+    def _time_since_periapsis(self, m_anomaly: float, t: float, p: float, h: float) -> float:
+        if np.isinf(m_anomaly):
+            return np.inf
+
         if self._orbit.is_closed:
             return t*m_anomaly/(2*pi)
 
-        return np.nan
+        orbit_type = self._orbit.orbit_type
+        if orbit_type == "parabolic":
+            return (p**2/h)*m_anomaly
+
+        elif orbit_type == "hyperbolic":
+            return np.nan

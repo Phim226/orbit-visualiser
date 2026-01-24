@@ -25,6 +25,7 @@ class VarProperties():
 # TODO: Remove any leading 0s from manual inputs.
 # TODO: Refactor to a lazy/cached recalculation model. Currently everything is recalculated on every variable change.
 # TODO: Refactor this class to separate concerns (controller, builder split for example).
+# TODO: Show correct sign on infinity symbol for mean anomaly and time since periapsis for open trajectories.
 class OrbitConfigurer():
 
     title_font = ("Orbitron", 16, "bold")
