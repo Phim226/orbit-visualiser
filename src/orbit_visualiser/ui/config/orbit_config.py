@@ -23,6 +23,7 @@ class VarProperties():
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
 # TODO: Allow for fractional manual inputs.
 # TODO: Remove any leading 0s from manual inputs.
+# TODO: Refactor to a lazy/cached recalculation model. Currently everything is recalculated on every variable change.
 class OrbitConfigurer():
 
     title_font = ("Orbitron", 16, "bold")
