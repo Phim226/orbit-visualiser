@@ -72,12 +72,20 @@ class Satellite():
         return self._c3
 
     @property
-    def t(self) -> float:
-        return self._t
+    def period(self) -> float:
+        return self._period
 
     @property
-    def n(self) ->float:
+    def n(self) -> float:
         return self._n
+
+    @property
+    def e_anomaly(self) -> float:
+        return self._e_anomaly
+
+    @property
+    def m_anomaly(self) -> float:
+        return self._m_anomaly
 
     @property
     def t_p(self) -> float:
@@ -110,9 +118,14 @@ class Satellite():
         self._c3 = self._characteristic_energy(mu, abs(a))
 
         # Time
-        self._t = self._orbital_period(mu, a)
-        self._n = self._mean_motion(self._t)
-        self._t_p = self._time_since_periapsis(nu, self._t)
+        period = self._orbital_period(mu, a)
+        self._period = period
+        self._n = self._mean_motion(period)
+        e_anomaly = self._eccentric_anomaly(e, nu)
+        self._e_anomaly = e_anomaly
+        m_anomaly = self._mean_anomaly(e, nu, e_anomaly)
+        self._m_anomaly = m_anomaly
+        self._t_p = self._time_since_periapsis(m_anomaly, period)
 
     @staticmethod
     def _specific_ang_momentum(mu: float, p: float) -> float:
@@ -202,20 +215,24 @@ class Satellite():
             return nu
 
         elif orbit_type == "elliptical":
-            return 2*np.arctan(np.sqrt((1- e)/(1 + e))*np.tan(nu/2))
+            e_anomaly = 2*np.arctan(np.sqrt((1 - e)/(1 + e))*np.tan(nu/2))
+            if e_anomaly < 0:
+                return e_anomaly + 2*pi
+
+            return e_anomaly
 
         elif orbit_type == "hyperbolic":
             return np.nan
 
         return np.nan
 
-    def _mean_anomaly(self, e: float, nu: float, E: float):
+    def _mean_anomaly(self, e: float, nu: float, e_anomaly: float):
         orbit_type = self._orbit.orbit_type
         if orbit_type == "circular":
             return nu
 
         elif orbit_type == "elliptical":
-            return E - e*np.sin(E)
+            return e_anomaly - e*np.sin(e_anomaly)
 
         elif orbit_type == "parabolic":
             return np.nan
@@ -223,8 +240,8 @@ class Satellite():
         elif orbit_type == "hyperbolic":
             return np.nan
 
-    def _time_since_periapsis(self, nu: float, t: float) -> float:
-        if self._orbit.orbit_type == "circular":
-            return t*nu/(2*pi)
+    def _time_since_periapsis(self, m_anomaly: float, t: float) -> float:
+        if self._orbit.is_closed:
+            return t*m_anomaly/(2*pi)
 
         return np.nan
