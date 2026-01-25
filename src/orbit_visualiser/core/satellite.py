@@ -228,14 +228,11 @@ class Satellite():
         return np.nan
 
     def _mean_anomaly(self, e: float, nu: float, e_anomaly: float, t_asymp: float):
-        orbit_type = self._orbit.orbit_type
-        if orbit_type == "circular":
-            return nu
-
-        elif orbit_type == "elliptical":
+        if self._orbit.is_closed:
             return e_anomaly - e*np.sin(e_anomaly)
 
-        if not self._orbit.is_closed and np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
+        orbit_type = self._orbit.orbit_type
+        if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
             return np.inf
 
         elif orbit_type == "parabolic":
