@@ -9,7 +9,14 @@ from orbit_visualiser.core import Orbit, CentralBody, Satellite
 # TODO: Fix bug where scroll zoom doesn't register as changing the view so the native matplotlib home button has unexpected (and often undesirable) behaviour.
 class OrbitFigure():
 
-    def __init__(self, root: Tk, figure_frame_placement: tuple[str], orbit: Orbit, central_body: CentralBody, satellite : Satellite):
+    def __init__(
+            self,
+            root: Tk,
+            figure_frame_placement: tuple[str],
+            orbit: Orbit,
+            central_body: CentralBody,
+            satellite : Satellite
+    ):
         self._root = root
 
         self._orbit = orbit
@@ -17,7 +24,10 @@ class OrbitFigure():
         self._sat = satellite
 
         self._figure_frame: Frame = Frame(root)
-        self._figure_frame.pack(side = figure_frame_placement[0], anchor = figure_frame_placement[1], padx = 8, pady = 6, fill = "both", expand = True)
+        self._figure_frame.pack(
+            side = figure_frame_placement[0], anchor = figure_frame_placement[1],
+            padx = 8, pady = 6, fill = "both", expand = True
+        )
 
     def build(self) -> None:
         self._create_figure()
@@ -70,10 +80,15 @@ class OrbitFigure():
         self._line, = self._ax.plot(x(t) , y(t), color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)
 
         # Plot the central body
-        self._ax.add_patch(Circle((0, 0), radius = self._body.r, fill = True, zorder = 10, facecolor = "#4C6A92", edgecolor = "#3C5474"))
+        self._ax.add_patch(
+            Circle((0, 0), radius = self._body.r, fill = True, zorder = 10,
+                   facecolor = "#4C6A92", edgecolor = "#3C5474")
+        )
 
         # Plot the satellite
-        self._sat_point, = self._ax.plot(self._orbit.rp, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B")
+        self._sat_point, = self._ax.plot(
+            self._orbit.rp, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B"
+        )
 
         f = self._zoom_factory(self._ax, 1.1)
 
