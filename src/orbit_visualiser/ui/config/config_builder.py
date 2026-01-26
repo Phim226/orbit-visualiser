@@ -56,7 +56,14 @@ class OrbitConfigBuilder():
 
     parameters: dict[str, tuple[str]] = orbital_parameters | satellite_parameters
 
-    def __init__(self, root: Tk, config_frame_placement: tuple[str], orbit_fig: OrbitFigure, orbit: Orbit, central_body: CentralBody, satellite: Satellite):
+    def __init__(
+            self, root: Tk,
+            config_frame_placement: tuple[str],
+            orbit_fig: OrbitFigure,
+            orbit: Orbit,
+            central_body: CentralBody,
+            satellite: Satellite
+    ):
         self._root = root
 
         self._orbit_fig = orbit_fig
@@ -108,10 +115,17 @@ class OrbitConfigBuilder():
             "nu" : self._nu_properties
         }
 
-        self._parameter_objects: dict[Orbit | Satellite, dict] = {orbit: self.orbital_parameters, satellite : self.satellite_parameters}
+        self._parameter_objects: dict[Orbit | Satellite, dict] = {
+            orbit: self.orbital_parameters,
+            satellite : self.satellite_parameters
+        }
 
         self._config_frame = Frame(root)
-        self._config_frame.pack(side = config_frame_placement[0], anchor = config_frame_placement[1], padx = 8, pady = 6)
+        self._config_frame.pack(
+            side = config_frame_placement[0],
+            anchor = config_frame_placement[1],
+            padx = 8, pady = 6
+        )
 
     @property
     def variable_properties(self) -> dict[str, VarProperties]:
@@ -153,7 +167,13 @@ class OrbitConfigBuilder():
     def nu_entry(self) -> Entry:
         return self._nu_entry
 
-    def build(self, reset: Callable, validate_input: Callable, update_value: Callable, format_value: Callable) -> None:
+    def build(
+            self,
+            reset: Callable,
+            validate_input: Callable,
+            update_value: Callable,
+            format_value: Callable
+    ) -> None:
         self._build_variables_frame(reset, validate_input, update_value)
 
         sep = Separator(self._config_frame, orient = "vertical")
@@ -161,26 +181,45 @@ class OrbitConfigBuilder():
 
         self._build_properties_frame(format_value)
 
-    def _build_variables_frame(self, reset: Callable, validate_input: Callable, update_value: Callable) -> None:
+    def _build_variables_frame(
+            self,
+            reset: Callable,
+            validate_input: Callable,
+            update_value: Callable
+    ) -> None:
         var_frame = Frame(self._config_frame, padx = 2)
         self._variables_frame = var_frame
 
         self._build_separator(var_frame, "Variables")
 
         # Build orbital geometry frame
-        orbital_geom_frame = LabelFrame(var_frame, bd = 1, relief = "sunken", text = "Orbital geometry", font = self._subtitle_font)
-        self._e_slider, self._e_entry = self._build_input_frame(orbital_geom_frame, "e", self._variable_properties["e"], validate_input, update_value)
-        self._rp_slider, self._rp_entry = self._build_input_frame(orbital_geom_frame, "rp", self._variable_properties["rp"], validate_input, update_value)
+        orbital_geom_frame = LabelFrame(
+            var_frame, bd = 1, relief = "sunken", text = "Orbital geometry", font = self._subtitle_font
+        )
+        self._e_slider, self._e_entry = self._build_input_frame(
+            orbital_geom_frame, "e", self._variable_properties["e"], validate_input, update_value
+        )
+        self._rp_slider, self._rp_entry = self._build_input_frame(
+            orbital_geom_frame, "rp", self._variable_properties["rp"], validate_input, update_value
+        )
         orbital_geom_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
         # Building central body frame
-        central_body_frame = LabelFrame(var_frame, bd = 1, relief = "sunken", text = "Central body", font = self._subtitle_font)
-        self._mu_slider, self._mu_entry = self._build_input_frame(central_body_frame, "mu", self._variable_properties["mu"], validate_input, update_value)
+        central_body_frame = LabelFrame(
+            var_frame, bd = 1, relief = "sunken", text = "Central body", font = self._subtitle_font
+        )
+        self._mu_slider, self._mu_entry = self._build_input_frame(
+            central_body_frame, "mu", self._variable_properties["mu"], validate_input, update_value
+        )
         central_body_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
         # Build satellite frame
-        sat_frame = LabelFrame(var_frame, bd = 1, relief = "sunken", text = "Satellite", font = self._subtitle_font)
-        self._nu_slider, self._nu_entry = self._build_input_frame(sat_frame, "nu", self._variable_properties["nu"], validate_input, update_value)
+        sat_frame = LabelFrame(
+            var_frame, bd = 1, relief = "sunken", text = "Satellite", font = self._subtitle_font
+        )
+        self._nu_slider, self._nu_entry = self._build_input_frame(
+            sat_frame, "nu", self._variable_properties["nu"], validate_input, update_value
+        )
         sat_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
         # Build reset button
@@ -189,7 +228,14 @@ class OrbitConfigBuilder():
 
         var_frame.pack(side = "left", anchor = "n", pady = (2, 0))
 
-    def _build_input_frame(self, root: Frame, parameter: str, param_props: VarProperties, validate_input: Callable, update_value: Callable) -> tuple[Scale, Entry]:
+    def _build_input_frame(
+            self,
+            root: Frame,
+            parameter: str,
+            param_props: VarProperties,
+            validate_input: Callable,
+            update_value: Callable
+    ) -> tuple[Scale, Entry]:
         obj = param_props.obj
         units = param_props.units
 
@@ -215,18 +261,30 @@ class OrbitConfigBuilder():
 
         return slider, entry
 
-    def _build_slider(self, root: Frame, parameter: str, source_object: Orbit | Satellite, label: str, lims: tuple[int], res: float, update_value: Callable) -> Scale:
+    def _build_slider(
+            self,
+            root: Frame,
+            parameter: str,
+            source_object: Orbit | Satellite,
+            label: str,
+            lims: tuple[int],
+            res: float,
+            update_value: Callable
+    ) -> Scale:
         slider_var: DoubleVar = DoubleVar()
         self.__setattr__(f"{parameter}_var", slider_var)
 
         slider_name = f"_{parameter}_slider"
         self.__setattr__(
             slider_name,
-            Scale(root, from_ = lims[0], to = lims[1], resolution = res, length = 260, orient = "horizontal", variable = slider_var,
-                  command = partial(update_value, parameter, source_object, "slider"), label = label, font = self._slider_font)
+            Scale(root, from_ = lims[0], to = lims[1], resolution = res, length = 260,
+                  orient = "horizontal", variable = slider_var,
+                  command = partial(update_value, parameter, source_object, "slider"),
+                  label = label, font = self._slider_font)
         )
 
-        init_value: float = round(np.degrees(getattr(source_object, parameter)), 2) if parameter == "nu" else getattr(source_object, parameter)
+        init_value: float = (round(np.degrees(getattr(source_object, parameter)), 2) if parameter == "nu"
+                             else getattr(source_object, parameter))
         slider_var.set(init_value)
 
         slider: Scale = self.__getattribute__(slider_name)
@@ -238,26 +296,48 @@ class OrbitConfigBuilder():
         self._properties_frame = props_frame
 
         self._build_separator(props_frame, "Properties")
-        orbital_props_frame = LabelFrame(props_frame, bd = 1, relief = "sunken", text = "Orbit", font = self._subtitle_font)
+        orbital_props_frame = LabelFrame(
+            props_frame, bd = 1, relief = "sunken", text = "Orbit", font = self._subtitle_font
+        )
         self._populate_properties(orbital_props_frame, self.orbital_parameters, self._orbit, format_value)
         orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
 
-        sat_props_frame = LabelFrame(props_frame, bd = 1, relief = "sunken", text = "Satellite", font = self._subtitle_font, width = 244)
+        sat_props_frame = LabelFrame(
+            props_frame, bd = 1, relief = "sunken", text = "Satellite",
+            font = self._subtitle_font, width = 244
+        )
         self._populate_properties(sat_props_frame, self.satellite_parameters, self._sat, format_value)
         sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x")
 
         props_frame.pack(side = "top", anchor = "n", pady = (2, 0))
 
-    def _populate_properties(self, frame: LabelFrame, parameters: dict[str, tuple[str]], source_object: Orbit | Satellite, format_value: Callable) -> None:
+    def _populate_properties(
+            self,
+            frame: LabelFrame,
+            parameters: dict[str, tuple[str]],
+            source_object: Orbit | Satellite,
+            format_value: Callable
+    ) -> None:
         for i, parameters in enumerate(list(parameters.items())):
             parameter_info = parameters[1]
-            self._build_display(frame, parameters[0], source_object, parameter_info[0], parameter_info[1], i, format_value)
+            self._build_display(
+                frame, parameters[0], source_object, parameter_info[0], parameter_info[1], i, format_value
+        )
 
         # Setting the weight allows the grid manager to stretch labels in _build_display into available space.
         frame.grid_columnconfigure(0, weight=0)
         frame.grid_columnconfigure(1, weight=1)
 
-    def _build_display(self, frame: LabelFrame, parameter: str, source_object: Orbit | Satellite, display_str: str, units: str, row: int, format_value: Callable) -> None:
+    def _build_display(
+            self,
+            frame: LabelFrame,
+            parameter: str,
+            source_object: Orbit | Satellite,
+            display_str: str,
+            units: str,
+            row: int,
+            format_value: Callable
+    ) -> None:
         init_value = getattr(source_object, parameter)
         if units is not None and "°" in units:
             init_value = np.degrees(init_value)

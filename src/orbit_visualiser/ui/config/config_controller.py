@@ -15,7 +15,14 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 class OrbitConfigController():
 
 
-    def __init__(self, figure: OrbitFigure, builder: OrbitConfigBuilder, orbit: Orbit, satellite: Satellite, central_body: CentralBody):
+    def __init__(
+            self,
+            figure: OrbitFigure,
+            builder: OrbitConfigBuilder,
+            orbit: Orbit,
+            satellite: Satellite,
+            central_body: CentralBody
+    ):
         self._orbit_fig: OrbitFigure = figure
         self._builder: OrbitConfigBuilder = builder
 
@@ -44,7 +51,12 @@ class OrbitConfigController():
         self._orbit_fig.redraw_satellite()
         self._orbit_fig.reset_axes()
 
-    def validate_manual_input(self, parameter: str, source_object: Orbit | Satellite | CentralBody, event: Event) -> None:
+    def validate_manual_input(
+            self,
+            parameter: str,
+            source_object: Orbit | Satellite | CentralBody,
+            event: Event
+    ) -> None:
         new_val = getattr(self._builder, f"{parameter}_entry").get().strip()
 
         try:
@@ -60,13 +72,17 @@ class OrbitConfigController():
         # When e < 1 then the orbit is periodic, and so the true anomaly is as well.
         if parameter == "nu":
             if self._orbit.e < 1 and (new_val_float < 0 or new_val_float > 360):
-                # float(new_val) will kill off any decimal points when new_val has extremely large absolute value (around 16 digits
-                # due to limitations of 64bit double precision for python floats). The Decimal class retains that information.
-                # If the angle is negative then Decimal(new_val)%360 reduces it to (-360, 0), then + 360 to the range we want.
+                # float(new_val) will kill off any decimal points when new_val has extremely large
+                # absolute value (around 16 digits due to limitations of 64bit double precision
+                # for python floats). The Decimal class retains that information. If the angle is
+                # negative then Decimal(new_val)%360 reduces it to (-360, 0), then + 360 to the range we want.
                 new_val_float = (Decimal(new_val)%360 + 360)%360
                 entry: Entry = getattr(self._builder, f"{parameter}_entry")
                 entry.delete(0, 1000)
-                entry.insert(0, f"{new_val_float: 0.{self._builder.variable_properties[parameter].decimal_places}f}".strip())
+                entry.insert(
+                    0,
+                    f"{new_val_float: 0.{self._builder.variable_properties[parameter].decimal_places}f}".strip()
+                )
 
             else:
                 t_asymp = np.degrees(self._orbit.t_asymp)
@@ -77,14 +93,24 @@ class OrbitConfigController():
 
         self.update_value(parameter, source_object, "entry", new_val_float)
 
-    def update_value(self, parameter: str, source_object: Orbit | Satellite | CentralBody, input_type: str, new_val: str | float) -> None:
+    def update_value(
+            self,
+            parameter: str,
+            source_object: Orbit | Satellite | CentralBody,
+            input_type: str,
+            new_val: str | float
+    ) -> None:
         new_val = float(new_val)
 
         # This if-elif block lets the sliders and manual inputs update one another.
         if input_type == "slider":
             entry: Entry = getattr(self._builder, f"{parameter}_entry")
             entry.delete(0, 1000)
-            entry.insert(0, f"{new_val: 0.{self._builder.variable_properties[parameter].decimal_places}f}".strip())
+            entry.insert(
+                0,
+                f"{new_val: 0.{self._builder.variable_properties[parameter].decimal_places}f}".strip()
+            )
+
         elif input_type == "entry":
             slider_var: DoubleVar = getattr(self._builder, f"{parameter}_var")
             slider_var.set(new_val)
@@ -98,7 +124,8 @@ class OrbitConfigController():
         self._orbit.update_orbital_properties()
         self._orbit.update_orbit_type()
 
-        # The value of the eccentricity determines the range of possible true anomaly values, which this if block checks for.
+        # The value of the eccentricity determines the range of possible true anomaly values, which
+        # this if block checks for.
         if parameter == "e":
             if new_val >= 1:
                 t_asymp = self._orbit.t_asymp
@@ -122,7 +149,12 @@ class OrbitConfigController():
             for param in params:
                 self._update_display(param, param_object)
 
-    def _update_display(self, parameter: str, source_object: Orbit | Satellite = None, value: float = None) -> None:
+    def _update_display(
+            self,
+            parameter: str,
+            source_object: Orbit | Satellite = None,
+            value: float = None
+    ) -> None:
         new_value = value if value is not None else getattr(source_object, parameter)
         unit = self._builder.parameters[parameter][1]
         if unit is not None and "°" in unit:
