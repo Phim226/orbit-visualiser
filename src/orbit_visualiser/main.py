@@ -1,7 +1,6 @@
 from tkinter import Tk
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
-from orbit_visualiser.ui import OrbitFigure
-from orbit_visualiser.ui import OrbitConfigurer
+from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, OrbitConfigController
 
 class OrbitVisualiser():
 
@@ -19,8 +18,9 @@ class OrbitVisualiser():
         orbit_figure: OrbitFigure = OrbitFigure(root, self.figure_frame_placement, orbit, central_body, satellite)
         orbit_figure.build()
 
-        orbit_config: OrbitConfigurer = OrbitConfigurer(root, self.config_frame_placement, orbit_figure, orbit, central_body, satellite)
-        orbit_config.build()
+        orbit_builder: OrbitConfigBuilder = OrbitConfigBuilder(root, self.config_frame_placement, orbit_figure, orbit, central_body, satellite)
+        orbit_controller: OrbitConfigController = OrbitConfigController(orbit_figure, orbit_builder, orbit, satellite, central_body)
+        orbit_builder.build(orbit_controller.reset_state, orbit_controller.validate_manual_input, orbit_controller.update_value, orbit_controller.format_display_value)
 
 # TODO: Write tests as I go.
 if __name__ == "__main__":
