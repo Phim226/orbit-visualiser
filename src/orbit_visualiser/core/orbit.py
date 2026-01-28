@@ -98,12 +98,14 @@ class Orbit():
     def update_orbital_properties(self):
         e, rp = self._e, self._rp
         self._p: float = self._orbital_param_erp(e, rp)
-        self._a: float = self._semimajor_axis_erp(e, rp)
-        self._b: float = self._semiminor_axis_erp(e, rp)
-        self._ra: float = self._apoapsis_erp(e, rp)
+        a = self._semimajor_axis_erp(e, rp)
+        self._a: float = a
+        b = self._semiminor_axis_erp(e, a)
+        self._b: float = b
+        self._ra: float = self._apoapsis_erp(e, a)
         self._t_asymp: float = self._asymptote_anomaly_e(e)
         self._turn_angle: float = self._turning_angle_e(e)
-        self._aim_rad: float = self._aiming_radius_erp(e, rp)
+        self._aim_rad: float = self._aiming_radius_erp(e, b)
 
     def update_orbit_type(self) -> None:
         e = self._e
@@ -134,20 +136,20 @@ class Orbit():
 
         return np.inf
 
-    def _semiminor_axis_erp(self, e: float, rp: float) -> float:
+    def _semiminor_axis_erp(self, e: float, a: float) -> float:
         """Calculate the semiminor axis b using the eccentricity and radius of periapsis"""
         if e > 1:
-            return rp*np.sqrt(e**2 - 1)/(1 - e)
+            return a*np.sqrt(e**2 - 1)
 
         elif e < 1:
-            return rp*np.sqrt(1 - e**2)/(1 - e)
+            return a*np.sqrt(1 - e**2)
 
         return np.inf
 
-    def _apoapsis_erp(self, e: float, rp: float) -> float:
+    def _apoapsis_erp(self, e: float, a: float) -> float:
         """Calculate the radius of apoapsis ra using the eccentricity and radius of periapsis"""
         if e != 1:
-            return rp*((1 + e)/(1 - e))
+            return a*(1 + e)
 
         return np.inf
 
@@ -165,9 +167,9 @@ class Orbit():
 
         return np.nan
 
-    def _aiming_radius_erp(self, e: float, rp: float) -> float:
+    def _aiming_radius_erp(self, e: float, b: float) -> float:
         if e > 1:
-            return rp*np.sqrt((e + 1)/(e - 1))
+            return -b
 
         return np.nan
 
