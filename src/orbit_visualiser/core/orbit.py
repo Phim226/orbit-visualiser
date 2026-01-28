@@ -20,6 +20,8 @@ class PerifocalOrbitEq():
 
 
 # TODO: self.orbital_angles should return just a tuple, not the linspace. The linspace is only for plotting so logic for calculating it should be in OrbitFigure.
+# TODO: Change calculations of properties to use previously calculated properties instead of reusing e and rp.
+# TODO: Have orbit type update first and not be separate from update_orbital_properties().
 class Orbit():
 
 
