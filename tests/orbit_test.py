@@ -32,6 +32,7 @@ def test_orbit_type(subtests: Subtests):
         0.5: ("elliptical", True),
         0.9999999999: ("elliptical", True),
         1: ("parabolic", False),
+        1.00000000001: ("hyperbolic", False),
         1.5: ("hyperbolic", False),
         10000000: ("hyperbolic", False)
     }
