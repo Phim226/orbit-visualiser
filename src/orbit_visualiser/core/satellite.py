@@ -11,7 +11,7 @@ class Satellite():
     def __init__(self, orbit: Orbit, central_body: CentralBody, nu: float = 0.00):
         self._orbit = orbit
         self._central_body = central_body
-        self._nu: float = nu # true anomaly in rads
+        self._nu = nu # true anomaly in rads
 
         self.update_satellite_properties()
 
