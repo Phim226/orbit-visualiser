@@ -44,7 +44,6 @@ class OrbitConfigController():
             setattr(var_props[name].obj, name, init_value)
 
         self._orbit.update_orbital_properties()
-        self._orbit.update_orbit_type()
         self._sat.update_satellite_properties()
 
         self._orbit_fig.redraw_orbit()
@@ -122,7 +121,6 @@ class OrbitConfigController():
 
 
         self._orbit.update_orbital_properties()
-        self._orbit.update_orbit_type()
 
         # The value of the eccentricity determines the range of possible true anomaly values, which
         # this if block checks for.

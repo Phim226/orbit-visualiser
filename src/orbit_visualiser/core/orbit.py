@@ -29,7 +29,6 @@ class Orbit():
         self._e: float = e # Eccentricity
         self._rp: float = rp # Radius of periapsis in km
         self.update_orbital_properties()
-        self.update_orbit_type()
 
 
     @property
@@ -97,6 +96,9 @@ class Orbit():
 
     def update_orbital_properties(self):
         e, rp = self._e, self._rp
+
+        self._update_orbit_type(e)
+
         self._p: float = self._orbital_param_erp(e, rp)
         a = self._semimajor_axis_erp(e, rp)
         self._a: float = a
@@ -107,8 +109,7 @@ class Orbit():
         self._turn_angle: float = self._turning_angle_e(e)
         self._aim_rad: float = self._aiming_radius_erp(e, b)
 
-    def update_orbit_type(self) -> None:
-        e = self._e
+    def _update_orbit_type(self, e: float) -> None:
         if e == 0:
             self._orbit_type = "circular"
             self._is_closed = True
