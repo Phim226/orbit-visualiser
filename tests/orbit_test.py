@@ -5,6 +5,12 @@ from orbit_visualiser.core import Orbit
 
 
 def test_circular_orbit_distance_parameters(subtests: Subtests):
+    """
+    For circular orbits the radius of periapsis, radius of apoapsis, semi-major axis, semi-minor axis
+    and orbital parameter should all be equivalent.
+
+    circular_orbit_test_cases is the list of initial radius of periapsis we set for our orbits.
+    """
     circular_orbit_test_cases = [
         0.000000001,
         1,
@@ -26,6 +32,14 @@ def test_circular_orbit_distance_parameters(subtests: Subtests):
                     np.isclose(rp, a) and np.isclose(rp, b) and np.isclose(rp, p))
 
 def test_orbit_type(subtests: Subtests):
+    """
+    If the eccentricity is 0<= e < 1 then the orbit is closed (True) and either circular (e = 0) or
+    elliptical (0 < e < 1). If the eccentricity is e >= 1 then the orbit is not closed (False) and
+    is either parabolic (e = 1) or hyperbolic (e > 1).
+
+    eccentricity_test_cases is a dictionary giving the eccentricity test value and the expected
+    orbit type and is_closed boolean value.
+    """
     eccentricity_test_cases = {
         0 : ("circular", True),
         0.0000000001: ("elliptical", True),
