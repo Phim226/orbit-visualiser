@@ -7,6 +7,9 @@ import numpy as np
 from orbit_visualiser.ui import OrbitFigure
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
+# TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
+# TODO: Split into variables, options and properties builders.
+
 @dataclass
 class VarProperties():
     name: str
