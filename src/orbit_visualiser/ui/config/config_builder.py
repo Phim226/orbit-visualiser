@@ -331,7 +331,7 @@ class OrbitConfigBuilder():
             format_value: Callable
     ) -> None:
         for i, (key, spec) in enumerate(properties.items()):
-            self._build_display(
+            self._build_property_row(
                 frame, key, source_object, spec, i, format_value
         )
 
@@ -339,7 +339,7 @@ class OrbitConfigBuilder():
         frame.grid_columnconfigure(0, weight = 0)
         frame.grid_columnconfigure(1, weight = 1)
 
-    def _build_display(
+    def _build_property_row(
             self,
             frame: LabelFrame,
             property: str,
