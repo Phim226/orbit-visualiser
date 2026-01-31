@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from math import pi
 import numpy as np
 
-
+# TODO: Move PerifocalOrbitEq to satellite.py.
+# TODO: Expand PerifocalOrbitEq to include velocity calculation as well.
 class PerifocalOrbitEq():
 
     def __init__(self, e: float, p: float):
