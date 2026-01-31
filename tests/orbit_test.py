@@ -23,13 +23,14 @@ def test_circular_orbit_distance_parameters(subtests: Subtests):
     for i, periapsis in enumerate(circular_orbit_test_cases):
         with subtests.test("Circular orbit distance parameters test cases", i = i):
             orbit = Orbit(rp = periapsis)
-            rp = orbit.rp
-            ra = orbit.ra
-            a = orbit.a
-            b = orbit.b
-            p = orbit.p
-            assert (np.isclose(rp, periapsis) and np.isclose(rp, ra) and
-                    np.isclose(rp, a) and np.isclose(rp, b) and np.isclose(rp, p))
+            periapsis = orbit.rp
+            distances = [
+                orbit.ra,
+                orbit.a,
+                orbit.b,
+                orbit.p
+            ]
+            assert np.allclose(distances, periapsis)
 
 def test_orbit_type(subtests: Subtests):
     """

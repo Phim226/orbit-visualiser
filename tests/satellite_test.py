@@ -55,6 +55,5 @@ def test_circular_orbit_anomalies(subtests: Subtests):
             satellite.nu = nu
             satellite.update_satellite_properties()
 
-            mean = satellite.m_anomaly
-            eccentric = satellite.e_anomaly
-            assert np.isclose(mean, nu) and np.isclose(eccentric, nu)
+            anomalies = [satellite.m_anomaly, satellite.e_anomaly]
+            assert np.allclose(anomalies, nu)
