@@ -1,7 +1,7 @@
 from tkinter import Entry, Event, messagebox, DoubleVar
 from decimal import Decimal
 import numpy as np
-from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, ParameterSpec
+from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, PropertySpec
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Show the correct sign on the infinity symbol for x and y position.

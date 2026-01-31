@@ -110,7 +110,7 @@ class OrbitFigure():
         self._canvas.draw_idle()
 
     def redraw_satellite(self) -> None:
-        x, y = self._sat.x, self._sat.y
+        x, y = self._sat.pos_pf
         self._sat_point.set_data((x,), (y,))
 
         self._canvas.draw_idle()
