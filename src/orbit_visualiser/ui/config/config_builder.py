@@ -9,9 +9,10 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
 # TODO: Split into variables, options and properties builders.
+# TODO: Manage geometry of display options using rows/columns.
 
-@dataclass
-class VarProperties():
+@dataclass(frozen = True)
+class VariableSpec():
     name: str
     obj: Orbit | Satellite | CentralBody
     init_value: float
@@ -20,44 +21,50 @@ class VarProperties():
     units: str | None
     entry_pos: tuple[int]
 
+@dataclass(frozen = True)
+class ParameterSpec():
+    label: str
+    units: str | None
+    getter: Callable[[Orbit | Satellite], float]
+
 class OrbitConfigBuilder():
 
     _title_font = ("Orbitron", 16, "bold")
     _subtitle_font = ("Orbitron", 11, "normal")
     _slider_font = ("Fira Mono", 9, "normal")
 
-    orbital_parameters: dict[str, tuple[str]] = {
-        "orbit_type" : ("Orbit type", None),
-        "a" : ("Semi-major axis", "km"),
-        "b" : ("Semi-minor axis", "km"),
-        "ra": ("Radius of apoapsis", "km"),
-        "p" : ("Semi-parameter", "km"),
-        "t_asymp" : ("Anomaly of asymptote", "°"),
-        "turn_angle" : ("Turning angle", "°"),
-        "aim_rad" : ("Aiming radius", "km")
+    orbital_parameters: dict[str, ParameterSpec] = {
+        "orbit_type" : ParameterSpec("Orbit type", None, lambda orbit: orbit.orbit_type),
+        "semi_major_axis" : ParameterSpec("Semi-major axis", "km", lambda orbit: orbit.a),
+        "semi_minor_axis" : ParameterSpec("Semi-minor axis", "km", lambda orbit: orbit.b),
+        "radius_apoapsis": ParameterSpec("Radius of apoapsis", "km", lambda orbit: orbit.ra),
+        "semi_parameter" : ParameterSpec("Semi-parameter", "km", lambda orbit: orbit.p),
+        "asymptote_anomal" : ParameterSpec("Anomaly of asymptote", "°", lambda orbit: np.degrees(orbit.t_asymp)),
+        "turn_angle" : ParameterSpec("Turning angle", "°", lambda orbit: np.degrees(orbit.turn_angle)),
+        "aim_radius" : ParameterSpec("Aiming radius", "km", lambda orbit: orbit.aim_rad)
     }
 
-    satellite_parameters: dict[str, tuple[str]] = {
-        "r" : ("Radius", "km"),
-        "x" : ("x position", "km"),
-        "y" : ("y position", "km"),
-        "period" : ("Orbital period", "s"),
-        "n" : ("Mean motion", "°/s"),
-        "e_anomaly" : ("Eccentric anomaly", "°"),
-        "m_anomaly" : ("Mean anomaly", "°"),
-        "t_p" : ("Time since periapsis", "s"),
-        "h" : ("Angular momentum", "km²/s"),
-        "v" : ("Velocity", "km/s"),
-        "v_azim" : ("Azimuthal velocity", "km/s"),
-        "v_radial" : ("Radial velocity", "km/s"),
-        "v_esc" : ("Escape velocity", "km/s"),
-        "v_inf" : ("Excess velocity", "km/s"),
-        "gam" : ("Flight angle", "°"),
-        "eps" : ("Specific energy", "km²/s²"),
-        "c3" : ("Characteristic energy", "km²/s²")
+    satellite_parameters: dict[str, tuple[str, Callable]] = {
+        "radius" : ParameterSpec("Radius", "km", lambda sat: sat.r),
+        "x_pos" : ParameterSpec("Perifocal x position", "km", lambda sat: sat.pos_pf[0]),
+        "y_pos" : ParameterSpec("Perifocal y position", "km", lambda sat: sat.pos_pf[1]),
+        "period" : ParameterSpec("Orbital period", "s", lambda sat: sat.period),
+        "mean_motion" : ParameterSpec("Mean motion", "°/s", lambda sat: np.degrees(sat.n)),
+        "e_anomaly" : ParameterSpec("Eccentric anomaly", "°", lambda sat: np.degrees(sat.e_anomaly)),
+        "m_anomaly" : ParameterSpec("Mean anomaly", "°", lambda sat: np.degrees(sat.m_anomaly)),
+        "time_periapsis" : ParameterSpec("Time since periapsis", "s", lambda sat: sat.t_p),
+        "ang_momentum" : ParameterSpec("Angular momentum", "km²/s", lambda sat: sat.h),
+        "velocity" : ParameterSpec("Velocity", "km/s", lambda sat: sat.v),
+        "azim_velocity" : ParameterSpec("Azimuthal velocity", "km/s", lambda sat: sat.v_azim),
+        "radial_velocity" : ParameterSpec("Radial velocity", "km/s", lambda sat: sat.v_radial),
+        "esc_velocity" : ParameterSpec("Escape velocity", "km/s", lambda sat: sat.v_esc),
+        "excess_velocity" : ParameterSpec("Excess velocity", "km/s", lambda sat: sat.v_inf),
+        "flight_angle" : ParameterSpec("Flight angle", "°", lambda sat: np.degrees(sat.gam)),
+        "spec_energy" : ParameterSpec("Specific energy", "km²/s²", lambda sat: sat.eps),
+        "char_energy" : ParameterSpec("Characteristic energy", "km²/s²", lambda sat: sat.c3)
     }
 
-    parameters: dict[str, tuple[str]] = orbital_parameters | satellite_parameters
+    parameters: dict[str, ParameterSpec] = orbital_parameters | satellite_parameters
 
     def __init__(
             self, root: Tk,
@@ -74,7 +81,7 @@ class OrbitConfigBuilder():
         self._central_body = central_body
         self._sat = satellite
 
-        self._e_properties: VarProperties = VarProperties(
+        self._e_properties: VariableSpec = VariableSpec(
             "Eccentricity",
             orbit,
             orbit.e,
@@ -83,7 +90,7 @@ class OrbitConfigBuilder():
             None,
             (85, 4)
         )
-        self._rp_properties: VarProperties = VarProperties(
+        self._rp_properties: VariableSpec = VariableSpec(
             "Radius of periapsis",
             orbit,
             orbit.rp,
@@ -92,7 +99,7 @@ class OrbitConfigBuilder():
             "km",
             (160, 4)
         )
-        self._mu_properties: VarProperties = VarProperties(
+        self._mu_properties: VariableSpec = VariableSpec(
             "Gravitational parameter",
             central_body,
             central_body.mu,
@@ -101,7 +108,7 @@ class OrbitConfigBuilder():
             "km³/s²",
             (198, 4)
         )
-        self._nu_properties: VarProperties = VarProperties(
+        self._nu_properties: VariableSpec = VariableSpec(
             "True anomaly",
             satellite,
             satellite.nu,
@@ -111,7 +118,7 @@ class OrbitConfigBuilder():
             (115, 4)
         )
 
-        self._variable_properties: dict[str, VarProperties] = {
+        self._variable_properties: dict[str, VariableSpec] = {
             "e" : self._e_properties,
             "rp" : self._rp_properties,
             "mu" : self._mu_properties,
@@ -131,7 +138,7 @@ class OrbitConfigBuilder():
         )
 
     @property
-    def variable_properties(self) -> dict[str, VarProperties]:
+    def variable_properties(self) -> dict[str, VariableSpec]:
         return self._variable_properties
 
     @property
@@ -235,7 +242,7 @@ class OrbitConfigBuilder():
             self,
             root: Frame,
             parameter: str,
-            param_props: VarProperties,
+            param_props: VariableSpec,
             validate_input: Callable,
             update_value: Callable
     ) -> tuple[Scale, Entry]:
@@ -324,31 +331,28 @@ class OrbitConfigBuilder():
         for i, parameters in enumerate(list(parameters.items())):
             parameter_info = parameters[1]
             self._build_display(
-                frame, parameters[0], source_object, parameter_info[0], parameter_info[1], i, format_value
+                frame, parameters[0], source_object, parameter_info, i, format_value
         )
 
         # Setting the weight allows the grid manager to stretch labels in _build_display into available space.
-        frame.grid_columnconfigure(0, weight=0)
-        frame.grid_columnconfigure(1, weight=1)
+        frame.grid_columnconfigure(0, weight = 0)
+        frame.grid_columnconfigure(1, weight = 1)
 
     def _build_display(
             self,
             frame: LabelFrame,
             parameter: str,
             source_object: Orbit | Satellite,
-            display_str: str,
-            units: str,
+            spec: ParameterSpec,
             row: int,
             format_value: Callable
     ) -> None:
-        init_value = getattr(source_object, parameter)
-        if units is not None and "°" in units:
-            init_value = np.degrees(init_value)
+        init_value = spec.getter(source_object)
 
-        var = StringVar(value = format_value(init_value, units))
+        var = StringVar(value = format_value(init_value, spec.units))
         self.__setattr__(f"{parameter}_str", var)
 
-        name_label = Label(frame, text = display_str + ":", anchor = "w", font = self._slider_font)
+        name_label = Label(frame, text = spec.label + ":", anchor = "w", font = self._slider_font)
         name_label.grid(row = row, column = 0, sticky = "w", padx = (0, 6))
 
         value_label = Label(frame, textvariable = var, anchor = "e", width = 13, font = self._slider_font)

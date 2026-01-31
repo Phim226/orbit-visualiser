@@ -1,7 +1,7 @@
 from tkinter import Entry, Event, messagebox, DoubleVar
 from decimal import Decimal
 import numpy as np
-from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder
+from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, ParameterSpec
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Show the correct sign on the infinity symbol for x and y position.
@@ -10,6 +10,7 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 # TODO: Remove any leading 0s from manual inputs.
 # TODO: Refactor to a lazy/cached recalculation model. Currently everything is recalculated on every variable change.
 # TODO: Show correct sign on infinity symbol for mean anomaly and time since periapsis for open trajectories.
+# TODO: Properly display very large values in the properties panel without them being cut off.
 
 class OrbitConfigController():
 
@@ -152,8 +153,9 @@ class OrbitConfigController():
             source_object: Orbit | Satellite = None,
             value: float = None
     ) -> None:
-        new_value = value if value is not None else getattr(source_object, parameter)
-        unit = self._builder.parameters[parameter][1]
+        spec: ParameterSpec = self._builder.parameters[parameter]
+        new_value = value if value is not None else spec.getter(source_object)
+        unit = spec.units
         if unit is not None and "°" in unit:
             new_value = np.degrees(new_value)
 

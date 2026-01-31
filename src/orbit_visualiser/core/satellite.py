@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.typing import ArrayLike
 from math import pi
 from orbit_visualiser.core import Orbit, CentralBody
 
@@ -22,6 +23,14 @@ class Satellite():
     @nu.setter
     def nu(self, nu: float) -> None:
         self._nu = nu
+
+    @property
+    def pos_pf(self) -> ArrayLike:
+        return self._pos_pf
+
+    @property
+    def vel_pf(self) -> ArrayLike:
+        return self._vel_pf
 
     @property
     def h(self) -> float:
@@ -54,14 +63,6 @@ class Satellite():
     @property
     def eps(self) -> float:
         return self._eps
-
-    @property
-    def x(self) -> float:
-        return self._x
-
-    @property
-    def y(self) -> float:
-        return self._y
 
     @property
     def gam(self) -> float:
@@ -101,7 +102,7 @@ class Satellite():
         mu_over_h = mu/h
 
         # Geometry
-        self._x, self._y = self._position(nu, t_asymp)
+        self._pos_pf = self._pf_position(nu, t_asymp)
         self._r = self._radius(nu, t_asymp, p, den)
 
         # Kinematics
@@ -132,7 +133,7 @@ class Satellite():
     def _specific_ang_momentum(mu: float, p: float) -> float:
         return np.sqrt(mu*p)
 
-    def _position(self, nu: float, t_asymp: float) -> tuple[float]:
+    def _pf_position(self, nu: float, t_asymp: float) -> tuple[float]:
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
                 return np.inf, np.inf
 
