@@ -122,7 +122,7 @@ class Satellite():
         # Time
         period = self._orbital_period(mu, a)
         self._period = period
-        self._n = self._mean_motion(period)
+        self._n = self._mean_motion(period, mu, p, a)
         e_anomaly = self._eccentric_anomaly(e, nu)
         self._e_anomaly = e_anomaly
         m_anomaly = self._mean_anomaly(e, nu, e_anomaly, t_asymp)
@@ -205,11 +205,16 @@ class Satellite():
 
         return np.nan
 
-    def _mean_motion(self, t: float) -> float:
+    def _mean_motion(self, t: float, mu: float, p: float, a: float) -> float:
         if self._orbit.is_closed:
             return 2*pi/t
 
-        return np.nan
+        orbit_type = self._orbit.orbit_type
+        if orbit_type == "parabolic":
+            return 2*np.sqrt(mu/p)
+
+        elif orbit_type == "hyperbolic":
+            return 2*np.sqrt(mu/abs(a**3))
 
     def _eccentric_anomaly(self, e: float, nu: float):
         orbit_type = self._orbit.orbit_type
