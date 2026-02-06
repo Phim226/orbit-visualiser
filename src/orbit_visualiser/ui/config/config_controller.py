@@ -143,21 +143,12 @@ class OrbitConfigController():
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
 
-        for property_object, properties in list(self._builder.property_specs_by_object.items()):
-            for property in properties:
-                self._update_display(property, property_object)
+        for property, property_spec in list(self._builder.property_specs.items()):
+            self._update_display(property, property_spec)
 
-    def _update_display(
-            self,
-            property: str,
-            source_object: Orbit | Satellite = None,
-            value: float = None
-    ) -> None:
-        spec: PropertySpec = self._builder.properties[property]
-        new_value = value if value is not None else spec.getter(source_object)
+    def _update_display(self, property: str, spec: PropertySpec) -> None:
+        new_value = spec.getter(spec.obj)
         unit = spec.units
-        if unit is not None and "°" in unit:
-            new_value = np.degrees(new_value)
 
         getattr(self._builder, f"{property}_str").set(self.format_display_value(new_value, unit))
 
