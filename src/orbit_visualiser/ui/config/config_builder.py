@@ -89,37 +89,37 @@ class OrbitConfigBuilder():
         self._e_specs: VariableSpec = VariableSpec(
             "Eccentricity",
             orbit,
+            None,
             orbit.e,
             (0, 5),
             3,
-            None,
             (85, 4)
         )
         self._rp_specs: VariableSpec = VariableSpec(
             "Radius of periapsis",
             orbit,
+            "km",
             orbit.rp,
             (central_body.r + 1, 200_000),
             0,
-            "km",
             (160, 4)
         )
         self._mu_specs: VariableSpec = VariableSpec(
             "Gravitational parameter",
             central_body,
+            "km³/s²",
             central_body.mu,
             (1, 1_000_000),
             0,
-            "km³/s²",
             (198, 4)
         )
         self._nu_specs: VariableSpec = VariableSpec(
             "True anomaly",
             satellite,
+            "°",
             satellite.nu,
             (0, 360),
             2,
-            "°",
             (115, 4)
         )
 
