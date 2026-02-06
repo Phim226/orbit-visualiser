@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame, Button, Entry, DoubleVar
+from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame, Button, Entry, DoubleVar, Checkbutton, IntVar
 from tkinter.ttk import Separator
 from typing import Callable, TypeVar, Generic
 from functools import partial
@@ -197,6 +197,8 @@ class OrbitConfigBuilder():
         self._options_frame.pack(side = "left", anchor = "n", pady = (2, 0))
 
         self._build_variables_frame(reset, validate_input, update_value)
+        self._build_display_options_frame()
+
 
         sep = Separator(self._config_frame, orient = "vertical")
         sep.pack(side = "left", fill = "y", padx = 6, expand = True)
@@ -313,6 +315,41 @@ class OrbitConfigBuilder():
         slider: Scale = self.__getattribute__(slider_name)
         slider.place(x = 0, y = 0, anchor = "nw")
         return slider
+
+    def _build_display_options_frame(self) -> None:
+        options_frame: Frame = Frame(self._options_frame)
+        self._options_frame = options_frame
+
+        self._build_separator(options_frame, "Display options")
+
+        # Build orbit options frame
+        orbit_options_frame = LabelFrame(
+            options_frame, bd = 1, relief = "sunken", text = "Orbit", font = self._subtitle_font
+        )
+        self._rp_display_var: IntVar = IntVar()
+        rp_display_check: Checkbutton = Checkbutton(orbit_options_frame, text = "Periapsis", variable = self._rp_display_var)
+        rp_display_check.pack(side = "top", anchor = "nw")
+        orbit_options_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
+
+        # Build central body options frame
+        central_body_options_frame = LabelFrame(
+            options_frame, bd = 1, relief = "sunken", text = "Central body", font = self._subtitle_font
+        )
+        self._central_body_display_var: IntVar = IntVar(value = 1)
+        central_body_display_check: Checkbutton = Checkbutton(central_body_options_frame, text = "Central body", variable = self._central_body_display_var)
+        central_body_display_check.pack(side = "top", anchor = "nw")
+        central_body_options_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
+
+        # Build satellite options frame
+        satellite_options_frame = LabelFrame(
+            options_frame, bd = 1, relief = "sunken", text = "Satellite", font = self._subtitle_font
+        )
+        self._radius_display_var: IntVar = IntVar()
+        radius_display_check: Checkbutton = Checkbutton(satellite_options_frame, text = "Radius", variable = self._radius_display_var)
+        radius_display_check.pack(side = "top", anchor = "nw")
+        satellite_options_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
+
+        options_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x", expand = True)
 
     def _build_properties_frame(self, format_value: Callable) -> None:
         props_frame = Frame(self._config_frame, padx = 2)

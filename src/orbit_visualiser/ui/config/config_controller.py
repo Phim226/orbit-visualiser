@@ -176,3 +176,6 @@ class OrbitConfigController():
 
         elif units in ["°/s"]:
             return f"{value:6.6f} {units}"
+
+    def draw_periapsis() -> None:
+        pass

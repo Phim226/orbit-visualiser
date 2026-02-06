@@ -123,6 +123,11 @@ class OrbitFigure():
 
         self._canvas.draw_idle()
 
+    def plot_periapsis_point(self) -> None:
+        self._rp_point = self._ax.plot(
+            self._orbit.rp, 0, ms = 3, marker = "o", zorder = 9, color = "#502BF2", label = "$r_p$"
+        )
+
     @staticmethod
     def _zoom_factory(ax: Axes, base_scale = 2.):
         def zoom_fun(event):
