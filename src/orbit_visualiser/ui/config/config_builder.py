@@ -38,39 +38,6 @@ class OrbitConfigBuilder():
     _subtitle_font = ("Orbitron", 11, "normal")
     _slider_font = ("Fira Mono", 9, "normal")
 
-    orbital_properties: dict[str, PropertySpec[Orbit]] = {
-        "orbit_type" : PropertySpec("Orbit type", None, lambda orbit: orbit.orbit_type),
-        "semi_major_axis" : PropertySpec("Semi-major axis", "km", lambda orbit: orbit.a),
-        "semi_minor_axis" : PropertySpec("Semi-minor axis", "km", lambda orbit: orbit.b),
-        "radius_apoapsis": PropertySpec("Radius of apoapsis", "km", lambda orbit: orbit.ra),
-        "semi_parameter" : PropertySpec("Semi-parameter", "km", lambda orbit: orbit.p),
-        "asymptote_anomal" : PropertySpec("Anomaly of asymptote", "°", lambda orbit: np.degrees(orbit.t_asymp)),
-        "turn_angle" : PropertySpec("Turning angle", "°", lambda orbit: np.degrees(orbit.turn_angle)),
-        "aim_radius" : PropertySpec("Aiming radius", "km", lambda orbit: orbit.aim_rad)
-    }
-
-    satellite_properties: dict[str, PropertySpec[Satellite]] = {
-        "radius" : PropertySpec("Radius", "km", lambda sat: sat.r),
-        "x_pos" : PropertySpec("Perifocal x position", "km", lambda sat: sat.pos_pf[0]),
-        "y_pos" : PropertySpec("Perifocal y position", "km", lambda sat: sat.pos_pf[1]),
-        "period" : PropertySpec("Orbital period", "s", lambda sat: sat.period),
-        "mean_motion" : PropertySpec("Mean motion", "°/s", lambda sat: np.degrees(sat.n)),
-        "e_anomaly" : PropertySpec("Eccentric anomaly", "°", lambda sat: np.degrees(sat.e_anomaly)),
-        "m_anomaly" : PropertySpec("Mean anomaly", "°", lambda sat: np.degrees(sat.m_anomaly)),
-        "time_periapsis" : PropertySpec("Time since periapsis", "s", lambda sat: sat.t_p),
-        "ang_momentum" : PropertySpec("Angular momentum", "km²/s", lambda sat: sat.h),
-        "velocity" : PropertySpec("Velocity", "km/s", lambda sat: sat.v),
-        "azim_velocity" : PropertySpec("Azimuthal velocity", "km/s", lambda sat: sat.v_azim),
-        "radial_velocity" : PropertySpec("Radial velocity", "km/s", lambda sat: sat.v_radial),
-        "esc_velocity" : PropertySpec("Escape velocity", "km/s", lambda sat: sat.v_esc),
-        "excess_velocity" : PropertySpec("Excess velocity", "km/s", lambda sat: sat.v_inf),
-        "flight_angle" : PropertySpec("Flight angle", "°", lambda sat: np.degrees(sat.gam)),
-        "spec_energy" : PropertySpec("Specific energy", "km²/s²", lambda sat: sat.eps),
-        "char_energy" : PropertySpec("Characteristic energy", "km²/s²", lambda sat: sat.c3)
-    }
-
-    properties: dict[str, PropertySpec] = orbital_properties | satellite_properties
-
     def __init__(
             self, root: Tk,
             config_frame_placement: tuple[str],
@@ -85,6 +52,39 @@ class OrbitConfigBuilder():
         self._orbit = orbit
         self._central_body = central_body
         self._sat = satellite
+
+        self._orbital_properties: dict[str, PropertySpec[Orbit]] = {
+            "orbit_type" : PropertySpec("Orbit type", orbit, None, lambda orbit: orbit.orbit_type),
+            "semi_major_axis" : PropertySpec("Semi-major axis", orbit, "km", lambda orbit: orbit.a),
+            "semi_minor_axis" : PropertySpec("Semi-minor axis", orbit, "km", lambda orbit: orbit.b),
+            "radius_apoapsis": PropertySpec("Radius of apoapsis", orbit, "km", lambda orbit: orbit.ra),
+            "semi_parameter" : PropertySpec("Semi-parameter", orbit, "km", lambda orbit: orbit.p),
+            "asymptote_anomal" : PropertySpec("Anomaly of asymptote", orbit, "°", lambda orbit: np.degrees(orbit.t_asymp)),
+            "turn_angle" : PropertySpec("Turning angle", orbit, "°", lambda orbit: np.degrees(orbit.turn_angle)),
+            "aim_radius" : PropertySpec("Aiming radius", orbit, "km", lambda orbit: orbit.aim_rad)
+        }
+
+        self._satellite_properties: dict[str, PropertySpec[Satellite]] = {
+            "radius" : PropertySpec("Radius", satellite, "km", lambda sat: sat.r),
+            "x_pos" : PropertySpec("Perifocal x position", satellite, "km", lambda sat: sat.pos_pf[0]),
+            "y_pos" : PropertySpec("Perifocal y position", satellite, "km", lambda sat: sat.pos_pf[1]),
+            "period" : PropertySpec("Orbital period", satellite, "s", lambda sat: sat.period),
+            "mean_motion" : PropertySpec("Mean motion", satellite, "°/s", lambda sat: np.degrees(sat.n)),
+            "e_anomaly" : PropertySpec("Eccentric anomaly", satellite, "°", lambda sat: np.degrees(sat.e_anomaly)),
+            "m_anomaly" : PropertySpec("Mean anomaly", satellite, "°", lambda sat: np.degrees(sat.m_anomaly)),
+            "time_periapsis" : PropertySpec("Time since periapsis", satellite, "s", lambda sat: sat.t_p),
+            "ang_momentum" : PropertySpec("Angular momentum", satellite, "km²/s", lambda sat: sat.h),
+            "velocity" : PropertySpec("Velocity", satellite, "km/s", lambda sat: sat.v),
+            "azim_velocity" : PropertySpec("Azimuthal velocity", satellite, "km/s", lambda sat: sat.v_azim),
+            "radial_velocity" : PropertySpec("Radial velocity", satellite, "km/s", lambda sat: sat.v_radial),
+            "esc_velocity" : PropertySpec("Escape velocity", satellite, "km/s", lambda sat: sat.v_esc),
+            "excess_velocity" : PropertySpec("Excess velocity", satellite, "km/s", lambda sat: sat.v_inf),
+            "flight_angle" : PropertySpec("Flight angle", satellite, "°", lambda sat: np.degrees(sat.gam)),
+            "spec_energy" : PropertySpec("Specific energy", satellite, "km²/s²", lambda sat: sat.eps),
+            "char_energy" : PropertySpec("Characteristic energy", satellite, "km²/s²", lambda sat: sat.c3)
+        }
+
+        self._property_specs: dict[str, PropertySpec] = self._orbital_properties | self._satellite_properties
 
         self._e_specs: VariableSpec = VariableSpec(
             "Eccentricity",
@@ -131,8 +131,8 @@ class OrbitConfigBuilder():
         }
 
         self._property_specs_by_object: dict[Orbit | Satellite, dict] = {
-            orbit: self.orbital_properties,
-            satellite : self.satellite_properties
+            Orbit: self._orbital_properties,
+            Satellite : self._satellite_properties
         }
 
         self._config_frame = Frame(root)
@@ -141,6 +141,10 @@ class OrbitConfigBuilder():
             anchor = config_frame_placement[1],
             padx = 8, pady = 6
         )
+
+    @property
+    def property_specs(self) -> dict[str, PropertySpec]:
+        return self._property_specs
 
     @property
     def variable_specs(self) -> dict[str, VariableSpec]:
@@ -317,14 +321,14 @@ class OrbitConfigBuilder():
         orbital_props_frame = LabelFrame(
             props_frame, bd = 1, relief = "sunken", text = "Orbit", font = self._subtitle_font
         )
-        self._populate_properties(orbital_props_frame, self.orbital_properties, self._orbit, format_value)
+        self._populate_properties(orbital_props_frame, self._orbital_properties, self._orbit, format_value)
         orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
 
         sat_props_frame = LabelFrame(
             props_frame, bd = 1, relief = "sunken", text = "Satellite",
             font = self._subtitle_font, width = 244
         )
-        self._populate_properties(sat_props_frame, self.satellite_properties, self._sat, format_value)
+        self._populate_properties(sat_props_frame, self._satellite_properties, self._sat, format_value)
         sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x")
 
         props_frame.pack(side = "top", anchor = "n", pady = (2, 0))
