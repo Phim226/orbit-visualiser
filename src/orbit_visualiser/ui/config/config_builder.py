@@ -186,6 +186,9 @@ class OrbitConfigBuilder():
             update_value: Callable,
             format_value: Callable
     ) -> None:
+        self._options_frame = Frame(self._config_frame, padx = 2)
+        self._options_frame.pack(side = "left", anchor = "n", pady = (2, 0))
+
         self._build_variables_frame(reset, validate_input, update_value)
 
         sep = Separator(self._config_frame, orient = "vertical")
@@ -199,7 +202,7 @@ class OrbitConfigBuilder():
             validate_input: Callable,
             update_value: Callable
     ) -> None:
-        var_frame = Frame(self._config_frame, padx = 2)
+        var_frame = Frame(self._options_frame)
         self._variables_frame = var_frame
 
         self._build_separator(var_frame, "Variables")
@@ -238,7 +241,7 @@ class OrbitConfigBuilder():
         reset_button = Button(var_frame, text = "Reset", command = reset)
         reset_button.pack(side = "top", anchor = "nw", pady = (4, 0))
 
-        var_frame.pack(side = "left", anchor = "n", pady = (2, 0))
+        var_frame.pack(side = "top", anchor = "ne", pady = (2, 0))
 
     def _build_input_frame(
             self,
