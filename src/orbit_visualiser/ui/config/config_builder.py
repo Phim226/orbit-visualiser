@@ -253,40 +253,41 @@ class OrbitConfigBuilder():
     def _build_input_frame(
             self,
             root: Frame,
-            parameter: str,
-            param_props: VariableSpec,
+            variable: str,
+            spec: VariableSpec,
             validate_input: Callable,
             update_value: Callable
     ) -> tuple[Scale, Entry]:
-        obj = param_props.obj
-        units = param_props.units
+        obj = spec.obj
+        units = spec.units
 
         frame = Frame(root, width = 265, height = 60)
 
         slider = self._build_slider(
             frame,
-            parameter,
+            variable,
             obj,
-            f"{param_props.name}{"" if units is None else f" ({units})"} = ",
-            param_props.slider_lims,
-            1/10**param_props.decimal_places,
+            f"{spec.label}{"" if units is None else f" ({units})"} = ",
+            spec.slider_lims,
+            1/10**spec.decimal_places,
             update_value
         )
 
         entry = Entry(frame, width = 10)
-        entry.insert(0, f"{param_props.init_value: 0.{param_props.decimal_places}f}".strip())
-        entry.bind("<Return>", partial(validate_input, parameter, obj))
-        x, y = param_props.entry_pos
+        entry.insert(0, f"{spec.init_value: 0.{spec.decimal_places}f}".strip())
+        entry.bind("<Return>", partial(validate_input, variable, obj))
+        x, y = spec.entry_pos
         entry.place(x = x, y = y)
 
-        frame.pack(side = "top", anchor = "nw", pady = 2)
+        frame.pack(side = "top", anchor = "n", pady = 2)
 
         return slider, entry
 
+    # TODO: Refactor this to input VariableSpec instead of VariableSpec attributes.
     def _build_slider(
             self,
             root: Frame,
-            parameter: str,
+            variable: str,
             source_object: Orbit | Satellite,
             label: str,
             lims: tuple[int],
@@ -294,19 +295,19 @@ class OrbitConfigBuilder():
             update_value: Callable
     ) -> Scale:
         slider_var: DoubleVar = DoubleVar()
-        self.__setattr__(f"{parameter}_var", slider_var)
+        self.__setattr__(f"{variable}_var", slider_var)
 
-        slider_name = f"_{parameter}_slider"
+        slider_name = f"_{variable}_slider"
         self.__setattr__(
             slider_name,
             Scale(root, from_ = lims[0], to = lims[1], resolution = res, length = 260,
                   orient = "horizontal", variable = slider_var,
-                  command = partial(update_value, parameter, source_object, "slider"),
+                  command = partial(update_value, variable, source_object, "slider"),
                   label = label, font = self._slider_font)
         )
 
-        init_value: float = (round(np.degrees(getattr(source_object, parameter)), 2) if parameter == "nu"
-                             else getattr(source_object, parameter))
+        init_value: float = (round(np.degrees(getattr(source_object, variable)), 2) if variable == "nu"
+                             else getattr(source_object, variable))
         slider_var.set(init_value)
 
         slider: Scale = self.__getattribute__(slider_name)
