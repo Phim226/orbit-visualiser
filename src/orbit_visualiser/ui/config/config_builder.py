@@ -11,14 +11,16 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 # TODO: Split into variables, options and properties builders.
 # TODO: Manage geometry of display options using rows/columns.
 
+
+# TODO: VariableSpec can be subclass of PropertySpec
 @dataclass(frozen = True)
 class VariableSpec():
-    name: str
+    label: str
     obj: Orbit | Satellite | CentralBody
+    units: str | None
     init_value: float
     slider_lims: tuple[int]
     decimal_places: int
-    units: str | None
     entry_pos: tuple[int]
 
 T = TypeVar("T")
@@ -26,8 +28,9 @@ T = TypeVar("T")
 @dataclass(frozen = True)
 class PropertySpec(Generic[T]):
     label: str
+    obj: Orbit | Satellite
     units: str | None
-    getter: Callable[[T], float]
+    getter: Callable[[T], float | bool]
 
 class OrbitConfigBuilder():
 
