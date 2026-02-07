@@ -8,6 +8,8 @@ from orbit_visualiser.core import Orbit, CentralBody, Satellite
 # TODO: Fix bug where scroll zoom doesn't register as changing the view so the native matplotlib home button has unexpected (and often undesirable) behaviour.
 class OrbitFigure():
 
+    DISPLAY_TEXT_OFFSET = (1.5, 1.5)
+
     def __init__(
             self,
             root: Tk,
@@ -89,6 +91,8 @@ class OrbitFigure():
             self._orbit.rp, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B"
         )
 
+        self.plot_periapsis_point()
+
         f = self._zoom_factory(self._ax, 1.1)
 
     def _build_canvas(self) -> None:
@@ -123,9 +127,11 @@ class OrbitFigure():
         self._canvas.draw_idle()
 
     def plot_periapsis_point(self) -> None:
+
         self._rp_point = self._ax.plot(
             self._orbit.rp, 0, ms = 3, marker = "o", zorder = 9, color = "#502BF2", label = "$r_p$"
         )
+        self._ax.annotate("$r_p$", xy = (self._orbit.rp, 0), xycoords = "data", xytext = self.DISPLAY_TEXT_OFFSET, textcoords = "offset points")
 
     @staticmethod
     def _zoom_factory(ax: Axes, base_scale = 2.):
@@ -136,8 +142,8 @@ class OrbitFigure():
             # set the range
             cur_xrange = (cur_xlim[1] - cur_xlim[0])*.5
             cur_yrange = (cur_ylim[1] - cur_ylim[0])*.5
-            xdata = (cur_xlim[1] + cur_xlim[0])/2 # get event x location
-            ydata = (cur_ylim[1] + cur_ylim[0])/2 # get event y location
+            plot_centre_x = (cur_xlim[1] + cur_xlim[0])/2
+            plot_centre_y = (cur_ylim[1] + cur_ylim[0])/2
             if event.button == 'up':
                 # deal with zoom in
                 scale_factor = 1/base_scale
@@ -149,10 +155,10 @@ class OrbitFigure():
                 scale_factor = 1
                 print(event.button)
             # set new limits
-            ax.set_xlim([xdata - cur_xrange*scale_factor,
-                        xdata + cur_xrange*scale_factor])
-            ax.set_ylim([ydata - cur_yrange*scale_factor,
-                        ydata + cur_yrange*scale_factor])
+            ax.set_xlim([plot_centre_x - cur_xrange*scale_factor,
+                        plot_centre_x + cur_xrange*scale_factor])
+            ax.set_ylim([plot_centre_y - cur_yrange*scale_factor,
+                        plot_centre_y + cur_yrange*scale_factor])
             ax.figure.canvas.draw_idle() # force re-draw the next time the GUI refreshes
 
         fig = ax.get_figure() # get the figure of interest
