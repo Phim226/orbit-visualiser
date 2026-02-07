@@ -131,10 +131,12 @@ class Satellite():
         return np.sqrt(mu*p)
 
     def _pf_position(self, nu: float, t_asymp: float) -> tuple[float]:
-        if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
-                return np.inf, np.inf
-
         orbit_eq = self._orbit.orbit_eq
+        if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
+                nu_offset = (nu/abs(nu))*np.deg2rad(0.01)
+                x_close_to_inf, y_close_to_inf = orbit_eq.x(nu - nu_offset), orbit_eq.y(nu - nu_offset)
+                return (x_close_to_inf/abs(x_close_to_inf))*np.inf, (y_close_to_inf/abs(y_close_to_inf))*np.inf
+
         return orbit_eq.x(nu), orbit_eq.y(nu)
 
 

@@ -4,12 +4,10 @@ import numpy as np
 from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, PropertySpec
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
-# TODO: Show the correct sign on the infinity symbol for x and y position.
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
 # TODO: Allow for fractional manual inputs.
 # TODO: Remove any leading 0s from manual inputs.
 # TODO: Refactor to a lazy/cached recalculation model. Currently everything is recalculated on every variable change.
-# TODO: Show correct sign on infinity symbol for mean anomaly and time since periapsis for open trajectories.
 # TODO: Properly display very large values in the properties panel without them being cut off.
 
 class OrbitConfigController():
