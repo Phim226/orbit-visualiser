@@ -55,13 +55,18 @@ git clone https://github.com/Phim226/orbit-visualiser.git
 Navigate to project folder:
 
 ```bash
-cd orbit-visualiser
+cd /local_path_to/orbit-visualiser
 ```
 
 Install dependencies:
 
 ```bash
 pip install -r requirements.txt
+```
+
+Install the package locally (optionally include -e after "install" to make it a editable local install if you want to make changes):
+```bash
+pip install .
 ```
 
 Run the program:
