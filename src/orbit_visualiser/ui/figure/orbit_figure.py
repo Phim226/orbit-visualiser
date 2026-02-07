@@ -5,7 +5,6 @@ from matplotlib.axes import Axes
 from matplotlib.patches import Circle
 from orbit_visualiser.core import Orbit, CentralBody, Satellite
 
-# TODO: Fix janky scroll zoom.
 # TODO: Fix bug where scroll zoom doesn't register as changing the view so the native matplotlib home button has unexpected (and often undesirable) behaviour.
 class OrbitFigure():
 
@@ -137,8 +136,8 @@ class OrbitFigure():
             # set the range
             cur_xrange = (cur_xlim[1] - cur_xlim[0])*.5
             cur_yrange = (cur_ylim[1] - cur_ylim[0])*.5
-            xdata = event.xdata # get event x location
-            ydata = event.ydata # get event y location
+            xdata = (cur_xlim[1] + cur_xlim[0])/2 # get event x location
+            ydata = (cur_ylim[1] + cur_ylim[0])/2 # get event y location
             if event.button == 'up':
                 # deal with zoom in
                 scale_factor = 1/base_scale
