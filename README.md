@@ -64,7 +64,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Install the package locally (optionally include -e after "install" to make it a editable local install if you want to make changes):
+Install the package locally (optionally include -e after "install" to make it an editable local install if you want to make changes):
 ```bash
 pip install .
 ```
