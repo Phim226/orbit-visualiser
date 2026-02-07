@@ -12,7 +12,8 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 # TODO: Manage geometry of display options using rows/columns.
 
 
-# TODO: VariableSpec can be subclass of PropertySpec
+# TODO: VariableSpec can be subclass of PropertySpec.
+# TODO: Refactor VariableSpec so that init_value is a getter lambda.
 @dataclass(frozen = True)
 class VariableSpec():
     label: str
