@@ -128,10 +128,10 @@ class OrbitFigure():
 
     def plot_periapsis_point(self) -> None:
 
-        self._rp_point = self._ax.plot(
+        self._rp_point, = self._ax.plot(
             self._orbit.rp, 0, ms = 3, marker = "o", zorder = 9, color = "#502BF2", label = "$r_p$"
         )
-        self._ax.annotate("$r_p$", xy = (self._orbit.rp, 0), xycoords = "data", xytext = self.DISPLAY_TEXT_OFFSET, textcoords = "offset points")
+        self._rp_annotation = self._ax.annotate("$r_p$", xy = (self._orbit.rp, 0), xycoords = "data", xytext = self.DISPLAY_TEXT_OFFSET, textcoords = "offset points")
 
     @staticmethod
     def _zoom_factory(ax: Axes, base_scale = 2.):
