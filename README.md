@@ -55,7 +55,7 @@ git clone https://github.com/Phim226/orbit-visualiser.git
 Navigate to project folder:
 
 ```bash
-cd /local_path_to/orbit-visualiser
+cd orbit-visualiser
 ```
 
 Install dependencies:
