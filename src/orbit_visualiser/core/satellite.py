@@ -3,9 +3,6 @@ from numpy.typing import ArrayLike
 from math import pi
 from orbit_visualiser.core import Orbit, CentralBody
 
-# TODO: Write equations for eccentric anomaly of hyperbolic trajectories.
-# TODO: Write equations for mean anomaly of open trajectories.
-# TODO: Write equations for time since periapsis for open trajectories.
 class Satellite():
 
 
@@ -123,11 +120,11 @@ class Satellite():
         period = self._orbital_period(mu, a)
         self._period = period
         self._n = self._mean_motion(period, mu, p, a)
-        e_anomaly = self._eccentric_anomaly(e, nu)
+        e_anomaly = self._eccentric_anomaly(e, nu, t_asymp)
         self._e_anomaly = e_anomaly
         m_anomaly = self._mean_anomaly(e, nu, e_anomaly, t_asymp)
         self._m_anomaly = m_anomaly
-        self._t_p = self._time_since_periapsis(m_anomaly, period, p, h)
+        self._t_p = self._time_since_periapsis(m_anomaly, period, p, h, e)
 
     @staticmethod
     def _specific_ang_momentum(mu: float, p: float) -> float:
@@ -181,11 +178,8 @@ class Satellite():
         return np.sqrt(mu/a)
 
     def _flight_angle(self, e: float, nu: float, t_asymp: float, den: float) -> float:
-        if np.isclose(nu, t_asymp, atol = 0.0001, rtol = 0):
-            return pi/2
-
-        elif np.isclose(nu, -t_asymp, atol = 0.0001, rtol = 0):
-            return -pi/2
+        if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
+            return (nu/abs(nu))*pi/2
 
         return np.arctan2(e*np.sin(nu), den)
 
@@ -205,9 +199,9 @@ class Satellite():
 
         return np.nan
 
-    def _mean_motion(self, t: float, mu: float, p: float, a: float) -> float:
+    def _mean_motion(self, period: float, mu: float, p: float, a: float) -> float:
         if self._orbit.is_closed:
-            return 2*pi/t
+            return 2*pi/period
 
         orbit_type = self._orbit.orbit_type
         if orbit_type == "parabolic":
@@ -216,7 +210,7 @@ class Satellite():
         elif orbit_type == "hyperbolic":
             return 2*np.sqrt(mu/abs(a**3))
 
-    def _eccentric_anomaly(self, e: float, nu: float):
+    def _eccentric_anomaly(self, e: float, nu: float, t_asymp: float):
         orbit_type = self._orbit.orbit_type
         if orbit_type == "circular":
             return nu
@@ -228,10 +222,15 @@ class Satellite():
 
             return e_anomaly
 
-        elif orbit_type == "hyperbolic":
+        elif orbit_type == "parabolic":
             return np.nan
 
-        return np.nan
+        elif orbit_type == "hyperbolic":
+            if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
+                return (nu/abs(nu))*np.inf
+
+            return 2*np.arctanh(np.sqrt((e - 1)/(e + 1))*np.tan(nu/2))
+
 
     def _mean_anomaly(self, e: float, nu: float, e_anomaly: float, t_asymp: float):
         if self._orbit.is_closed:
@@ -239,24 +238,28 @@ class Satellite():
 
         orbit_type = self._orbit.orbit_type
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
-            return np.inf
+            return (nu/abs(nu))*np.inf
 
         elif orbit_type == "parabolic":
             return 0.5*np.tan(nu/2) + (1/6)*(np.tan(nu/2))**3
 
         elif orbit_type == "hyperbolic":
-            return np.nan
+            return e*np.sinh(e_anomaly) - e_anomaly
 
-    def _time_since_periapsis(self, m_anomaly: float, t: float, p: float, h: float) -> float:
-        if np.isinf(m_anomaly):
+
+    def _time_since_periapsis(self, m_anomaly: float, period: float, p: float, h: float, e: float) -> float:
+        if np.isneginf(m_anomaly):
+            return -np.inf
+
+        elif np.isinf(m_anomaly):
             return np.inf
 
         if self._orbit.is_closed:
-            return t*m_anomaly/(2*pi)
+            return period*m_anomaly/(2*pi)
 
         orbit_type = self._orbit.orbit_type
         if orbit_type == "parabolic":
             return (p**2/h)*m_anomaly
 
         elif orbit_type == "hyperbolic":
-            return np.nan
+            return (p**2/h)*(e**2 - 1)**(-1.5)*m_anomaly
