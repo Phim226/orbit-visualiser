@@ -107,7 +107,7 @@ class VariablesBuilder(Builder):
             self,
             reset: Callable,
             validate_input: Callable,
-            update_value: Callable
+            slider_changed: Callable
     ) -> None:
         var_frame = Frame(self._options_frame)
         self._variables_frame = var_frame
@@ -119,10 +119,10 @@ class VariablesBuilder(Builder):
             var_frame, bd = 1, relief = "sunken", text = "Orbital geometry", font = self._subtitle_font
         )
         self._e_slider, self._e_entry = self._build_input_frame(
-            orbital_geom_frame, "e", self._variable_specs["e"], validate_input, update_value
+            orbital_geom_frame, "e", self._variable_specs["e"], validate_input, slider_changed
         )
         self._rp_slider, self._rp_entry = self._build_input_frame(
-            orbital_geom_frame, "rp", self._variable_specs["rp"], validate_input, update_value
+            orbital_geom_frame, "rp", self._variable_specs["rp"], validate_input, slider_changed
         )
         orbital_geom_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
@@ -131,7 +131,7 @@ class VariablesBuilder(Builder):
             var_frame, bd = 1, relief = "sunken", text = "Central body", font = self._subtitle_font
         )
         self._mu_slider, self._mu_entry = self._build_input_frame(
-            central_body_frame, "mu", self._variable_specs["mu"], validate_input, update_value
+            central_body_frame, "mu", self._variable_specs["mu"], validate_input, slider_changed
         )
         central_body_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
@@ -140,7 +140,7 @@ class VariablesBuilder(Builder):
             var_frame, bd = 1, relief = "sunken", text = "Satellite", font = self._subtitle_font
         )
         self._nu_slider, self._nu_entry = self._build_input_frame(
-            sat_frame, "nu", self._variable_specs["nu"], validate_input, update_value
+            sat_frame, "nu", self._variable_specs["nu"], validate_input, slider_changed
         )
         sat_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
@@ -156,7 +156,7 @@ class VariablesBuilder(Builder):
             variable: str,
             spec: VariableSpec,
             validate_input: Callable,
-            update_value: Callable
+            slider_changed: Callable
     ) -> tuple[Scale, Entry]:
         obj = spec.obj
 
@@ -166,7 +166,7 @@ class VariablesBuilder(Builder):
             frame,
             variable,
             spec,
-            update_value
+            slider_changed
         )
 
         entry = Entry(frame, width = 10)
@@ -184,7 +184,7 @@ class VariablesBuilder(Builder):
             root: Frame,
             variable: str,
             spec: VariableSpec,
-            update_value: Callable
+            slider_changed: Callable
     ) -> Scale:
         slider_var: DoubleVar = DoubleVar()
         self.__setattr__(f"{variable}_var", slider_var)
@@ -198,7 +198,7 @@ class VariablesBuilder(Builder):
             slider_name,
             Scale(root, from_ = lims[0], to = lims[1], resolution = 1/10**spec.decimal_places, length = 260,
                   orient = "horizontal", variable = slider_var,
-                  command = partial(update_value, variable, obj, "slider"),
+                  command = partial(slider_changed, variable, obj, "slider"),
                   label = label, font = self._slider_font)
         )
 

@@ -59,7 +59,7 @@ class OrbitConfigBuilderTest(Builder):
             self,
             reset: Callable,
             validate_input: Callable,
-            update_value: Callable,
+            slider_changed: Callable,
             format_value: Callable
     ) -> None:
 

@@ -92,7 +92,7 @@ class OrbitConfigController():
 
         self.update_value(variable, source_object, "entry", new_val_float)
 
-    def update_value(
+    def slider_changed(
             self,
             variable: str,
             source_object: Orbit | Satellite | CentralBody,
