@@ -9,7 +9,6 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 # TODO: Allow for fractional manual inputs.
 # TODO: Remove any leading 0s from manual inputs.
 # TODO: Refactor to a lazy/cached recalculation model. Currently everything is recalculated on every variable change.
-# TODO: Properly display very large values in the properties panel without them being cut off.
 
 class VariablesController():
 

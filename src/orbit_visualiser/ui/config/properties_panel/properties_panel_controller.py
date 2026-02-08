@@ -1,10 +1,6 @@
 import numpy as np
 from orbit_visualiser.ui.config.properties_panel.properties_panel_builder import PropertiesBuilder
 
-# TODO: Allow for temporary increase in slider scale when inputting manual values.
-# TODO: Allow for fractional manual inputs.
-# TODO: Remove any leading 0s from manual inputs.
-# TODO: Refactor to a lazy/cached recalculation model. Currently everything is recalculated on every variable change.
 # TODO: Properly display very large values in the properties panel without them being cut off.
 
 class PropertiesController():
