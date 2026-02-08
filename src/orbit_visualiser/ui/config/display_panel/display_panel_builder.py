@@ -1,6 +1,5 @@
-from tkinter import Tk, Frame, LabelFrame, Checkbutton, IntVar
+from tkinter import Frame, LabelFrame, Checkbutton, IntVar
 from orbit_visualiser.ui.common.builder import Builder
-from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
 # TODO: Manage geometry of display options using rows/columns.

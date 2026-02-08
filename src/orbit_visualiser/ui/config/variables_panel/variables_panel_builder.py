@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, Scale, LabelFrame, Button, Entry, DoubleVar
+from tkinter import Frame, Scale, LabelFrame, Button, Entry, DoubleVar
 from typing import Callable
 from functools import partial
 import numpy as np

@@ -41,7 +41,7 @@ class OrbitConfigBuilderTest(Builder):
 
         self._variables_builder = VariablesBuilder(self._options_frame, orbit, central_body, satellite)
         self._display_builder = DisplayBuilder(self._options_frame)
-        self._properties_builder = PropertiesBuilder(self._config_frame, orbit, central_body, satellite)
+        self._properties_builder = PropertiesBuilder(self._config_frame, orbit, satellite)
 
     @property
     def variables_builder(self) -> VariablesBuilder:

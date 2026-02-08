@@ -1,7 +1,7 @@
 from tkinter import Frame, Label, StringVar, LabelFrame
 from typing import Callable
 import numpy as np
-from orbit_visualiser.core import Orbit, Satellite, CentralBody
+from orbit_visualiser.core import Orbit, Satellite
 from orbit_visualiser.ui.common.builder import Builder
 from orbit_visualiser.ui.common.specs import PropertySpec
 
@@ -13,7 +13,6 @@ class PropertiesBuilder(Builder):
             self,
             config_frame: Frame,
             orbit: Orbit,
-            central_body: CentralBody,
             satellite: Satellite
     ):
         self._config_frame = config_frame
