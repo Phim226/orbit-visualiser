@@ -1,14 +1,11 @@
-from tkinter import Tk, Frame, Scale, Label, StringVar, LabelFrame, Button, Entry, DoubleVar, Checkbutton, IntVar
+from tkinter import Tk, Frame
 from tkinter.ttk import Separator
 from typing import Callable
-from functools import partial
-import numpy as np
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui.config.display_panel.display_panel_builder import DisplayBuilder
 from orbit_visualiser.ui.config.properties_panel.properties_panel_builder import PropertiesBuilder
 from orbit_visualiser.ui.config.variables_panel.variables_panel_builder import VariablesBuilder
 from orbit_visualiser.ui.common.builder import Builder
-from orbit_visualiser.ui.common.specs import PropertySpec, VariableSpec
 
 # TODO: Give option to show parameters on the plot (arrows/lines for vectors and distances etc).
 # TODO: Split into variables, options and properties builders.

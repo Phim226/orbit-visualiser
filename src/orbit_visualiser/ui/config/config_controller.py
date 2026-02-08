@@ -1,10 +1,11 @@
-from tkinter import Entry, Event, messagebox, DoubleVar
-from decimal import Decimal
-import numpy as np
-from orbit_visualiser.ui.common.specs import PropertySpec
-from orbit_visualiser.ui.config.config_builder import OrbitConfigBuilder
-from orbit_visualiser.ui.figure.orbit_figure import OrbitFigure
+from tkinter import Event
+from typing import Callable
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
+from orbit_visualiser.ui.config.config_builder import OrbitConfigBuilder, OrbitConfigBuilder
+from orbit_visualiser.ui.config.variables_panel.variables_panel_controller import VariablesController
+from orbit_visualiser.ui.config.properties_panel.properties_panel_controller import PropertiesController
+#from orbit_visualiser.ui.config.display_panel.display_panel_controller import DisplayController
+from orbit_visualiser.ui.figure.orbit_figure import OrbitFigure
 
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
 # TODO: Allow for fractional manual inputs.
