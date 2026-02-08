@@ -1,23 +1,22 @@
-from tkinter import Tk
+from tkinter import Frame, Label, StringVar, LabelFrame
+from typing import Callable
 import numpy as np
-from orbit_visualiser.ui import OrbitFigure, PropertySpec, VariableSpec
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
+from orbit_visualiser.ui.common.builder import Builder
+from orbit_visualiser.ui.common.specs import PropertySpec
 
 
-class PropertiesBuilder():
+class PropertiesBuilder(Builder):
 
 
     def __init__(
-            self, root: Tk,
-            config_frame_placement: tuple[str],
-            orbit_fig: OrbitFigure,
+            self, config_frame: Frame,
             orbit: Orbit,
             central_body: CentralBody,
             satellite: Satellite
     ):
-        self._root = root
+        self._config_frame = config_frame
 
-        self._orbit_fig = orbit_fig
         self._orbit = orbit
         self._central_body = central_body
         self._sat = satellite
@@ -54,3 +53,66 @@ class PropertiesBuilder():
         }
 
         self._property_specs: dict[str, PropertySpec] = self._orbital_properties | self._satellite_properties
+
+    @property
+    def property_specs(self) -> dict[str, PropertySpec]:
+        return self._property_specs
+
+    def build(self, format_value: Callable) -> None:
+        self._build_properties_frame(format_value)
+
+    def _build_properties_frame(self, format_value: Callable) -> None:
+        props_frame = Frame(self._config_frame, padx = 2)
+        self._properties_frame = props_frame
+
+        self._build_separator(props_frame, "Properties")
+        orbital_props_frame = LabelFrame(
+            props_frame, bd = 1, relief = "sunken", text = "Orbit", font = self._subtitle_font
+        )
+        self._populate_properties(orbital_props_frame, self._orbital_properties, self._orbit, format_value)
+        orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
+
+        sat_props_frame = LabelFrame(
+            props_frame, bd = 1, relief = "sunken", text = "Satellite",
+            font = self._subtitle_font, width = 244
+        )
+        self._populate_properties(sat_props_frame, self._satellite_properties, self._sat, format_value)
+        sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x")
+
+        props_frame.pack(side = "top", anchor = "n", pady = (2, 0))
+
+    def _populate_properties(
+            self,
+            frame: LabelFrame,
+            properties: dict[str, PropertySpec],
+            source_object: Orbit | Satellite,
+            format_value: Callable
+    ) -> None:
+        for i, (key, spec) in enumerate(properties.items()):
+            self._build_property_row(
+                frame, key, source_object, spec, i, format_value
+        )
+
+        # Setting the weight allows the grid manager to stretch labels in _build_display into available space.
+        frame.grid_columnconfigure(0, weight = 0)
+        frame.grid_columnconfigure(1, weight = 1)
+
+    def _build_property_row(
+            self,
+            frame: LabelFrame,
+            property: str,
+            source_object: Orbit | Satellite,
+            spec: PropertySpec,
+            row: int,
+            format_value: Callable
+    ) -> None:
+        init_value = spec.getter(source_object)
+
+        var = StringVar(value = format_value(init_value, spec.units))
+        self.__setattr__(f"{property}_str", var)
+
+        name_label = Label(frame, text = spec.label + ":", anchor = "w", font = self._slider_font)
+        name_label.grid(row = row, column = 0, sticky = "w", padx = (0, 6))
+
+        value_label = Label(frame, textvariable = var, anchor = "e", width = 13, font = self._slider_font)
+        value_label.grid(row = row, column = 1, sticky = "ew", padx = (0, 6))
