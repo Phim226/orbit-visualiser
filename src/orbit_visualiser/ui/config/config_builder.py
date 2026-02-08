@@ -11,27 +11,23 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 # TODO: Split into variables, options and properties builders.
 # TODO: Manage geometry of display options using rows/columns.
 
-
-# TODO: VariableSpec can be subclass of PropertySpec.
-# TODO: Refactor VariableSpec so that init_value is a getter lambda.
-@dataclass(frozen = True)
-class VariableSpec():
-    label: str
-    obj: Orbit | Satellite | CentralBody
-    units: str | None
-    init_value: float
-    slider_lims: tuple[int]
-    decimal_places: int
-    entry_pos: tuple[int]
-
 T = TypeVar("T")
 
 @dataclass(frozen = True)
 class PropertySpec(Generic[T]):
     label: str
-    obj: Orbit | Satellite
+    obj: Orbit | Satellite | CentralBody
     units: str | None
     getter: Callable[[T], float | bool]
+
+@dataclass(frozen = True)
+class VariableSpec(PropertySpec):
+    init_value: float
+    slider_lims: tuple[int]
+    decimal_places: int
+    entry_pos: tuple[int]
+
+
 
 class OrbitConfigBuilder():
 
@@ -91,6 +87,7 @@ class OrbitConfigBuilder():
             "Eccentricity",
             orbit,
             None,
+            lambda orbit: orbit.e,
             orbit.e,
             (0, 5),
             3,
@@ -100,6 +97,7 @@ class OrbitConfigBuilder():
             "Radius of periapsis",
             orbit,
             "km",
+            lambda orbit: orbit.rp,
             orbit.rp,
             (central_body.r + 1, 200_000),
             0,
@@ -109,6 +107,7 @@ class OrbitConfigBuilder():
             "Gravitational parameter",
             central_body,
             "km³/s²",
+            lambda central_body: central_body.mu,
             central_body.mu,
             (1, 1_000_000),
             0,
@@ -118,7 +117,8 @@ class OrbitConfigBuilder():
             "True anomaly",
             satellite,
             "°",
-            satellite.nu,
+            lambda sat: np.degrees(sat.nu),
+            np.degrees(satellite.nu),
             (0, 360),
             2,
             (115, 4)
@@ -129,11 +129,6 @@ class OrbitConfigBuilder():
             "rp" : self._rp_specs,
             "mu" : self._mu_specs,
             "nu" : self._nu_specs
-        }
-
-        self._property_specs_by_object: dict[Orbit | Satellite, dict] = {
-            Orbit: self._orbital_properties,
-            Satellite : self._satellite_properties
         }
 
         self._config_frame = Frame(root)
@@ -150,10 +145,6 @@ class OrbitConfigBuilder():
     @property
     def variable_specs(self) -> dict[str, VariableSpec]:
         return self._variable_specs
-
-    @property
-    def property_specs_by_object(self) -> dict[Orbit | Satellite, dict]:
-        return self._property_specs_by_object
 
     @property
     def e_slider(self) -> Scale:
@@ -269,15 +260,12 @@ class OrbitConfigBuilder():
         slider = self._build_slider(
             frame,
             variable,
-            obj,
-            f"{spec.label}{"" if units is None else f" ({units})"} = ",
-            spec.slider_lims,
-            1/10**spec.decimal_places,
+            spec,
             update_value
         )
 
         entry = Entry(frame, width = 10)
-        entry.insert(0, f"{spec.init_value: 0.{spec.decimal_places}f}".strip())
+        entry.insert(0, f"{spec.getter(obj): 0.{spec.decimal_places}f}".strip())
         entry.bind("<Return>", partial(validate_input, variable, obj))
         x, y = spec.entry_pos
         entry.place(x = x, y = y)
@@ -286,32 +274,30 @@ class OrbitConfigBuilder():
 
         return slider, entry
 
-    # TODO: Refactor this to input VariableSpec instead of VariableSpec attributes.
     def _build_slider(
             self,
             root: Frame,
             variable: str,
-            source_object: Orbit | Satellite,
-            label: str,
-            lims: tuple[int],
-            res: float,
+            spec: VariableSpec,
             update_value: Callable
     ) -> Scale:
         slider_var: DoubleVar = DoubleVar()
         self.__setattr__(f"{variable}_var", slider_var)
 
         slider_name = f"_{variable}_slider"
+        lims = spec.slider_lims
+        obj = spec.obj
+        units = spec.units
+        label = f"{spec.label}{"" if units is None else f" ({units})"} = "
         self.__setattr__(
             slider_name,
-            Scale(root, from_ = lims[0], to = lims[1], resolution = res, length = 260,
+            Scale(root, from_ = lims[0], to = lims[1], resolution = 1/10**spec.decimal_places, length = 260,
                   orient = "horizontal", variable = slider_var,
-                  command = partial(update_value, variable, source_object, "slider"),
+                  command = partial(update_value, variable, obj, "slider"),
                   label = label, font = self._slider_font)
         )
 
-        init_value: float = (round(np.degrees(getattr(source_object, variable)), 2) if variable == "nu"
-                             else getattr(source_object, variable))
-        slider_var.set(init_value)
+        slider_var.set(spec.getter(obj))
 
         slider: Scale = self.__getattribute__(slider_name)
         slider.place(x = 0, y = 0, anchor = "nw")
