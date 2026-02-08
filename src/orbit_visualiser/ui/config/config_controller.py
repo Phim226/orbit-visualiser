@@ -99,82 +99,10 @@ class OrbitConfigController():
             input_type: str,
             new_val: str | float
     ) -> None:
-        new_val = float(new_val)
-
-        # This if-elif block lets the sliders and manual inputs update one another.
-        if input_type == "slider":
-            entry: Entry = getattr(self._builder.variables_builder, f"{variable}_entry")
-            entry.delete(0, 1000)
-            entry.insert(
-                0,
-                f"{new_val: 0.{self._builder.variables_builder.variable_specs[variable].decimal_places}f}".strip()
-            )
-
-        elif input_type == "entry":
-            slider_var: DoubleVar = getattr(self._builder.variables_builder, f"{variable}_var")
-            slider_var.set(new_val)
-
-        if variable == "nu":
-            new_val = np.deg2rad(float(new_val))
-
-        setattr(source_object, variable, new_val)
-
-
-        self._orbit.update_orbital_properties()
-        self._sat.update_satellite_properties()
-
-        # The value of the eccentricity determines the range of possible true anomaly values, which
-        # this if block checks for.
-        if variable == "e":
-            if new_val >= 1:
-                t_asymp = self._orbit.t_asymp
-                t_asymp_slider_lim = round(np.degrees(t_asymp), 2)
-                self._builder.variables_builder.nu_slider.configure(from_ = -t_asymp_slider_lim, to = t_asymp_slider_lim)
-                nu = self._sat.nu
-                if nu < -t_asymp:
-                    self._sat.nu = -t_asymp
-                elif nu > t_asymp:
-                    self._sat.nu = t_asymp
-
-            else:
-                self._builder.variables_builder.nu_slider.configure(from_ = 0, to = 360)
-
-        self._orbit_fig.redraw_orbit()
-        self._orbit_fig.redraw_satellite()
-
-        for property, property_spec in list(self._builder.properties_builder.property_specs.items()):
-            self._update_display(property, property_spec)
-
-    def _update_display(self, property: str, spec: PropertySpec) -> None:
-        new_value = spec.getter(spec.obj)
-        unit = spec.units
-
-        getattr(self._builder.properties_builder, f"{property}_str").set(self.format_display_value(new_value, unit))
-
-    def format_display_value(self, value: float | str, units: str | None) -> str:
-        if units is None:
-            return value.capitalize()
-
-        if np.isclose(value, 0):
-            value = 0.00
-
-        if np.isneginf(value):
-            return f"-∞ {units}"
-
-        elif np.isinf(value):
-            return f"∞ {units}"
-
-        elif np.isnan(value):
-            return "n/a"
-
-        elif units in ["km", "km²/s", "s"]:
-            return f"{value:6.0f} {units}"
-
-        elif units in ["°", "km/s", "km²/s²"]:
-            return f"{value:6.2f} {units}"
-
-        elif units in ["°/s"]:
-            return f"{value:6.6f} {units}"
-
-    def draw_periapsis() -> None:
-        pass
+        self._variables_controller.update_variable(
+            variable,
+            source_object,
+            input_type,
+            new_val
+        )
+        self._properties_controller.update_display()
