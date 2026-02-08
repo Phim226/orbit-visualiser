@@ -1,7 +1,9 @@
 from tkinter import Entry, Event, messagebox, DoubleVar
 from decimal import Decimal
 import numpy as np
-from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, PropertySpec
+from orbit_visualiser.ui.common.specs import PropertySpec
+from orbit_visualiser.ui.config.config_builder import OrbitConfigBuilder
+from orbit_visualiser.ui.figure.orbit_figure import OrbitFigure
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
@@ -119,6 +121,7 @@ class OrbitConfigController():
 
 
         self._orbit.update_orbital_properties()
+        self._sat.update_satellite_properties()
 
         # The value of the eccentricity determines the range of possible true anomaly values, which
         # this if block checks for.
@@ -135,8 +138,6 @@ class OrbitConfigController():
 
             else:
                 self._builder.nu_slider.configure(from_ = 0, to = 360)
-
-        self._sat.update_satellite_properties()
 
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
