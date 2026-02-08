@@ -21,7 +21,7 @@ class OrbitVisualiser():
         orbit_figure.build()
 
         orbit_builder: OrbitConfigBuilder = OrbitConfigBuilder(
-            root, self.config_frame_placement, orbit_figure, orbit, central_body, satellite
+            root, self.config_frame_placement, orbit, central_body, satellite
         )
         orbit_controller: OrbitConfigController = OrbitConfigController(
             orbit_figure, orbit_builder, orbit, satellite, central_body

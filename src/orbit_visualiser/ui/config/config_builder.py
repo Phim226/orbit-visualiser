@@ -38,14 +38,12 @@ class OrbitConfigBuilder():
     def __init__(
             self, root: Tk,
             config_frame_placement: tuple[str],
-            orbit_fig: OrbitFigure,
             orbit: Orbit,
             central_body: CentralBody,
             satellite: Satellite
     ):
         self._root = root
 
-        self._orbit_fig = orbit_fig
         self._orbit = orbit
         self._central_body = central_body
         self._sat = satellite
