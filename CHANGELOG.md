@@ -4,7 +4,9 @@ All notable changes to this project will be documented here.
 
 # Unreleased
 - Certain orbital parameters can be displayed in the plot
-- Refactor config builder and controller into variable, property and display builders/controllers
+
+# 0.4.2 - 08/02/2026
+- Refactored config builder and controller into variable, property and display builders/controllers
 - Created new folder for common ui types
 - Made ui imports safer
 
