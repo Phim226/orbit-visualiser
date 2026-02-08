@@ -11,14 +11,13 @@ class PropertiesController():
 
 
     def __init__(self, builder: PropertiesBuilder):
-        self._builder: PropertiesBuilder = builder
+        self._builder = builder
 
-    def _update_display(self) -> None:
+    def update_display(self) -> None:
         for property, spec in list(self._builder.property_specs.items()):
             new_value = spec.getter(spec.obj)
             unit = spec.units
-
-        getattr(self._builder, f"{property}_str").set(self.format_display_value(new_value, unit))
+            getattr(self._builder, f"{property}_str").set(self.format_display_value(new_value, unit))
 
     def format_display_value(self, value: float | str, units: str | None) -> str:
         if units is None:

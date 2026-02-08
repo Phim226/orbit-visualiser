@@ -2,7 +2,7 @@ from tkinter import Entry, Event, messagebox, DoubleVar
 from decimal import Decimal
 import numpy as np
 from orbit_visualiser.ui.figure.orbit_figure import OrbitFigure
-from orbit_visualiser.ui.config.config_builder import  OrbitConfigBuilder
+from orbit_visualiser.ui.config.variables_panel.variables_panel_builder import  VariablesBuilder
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
@@ -17,17 +17,17 @@ class VariablesController():
     def __init__(
             self,
             figure: OrbitFigure,
-            builder: OrbitConfigBuilder,
+            builder: VariablesBuilder,
             orbit: Orbit,
             satellite: Satellite,
             central_body: CentralBody
     ):
-        self._orbit_fig: OrbitFigure = figure
-        self._builder: OrbitConfigBuilder = builder
+        self._orbit_fig = figure
+        self._builder = builder
 
-        self._orbit: Orbit = orbit
-        self._sat: Satellite = satellite
-        self._central_body: CentralBody = central_body
+        self._orbit = orbit
+        self._sat = satellite
+        self._central_body = central_body
 
 
     def reset_state(self) -> None:
@@ -89,9 +89,9 @@ class VariablesController():
                 elif new_val_float > t_asymp:
                     new_val_float = t_asymp
 
-        self.update_value(variable, source_object, "entry", new_val_float)
+        self.update_variable(variable, source_object, "entry", new_val_float)
 
-    def update_value(
+    def update_variable(
             self,
             variable: str,
             source_object: Orbit | Satellite | CentralBody,
