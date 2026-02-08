@@ -10,16 +10,13 @@ class PropertiesBuilder(Builder):
 
 
     def __init__(
-            self, config_frame: Frame,
+            self,
+            config_frame: Frame,
             orbit: Orbit,
             central_body: CentralBody,
             satellite: Satellite
     ):
         self._config_frame = config_frame
-
-        self._orbit = orbit
-        self._central_body = central_body
-        self._sat = satellite
 
         self._orbital_properties: dict[str, PropertySpec[Orbit]] = {
             "orbit_type" : PropertySpec("Orbit type", orbit, None, lambda orbit: orbit.orbit_type),
@@ -58,10 +55,7 @@ class PropertiesBuilder(Builder):
     def property_specs(self) -> dict[str, PropertySpec]:
         return self._property_specs
 
-    def build(self, format_value: Callable) -> None:
-        self._build_properties_frame(format_value)
-
-    def _build_properties_frame(self, format_value: Callable) -> None:
+    def build_properties_frame(self, format_value: Callable) -> None:
         props_frame = Frame(self._config_frame, padx = 2)
         self._properties_frame = props_frame
 
@@ -69,14 +63,14 @@ class PropertiesBuilder(Builder):
         orbital_props_frame = LabelFrame(
             props_frame, bd = 1, relief = "sunken", text = "Orbit", font = self._subtitle_font
         )
-        self._populate_properties(orbital_props_frame, self._orbital_properties, self._orbit, format_value)
+        self._populate_properties(orbital_props_frame, self._orbital_properties, format_value)
         orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
 
         sat_props_frame = LabelFrame(
             props_frame, bd = 1, relief = "sunken", text = "Satellite",
             font = self._subtitle_font, width = 244
         )
-        self._populate_properties(sat_props_frame, self._satellite_properties, self._sat, format_value)
+        self._populate_properties(sat_props_frame, self._satellite_properties, format_value)
         sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x")
 
         props_frame.pack(side = "top", anchor = "n", pady = (2, 0))
@@ -85,13 +79,10 @@ class PropertiesBuilder(Builder):
             self,
             frame: LabelFrame,
             properties: dict[str, PropertySpec],
-            source_object: Orbit | Satellite,
             format_value: Callable
     ) -> None:
         for i, (key, spec) in enumerate(properties.items()):
-            self._build_property_row(
-                frame, key, source_object, spec, i, format_value
-        )
+            self._build_property_row(frame, key, spec, i, format_value)
 
         # Setting the weight allows the grid manager to stretch labels in _build_display into available space.
         frame.grid_columnconfigure(0, weight = 0)
@@ -101,12 +92,11 @@ class PropertiesBuilder(Builder):
             self,
             frame: LabelFrame,
             property: str,
-            source_object: Orbit | Satellite,
             spec: PropertySpec,
             row: int,
             format_value: Callable
     ) -> None:
-        init_value = spec.getter(source_object)
+        init_value = spec.getter(spec.obj)
 
         var = StringVar(value = format_value(init_value, spec.units))
         self.__setattr__(f"{property}_str", var)

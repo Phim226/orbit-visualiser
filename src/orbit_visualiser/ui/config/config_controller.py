@@ -32,12 +32,12 @@ class OrbitConfigController():
 
 
     def reset_state(self) -> None:
-        var_props = self._builder.variable_specs
+        var_props = self._builder.variables_builder.variable_specs
         for name, value in list(var_props.items()):
             init_value = value.init_value
-            getattr(self._builder, f"{name}_slider").set(init_value)
+            getattr(self._builder.variables_builder, f"{name}_slider").set(init_value)
 
-            entry: Entry = getattr(self._builder, f"{name}_entry")
+            entry: Entry = getattr(self._builder.variables_builder, f"{name}_entry")
             entry.delete(0, 1000)
             entry.insert(0, f"{init_value: 0.{value.decimal_places}f}".strip())
 
@@ -56,7 +56,7 @@ class OrbitConfigController():
             source_object: Orbit | Satellite | CentralBody,
             event: Event
     ) -> None:
-        new_val = getattr(self._builder, f"{variable}_entry").get().strip()
+        new_val = getattr(self._builder.variables_builder, f"{variable}_entry").get().strip()
 
         try:
             new_val_float = float(new_val)
@@ -76,7 +76,7 @@ class OrbitConfigController():
                 # for python floats). The Decimal class retains that information. If the angle is
                 # negative then Decimal(new_val)%360 reduces it to (-360, 0), then + 360 to the range we want.
                 new_val_float = (Decimal(new_val)%360 + 360)%360
-                entry: Entry = getattr(self._builder, f"{variable}_entry")
+                entry: Entry = getattr(self._builder.variables_builder, f"{variable}_entry")
                 entry.delete(0, 1000)
                 entry.insert(
                     0,
@@ -103,15 +103,15 @@ class OrbitConfigController():
 
         # This if-elif block lets the sliders and manual inputs update one another.
         if input_type == "slider":
-            entry: Entry = getattr(self._builder, f"{variable}_entry")
+            entry: Entry = getattr(self._builder.variables_builder, f"{variable}_entry")
             entry.delete(0, 1000)
             entry.insert(
                 0,
-                f"{new_val: 0.{self._builder.variable_specs[variable].decimal_places}f}".strip()
+                f"{new_val: 0.{self._builder.variables_builder.variable_specs[variable].decimal_places}f}".strip()
             )
 
         elif input_type == "entry":
-            slider_var: DoubleVar = getattr(self._builder, f"{variable}_var")
+            slider_var: DoubleVar = getattr(self._builder.variables_builder, f"{variable}_var")
             slider_var.set(new_val)
 
         if variable == "nu":
@@ -129,7 +129,7 @@ class OrbitConfigController():
             if new_val >= 1:
                 t_asymp = self._orbit.t_asymp
                 t_asymp_slider_lim = round(np.degrees(t_asymp), 2)
-                self._builder.nu_slider.configure(from_ = -t_asymp_slider_lim, to = t_asymp_slider_lim)
+                self._builder.variables_builder.nu_slider.configure(from_ = -t_asymp_slider_lim, to = t_asymp_slider_lim)
                 nu = self._sat.nu
                 if nu < -t_asymp:
                     self._sat.nu = -t_asymp
@@ -137,19 +137,19 @@ class OrbitConfigController():
                     self._sat.nu = t_asymp
 
             else:
-                self._builder.nu_slider.configure(from_ = 0, to = 360)
+                self._builder.variables_builder.nu_slider.configure(from_ = 0, to = 360)
 
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
 
-        for property, property_spec in list(self._builder.property_specs.items()):
+        for property, property_spec in list(self._builder.properties_builder.property_specs.items()):
             self._update_display(property, property_spec)
 
     def _update_display(self, property: str, spec: PropertySpec) -> None:
         new_value = spec.getter(spec.obj)
         unit = spec.units
 
-        getattr(self._builder, f"{property}_str").set(self.format_display_value(new_value, unit))
+        getattr(self._builder.properties_builder, f"{property}_str").set(self.format_display_value(new_value, unit))
 
     def format_display_value(self, value: float | str, units: str | None) -> str:
         if units is None:

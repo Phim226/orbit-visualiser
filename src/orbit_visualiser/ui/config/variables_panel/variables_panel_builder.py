@@ -11,13 +11,13 @@ class VariablesBuilder(Builder):
 
 
     def __init__(
-            self, root: Tk,
-            config_frame_placement: tuple[str],
+            self,
+            options_frame: Frame,
             orbit: Orbit,
             central_body: CentralBody,
             satellite: Satellite
     ):
-        self._root = root
+        self._options_frame = options_frame
 
         self._e_specs: VariableSpec = VariableSpec(
             "Eccentricity",
@@ -67,13 +67,6 @@ class VariablesBuilder(Builder):
             "nu" : self._nu_specs
         }
 
-        self._config_frame = Frame(root)
-        self._config_frame.pack(
-            side = config_frame_placement[0],
-            anchor = config_frame_placement[1],
-            padx = 8, pady = 6
-        )
-
     @property
     def variable_specs(self) -> dict[str, VariableSpec]:
         return self._variable_specs
@@ -110,13 +103,7 @@ class VariablesBuilder(Builder):
     def nu_entry(self) -> Entry:
         return self._nu_entry
 
-    def build(self, reset: Callable, validate_input: Callable, update_value: Callable) -> None:
-        self._options_frame = Frame(self._config_frame, padx = 2)
-        self._options_frame.pack(side = "left", anchor = "n", pady = (2, 0))
-
-        self._build_variables_frame(reset, validate_input, update_value)
-
-    def _build_variables_frame(
+    def build_variables_frame(
             self,
             reset: Callable,
             validate_input: Callable,

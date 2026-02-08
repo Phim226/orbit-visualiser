@@ -14,29 +14,67 @@ from orbit_visualiser.ui.common.specs import PropertySpec, VariableSpec
 # TODO: Split into variables, options and properties builders.
 # TODO: Manage geometry of display options using rows/columns.
 
-T = TypeVar("T")
+class OrbitConfigBuilderTest(Builder):
 
-@dataclass(frozen = True)
-class PropertySpec(Generic[T]):
-    label: str
-    obj: Orbit | Satellite | CentralBody
-    units: str | None
-    getter: Callable[[T], float | bool]
+    def __init__(
+            self, root: Tk,
+            config_frame_placement: tuple[str],
+            orbit: Orbit,
+            central_body: CentralBody,
+            satellite: Satellite
+    ):
+        self._root = root
 
-@dataclass(frozen = True)
-class VariableSpec(PropertySpec):
-    init_value: float
-    slider_lims: tuple[int]
-    decimal_places: int
-    entry_pos: tuple[int]
+        self._orbit = orbit
+        self._central_body = central_body
+        self._sat = satellite
+
+        self._config_frame = Frame(root)
+        self._config_frame.pack(
+            side = config_frame_placement[0],
+            anchor = config_frame_placement[1],
+            padx = 8, pady = 6
+        )
+
+        self._options_frame = Frame(self._config_frame, padx = 2)
+        self._options_frame.pack(side = "left", anchor = "n", pady = (2, 0))
+
+        self._variables_builder = VariablesBuilder(self._options_frame, orbit, central_body, satellite)
+        self._display_builder = DisplayBuilder(self._options_frame)
+        self._properties_builder = PropertiesBuilder(self._config_frame, orbit, central_body, satellite)
+
+    @property
+    def variables_builder(self) -> VariablesBuilder:
+        return self._variables_builder
+
+    @property
+    def display_builder(self) -> DisplayBuilder:
+        return self._display_builder
+
+    @property
+    def properties_builder(self) -> PropertiesBuilder:
+        return self._properties_builder
+
+    def build(
+            self,
+            reset: Callable,
+            validate_input: Callable,
+            update_value: Callable,
+            format_value: Callable
+    ) -> None:
 
 
+        self._variables_builder.build_variables_frame(reset, validate_input, update_value)
+        self._display_builder.build_display_options_frame()
 
-class OrbitConfigBuilder():
 
-    _title_font = ("Orbitron", 16, "bold")
-    _subtitle_font = ("Orbitron", 11, "normal")
-    _slider_font = ("Fira Mono", 9, "normal")
+        sep = Separator(self._config_frame, orient = "vertical")
+        sep.pack(side = "left", fill = "y", padx = 6, expand = True)
+
+        self._properties_builder.build_properties_frame(format_value)
+
+
+class OrbitConfigBuilder(Builder):
 
     def __init__(
             self, root: Tk,
@@ -305,14 +343,14 @@ class OrbitConfigBuilder():
         return slider
 
     def _build_display_options_frame(self) -> None:
-        options_frame: Frame = Frame(self._options_frame)
-        self._options_frame = options_frame
+        display_options_frame: Frame = Frame(self._options_frame)
+        self._display_options_frame = display_options_frame
 
-        self._build_separator(options_frame, "Display options")
+        self._build_separator(display_options_frame, "Display options")
 
         # Build orbit options frame
         orbit_options_frame = LabelFrame(
-            options_frame, bd = 1, relief = "sunken", text = "Orbit", font = self._subtitle_font
+            display_options_frame, bd = 1, relief = "sunken", text = "Orbit", font = self._subtitle_font
         )
         self._rp_display_var: IntVar = IntVar()
         rp_display_check: Checkbutton = Checkbutton(orbit_options_frame, text = "Periapsis", variable = self._rp_display_var)
@@ -321,7 +359,7 @@ class OrbitConfigBuilder():
 
         # Build central body options frame
         central_body_options_frame = LabelFrame(
-            options_frame, bd = 1, relief = "sunken", text = "Central body", font = self._subtitle_font
+            display_options_frame, bd = 1, relief = "sunken", text = "Central body", font = self._subtitle_font
         )
         self._central_body_display_var: IntVar = IntVar(value = 1)
         central_body_display_check: Checkbutton = Checkbutton(central_body_options_frame, text = "Central body", variable = self._central_body_display_var)
@@ -330,14 +368,14 @@ class OrbitConfigBuilder():
 
         # Build satellite options frame
         satellite_options_frame = LabelFrame(
-            options_frame, bd = 1, relief = "sunken", text = "Satellite", font = self._subtitle_font
+            display_options_frame, bd = 1, relief = "sunken", text = "Satellite", font = self._subtitle_font
         )
         self._radius_display_var: IntVar = IntVar()
         radius_display_check: Checkbutton = Checkbutton(satellite_options_frame, text = "Radius", variable = self._radius_display_var)
         radius_display_check.pack(side = "top", anchor = "nw")
         satellite_options_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
-        options_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x", expand = True)
+        display_options_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x", expand = True)
 
     def _build_properties_frame(self, format_value: Callable) -> None:
         props_frame = Frame(self._config_frame, padx = 2)
@@ -394,10 +432,3 @@ class OrbitConfigBuilder():
 
         value_label = Label(frame, textvariable = var, anchor = "e", width = 13, font = self._slider_font)
         value_label.grid(row = row, column = 1, sticky = "ew", padx = (0, 6))
-
-    def _build_separator(self, root: Frame, text: str) -> None:
-        frame = Frame(root)
-        frame.pack(side = "top", fill = "x", pady = 4)
-
-        Label(frame, text = text, font = self._title_font).pack(side = "left", padx = (0, 6))
-        Frame(frame, height = 2, bd = 1, relief = "sunken").pack(side = "left", fill = "x", expand = True)

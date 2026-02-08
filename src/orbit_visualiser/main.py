@@ -1,6 +1,6 @@
 from tkinter import Tk
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
-from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, OrbitConfigController
+from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilderTest, OrbitConfigController
 
 class OrbitVisualiser():
 
@@ -20,7 +20,7 @@ class OrbitVisualiser():
         )
         orbit_figure.build()
 
-        orbit_builder: OrbitConfigBuilder = OrbitConfigBuilder(
+        orbit_builder: OrbitConfigBuilderTest = OrbitConfigBuilderTest(
             root, self.config_frame_placement, orbit, central_body, satellite
         )
         orbit_controller: OrbitConfigController = OrbitConfigController(
