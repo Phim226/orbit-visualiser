@@ -14,7 +14,7 @@ from orbit_visualiser.ui.common.specs import PropertySpec, VariableSpec
 # TODO: Split into variables, options and properties builders.
 # TODO: Manage geometry of display options using rows/columns.
 
-class OrbitConfigBuilderTest(Builder):
+class OrbitConfigBuilder(Builder):
 
     def __init__(
             self, root: Tk,
@@ -62,11 +62,8 @@ class OrbitConfigBuilderTest(Builder):
             slider_changed: Callable,
             format_value: Callable
     ) -> None:
-
-
-        self._variables_builder.build_variables_frame(reset, validate_input, update_value)
+        self._variables_builder.build_variables_frame(reset, validate_input, slider_changed)
         self._display_builder.build_display_options_frame()
-
 
         sep = Separator(self._config_frame, orient = "vertical")
         sep.pack(side = "left", fill = "y", padx = 6, expand = True)
