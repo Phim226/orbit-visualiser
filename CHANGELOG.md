@@ -4,10 +4,12 @@ All notable changes to this project will be documented here.
 
 # Unreleased
 - Certain orbital parameters can be displayed in the plot
+- PerifocalOrbitEq refactored to live in the Satellite class
+
+# 0.4.3 - 09/02/2026
 - Implemented automatic testing
 - Tests architecture rewritten
 - Wrote invariants unit tests
-- PerifocalOrbitEq refactored to live in the Satellite class
 
 # 0.4.2 - 08/02/2026
 - Refactored config builder and controller into variable, property and display builders/controllers
