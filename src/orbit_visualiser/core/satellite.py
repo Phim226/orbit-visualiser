@@ -95,7 +95,7 @@ class Satellite():
         self._h = h
 
         # Helper quantities
-        den = 1 + e*np.cos(nu)
+        den = 1 + e*np.cos(nu) # Denominator of the orbit equation
         mu_over_h = mu/h
 
         # Geometry

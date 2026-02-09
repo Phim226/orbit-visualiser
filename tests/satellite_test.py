@@ -1,59 +1,97 @@
+import pytest
 from math import pi
-from pytest import Subtests
 import numpy as np
-from orbit_visualiser.core import CentralBody, Orbit, Satellite
+from typing import Callable
+from numpy.typing import NDArray
+from orbit_visualiser.core import Satellite, Orbit
+from tests.test_cases import standard_test_cases, standard_open_test_cases
 
+# TODO: implement sanity tests (use different formulae for the same value and check they are equal)
 
-def test_circular_orbit_flight_angle(subtests: Subtests):
+@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", standard_open_test_cases)
+def test_satellite_velocity_sanity(
+    satellite_factory: Callable[[float, float, float], Satellite],
+    open_anomaly_grid: Callable[[Orbit, int], NDArray[np.float64]],
+    e: float,
+    rp: float,
+    mu: float,
+    closure: str,
+    orbit_type: str
+):
     """
-    For circular orbits the flight angle of a satellite at any true anomaly should be 0.
-
-    test_cases is the interval [0, 2pi] radians split into 20, so each value of the true
-    anomaly increases by roughly 0.314 radians for each test.
+    Sanity test to check that different formulae for the velocity give the same result.
     """
-    satellite = Satellite(Orbit(), CentralBody())
-    test_cases = np.linspace(0, 2*pi, num = 20)
+    satellite: Satellite = satellite_factory(e, rp, mu)
 
-    for i, nu in enumerate(test_cases):
-        with subtests.test("Circular orbit flight angle test cases", i = i):
-            satellite.nu = nu
-            satellite.update_satellite_properties()
+    anomaly_grid = open_anomaly_grid(satellite._orbit)
 
-            gam = satellite.gam
-            assert np.isclose(gam, 0)
+    for nu in anomaly_grid:
+        satellite.nu = nu
+        satellite.update_satellite_properties()
 
-def test_circular_orbit_radial_velocity(subtests: Subtests):
+        v = np.sqrt(satellite.v_inf**2 + satellite.v_esc**2)
+
+        assert np.isclose(v, satellite.v)
+
+@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", standard_test_cases)
+def test_satellite_azimuthal_velocity_sanity(
+    satellite_factory: Callable[[float, float, float], Satellite],
+    closed_anomaly_grid: NDArray[np.float64],
+    open_anomaly_grid: Callable[[Orbit, int], NDArray[np.float64]],
+    e: float,
+    rp: float,
+    mu: float,
+    closure: str,
+    orbit_type: str
+):
     """
-    For circular orbits the radial velocity of a satellite at any true anomaly should be 0.
-
-    test_cases is the interval [0, 2pi] radians split into 20, so each value of the true
-    anomaly increases by roughly 0.314 radians for each test.
+    Sanity test to check that different formulae for the azimuthal velocity give the same result.
     """
-    satellite = Satellite(Orbit(), CentralBody())
-    test_cases = np.linspace(0, 2*pi, num = 20)
+    satellite: Satellite = satellite_factory(e, rp, mu)
 
-    for i, nu in enumerate(test_cases):
-        with subtests.test("Circular orbit radial velocity test cases", i = i):
-            satellite.nu = nu
-            satellite.update_satellite_properties()
+    if closure == "closed":
+        anomaly_grid = closed_anomaly_grid
+    else:
+        anomaly_grid = open_anomaly_grid(satellite._orbit)
 
-            v_rad = satellite.v_radial
-            assert np.isclose(v_rad, 0)
+    for nu in anomaly_grid:
+        satellite.nu = nu
+        satellite.update_satellite_properties()
 
-def test_circular_orbit_anomalies(subtests: Subtests):
+        v_azim_vals = [
+            satellite.h/satellite.r,
+            satellite.v*np.cos(satellite.gam)
+        ]
+
+
+        assert np.allclose(v_azim_vals, satellite.v_azim)
+
+@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", standard_test_cases)
+def test_satellite_radial_velocity_sanity(
+    satellite_factory: Callable[[float, float, float], Satellite],
+    closed_anomaly_grid: NDArray[np.float64],
+    open_anomaly_grid: Callable[[Orbit, int], NDArray[np.float64]],
+    e: float,
+    rp: float,
+    mu: float,
+    closure: str,
+    orbit_type: str
+):
     """
-    For circular orbits the eccentric, mean and true anomalies should always be equivalent.
-
-    test_cases is the interval [0, 2pi] radians split into 20, so each value of the true
-    anomaly increases by roughly 0.314 radians for each test.
+    Sanity test to check that different formulae for the radial velocity give the same result.
     """
-    satellite = Satellite(Orbit(), CentralBody())
-    test_cases = np.linspace(0, 2*pi, num = 20)
+    satellite: Satellite = satellite_factory(e, rp, mu)
 
-    for i, nu in enumerate(test_cases):
-        with subtests.test("Circular orbit mean/eccentric/true anomaly test cases", i = i):
-            satellite.nu = nu
-            satellite.update_satellite_properties()
+    if closure == "closed":
+        anomaly_grid = closed_anomaly_grid
+    else:
+        anomaly_grid = open_anomaly_grid(satellite._orbit)
 
-            anomalies = [satellite.m_anomaly, satellite.e_anomaly]
-            assert np.allclose(anomalies, nu)
+    for nu in anomaly_grid:
+        satellite.nu = nu
+        satellite.update_satellite_properties()
+
+        v_radial = satellite.v*np.sin(satellite.gam)
+
+        assert np.isclose(v_radial, satellite.v_radial)
+

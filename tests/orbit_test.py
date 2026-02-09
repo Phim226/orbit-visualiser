@@ -1,58 +1,25 @@
-from pytest import Subtests
+import pytest
 import numpy as np
+from typing import Callable
 from orbit_visualiser.core import Orbit
+from tests.test_cases import e_tagged_test_cases
 
+# TODO: implement sanity tests (use different formulae for the same value and check they are equal)
 
-
-def test_circular_orbit_distance_parameters(subtests: Subtests):
-    """
-    For circular orbits the radius of periapsis, radius of apoapsis, semi-major axis, semi-minor axis
-    and orbital parameter should all be equivalent.
-
-    circular_orbit_test_cases is the list of initial radius of periapsis we set for our orbits.
-    """
-    circular_orbit_test_cases = [
-        0.000000001,
-        1,
-        6789,
-        50000,
-        1000000,
-        4095384905805829034
-    ]
-
-    for i, periapsis in enumerate(circular_orbit_test_cases):
-        with subtests.test("Circular orbit distance parameters test cases", i = i):
-            orbit = Orbit(rp = periapsis)
-            periapsis = orbit.rp
-            distances = [
-                orbit.ra,
-                orbit.a,
-                orbit.b,
-                orbit.p
-            ]
-            assert np.allclose(distances, periapsis)
-
-def test_orbit_type(subtests: Subtests):
+@pytest.mark.parametrize("e, closure, orbit_type", e_tagged_test_cases)
+def test_orbit_type_sanity(
+    orbit_factory: Callable[[float, float], Orbit],
+    e: float,
+    closure: str,
+    orbit_type: str):
     """
     If the eccentricity is 0<= e < 1 then the orbit is closed (True) and either circular (e = 0) or
     elliptical (0 < e < 1). If the eccentricity is e >= 1 then the orbit is not closed (False) and
     is either parabolic (e = 1) or hyperbolic (e > 1).
-
-    eccentricity_test_cases is a dictionary giving the eccentricity test value and the expected
-    orbit type and is_closed boolean value.
     """
-    eccentricity_test_cases = {
-        0 : ("circular", True),
-        0.0000000001: ("elliptical", True),
-        0.5: ("elliptical", True),
-        0.9999999999: ("elliptical", True),
-        1: ("parabolic", False),
-        1.00000000001: ("hyperbolic", False),
-        1.5: ("hyperbolic", False),
-        10000000: ("hyperbolic", False)
-    }
+    orbit: Orbit = orbit_factory(e = e)
 
-    for i, (e, output) in enumerate(eccentricity_test_cases.items()):
-        with subtests.test("Orbit type test cases", i = i):
-            orbit = Orbit(e = e)
-            assert orbit.orbit_type == output[0] and orbit.is_closed is output[1]
+    test_orbit_closure = "closed" if orbit.is_closed else "open"
+    test_orbit_type = orbit.orbit_type
+
+    assert test_orbit_closure == closure and test_orbit_type == orbit_type
