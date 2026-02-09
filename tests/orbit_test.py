@@ -4,6 +4,8 @@ from typing import Callable
 from orbit_visualiser.core import Orbit
 from tests.test_cases import e_tagged_test_cases
 
+# TODO: implement sanity tests (use different formulae for the same value and check they are equal)
+
 @pytest.mark.parametrize("e, closure, orbit_type", e_tagged_test_cases)
 def test_orbit_type_sanity(
     orbit_factory: Callable[[float, float], Orbit],
