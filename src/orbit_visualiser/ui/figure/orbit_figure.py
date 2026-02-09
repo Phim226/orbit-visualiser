@@ -3,12 +3,15 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 from matplotlib.patches import Circle
+import numpy as np
+from numpy.typing import NDArray
 from orbit_visualiser.core import Orbit, CentralBody, Satellite
 
 # TODO: Fix bug where scroll zoom doesn't register as changing the view so the native matplotlib home button has unexpected (and often undesirable) behaviour.
 class OrbitFigure():
 
     DISPLAY_TEXT_OFFSET = (1.5, 1.5)
+    NUM_POINTS = 100_000
 
     def __init__(
             self,
@@ -75,7 +78,7 @@ class OrbitFigure():
 
     def _initialise_plot(self) -> None:
         # Plot the initial orbit
-        t = self._orbit.orbital_angles()
+        t = self._get_anomaly_data(self._orbit.orbital_angles())
         orbit_eq = self._orbit.orbit_eq
         x, y = orbit_eq.x, orbit_eq.y
         self._line, = self._ax.plot(x(t) , y(t), color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)
@@ -105,8 +108,17 @@ class OrbitFigure():
         toolbar.update()
         toolbar.pack(side = "bottom", fill = "x")
 
+    def _get_anomaly_data(self, angles: tuple[float]) -> NDArray[np.float64]:
+        lower_lim, upper_lim = angles
+
+        # Check if angles represent closed or open orbit (open orbits will have negative angles).
+        # If the orbit is open then we need a small offset so the plot doesn't evaluate to infinity
+        # and cause runtime errors or unusual graphical artifacts.
+        delta = 0.0001 if lower_lim < 0 else 0
+        return np.linspace(lower_lim + delta, upper_lim - delta, OrbitFigure.NUM_POINTS)
+
     def redraw_orbit(self) -> None:
-        t = self._orbit.orbital_angles()
+        t = self._get_anomaly_data(self._orbit.orbital_angles())
         orbit_eq = self._orbit.orbit_eq
         self._line.set_data(orbit_eq.x(t), orbit_eq.y(t))
 
@@ -131,7 +143,13 @@ class OrbitFigure():
         self._rp_point, = self._ax.plot(
             self._orbit.rp, 0, ms = 3, marker = "o", zorder = 9, color = "#502BF2", label = "$r_p$"
         )
-        self._rp_annotation = self._ax.annotate("$r_p$", xy = (self._orbit.rp, 0), xycoords = "data", xytext = self.DISPLAY_TEXT_OFFSET, textcoords = "offset points")
+        self._rp_annotation = self._ax.annotate(
+            "$r_p$",
+            xy = (self._orbit.rp, 0),
+            xycoords = "data",
+            xytext = OrbitFigure.DISPLAY_TEXT_OFFSET,
+            textcoords = "offset points"
+        )
 
     @staticmethod
     def _zoom_factory(ax: Axes, base_scale = 2.):

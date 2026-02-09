@@ -20,7 +20,6 @@ class PerifocalOrbitEq():
         return self._y
 
 
-# TODO: self.orbital_angles should return just a tuple, not the linspace. The linspace is only for plotting so logic for calculating it should be in OrbitFigure.
 class Orbit():
 
 
@@ -86,12 +85,11 @@ class Orbit():
     def orbit_eq(self) -> PerifocalOrbitEq:
         return PerifocalOrbitEq(self._e, self._p)
 
-    def orbital_angles(self):
+    def orbital_angles(self) -> tuple[float]:
         if self._e < 1:
-            return np.linspace(0, 2*pi, 100_000)
+            return 0, 2*pi
 
-        delta = 0.0001
-        return np.linspace(-self._t_asymp + delta, self._t_asymp - delta, 100_000)
+        return -self._t_asymp, self._t_asymp
 
     def update_orbital_properties(self):
         e, rp = self._e, self._rp
