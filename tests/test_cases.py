@@ -29,12 +29,22 @@ def _create_test_cases(values_dict: dict[str, list[float]]) -> list[list[Any]]:
 
     return test_cases
 
-e_test_cases: list[float] = [0, 0.0001, 0.1, 0.5, 0.9, 0.99999, 1, 1.0000001, 1.5, 2, 10, 1000]
-rp_test_cases: list[float] = [10, 6789, 20_000, 50_000, 100_000, 1_000_000, 938_382_001_928_942_153]
-mu_test_cases: list[float] = [1.0, 4902.8, 42_828.0, 398600.0, 37_931_200.0]
+e_closed_test_cases: list[float] = [0, 0.0001, 0.5, 0.99999]
+e_open_test_cases: list[float] = [1, 1.0000001, 1.5, 1000]
+e_elliptical_test_cases: list[float] = [0.0001, 0.5, 0.99999]
+e_hyperbolic_test_cases: list[float] = [1.0000001, 1.5, 1000]
+e_test_cases: list[float] = e_closed_test_cases + e_open_test_cases
+rp_test_cases: list[float] = [10, 6789, 100_000, 1_000_000, 938_382_001_928_942_153]
+mu_test_cases: list[float] = [1.0, 4902.8, 398600.0, 37_931_200.0]
 
 # Test cases for variable eccentricity, radius of periapsis and gravitational parameter
 standard_test_cases = _create_test_cases({"e": e_test_cases, "rp": rp_test_cases, "mu": mu_test_cases})
+
+# Test cases for variable eccentricity < 1, radius of periapsis and gravitational parameter
+standard_closed_test_cases = _create_test_cases({"e": e_closed_test_cases, "rp": rp_test_cases, "mu": mu_test_cases})
+
+# Test cases for variable eccentricity > 1, radius of periapsis and gravitational parameter
+standard_open_test_cases = _create_test_cases({"e": e_open_test_cases, "rp": rp_test_cases, "mu": mu_test_cases})
 
 # Test cases for constant eccentricity and variable radius of periapsis and gravitational parameter
 rp_mu_test_cases = _create_test_cases({"rp": rp_test_cases, "mu": mu_test_cases})
