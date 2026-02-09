@@ -4,6 +4,7 @@ All notable changes to this project will be documented here.
 
 # Unreleased
 - Certain orbital parameters can be displayed in the plot
+- Implemented automatic testing
 - Tests architecture rewritten
 - Wrote invariants unit tests
 - PerifocalOrbitEq refactored to live in the Satellite class
