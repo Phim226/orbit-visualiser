@@ -78,10 +78,9 @@ class OrbitFigure():
 
     def _initialise_plot(self) -> None:
         # Plot the initial orbit
-        t = self._get_anomaly_data(self._orbit.orbital_angles())
-        orbit_eq = self._orbit.orbit_eq
-        x, y = orbit_eq.x, orbit_eq.y
-        self._line, = self._ax.plot(x(t) , y(t), color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)
+        nu = self._get_anomaly_data(self._orbit.orbital_angles())
+        x, y = self._sat.pos_pf_eq(nu)
+        self._line, = self._ax.plot(x, y, color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)
 
         # Plot the central body
         self._ax.add_patch(
@@ -118,9 +117,9 @@ class OrbitFigure():
         return np.linspace(lower_lim + delta, upper_lim - delta, OrbitFigure.NUM_POINTS)
 
     def redraw_orbit(self) -> None:
-        t = self._get_anomaly_data(self._orbit.orbital_angles())
-        orbit_eq = self._orbit.orbit_eq
-        self._line.set_data(orbit_eq.x(t), orbit_eq.y(t))
+        nu = self._get_anomaly_data(self._orbit.orbital_angles())
+        x, y = self._sat.pos_pf_eq(nu)
+        self._line.set_data(x, y)
 
         self._canvas.draw_idle()
 

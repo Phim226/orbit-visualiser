@@ -1,8 +1,12 @@
 import numpy as np
-from numpy.typing import ArrayLike
+from numpy.typing import NDArray
+from typing import Callable
 from math import pi
-from orbit_visualiser.core import Orbit, CentralBody
+from orbit_visualiser.core.common.orbit_formulae import perifocal_position_eq, perifocal_velocity_eq
+from orbit_visualiser.core.orbit import Orbit, CentralBody
 
+# TODO: Split formulae from Satellite class.
+# TODO: Update satellite properties when true anomaly is set rather than calling it explicitly outside the class
 class Satellite():
 
 
@@ -22,11 +26,19 @@ class Satellite():
         self._nu = nu
 
     @property
-    def pos_pf(self) -> ArrayLike:
+    def pos_pf_eq(self) -> Callable[[float], NDArray[np.float64]]:
+        return self._pos_pf_eq
+
+    @property
+    def vel_pf_eq(self) -> Callable[[float], NDArray[np.float64]]:
+        return self._vel_pf_eq
+
+    @property
+    def pos_pf(self) -> NDArray:
         return self._pos_pf
 
     @property
-    def vel_pf(self) -> ArrayLike:
+    def vel_pf(self) -> NDArray:
         return self._vel_pf
 
     @property
@@ -94,6 +106,10 @@ class Satellite():
         h, t_asymp, a = self._specific_ang_momentum(mu, p), self._orbit.t_asymp, self._orbit.a
         self._h = h
 
+        # Perifocal equations
+        self._pos_pf_eq = perifocal_position_eq(e, p)
+        self._vel_pf_eq = perifocal_velocity_eq(e, mu, h)
+
         # Helper quantities
         den = 1 + e*np.cos(nu) # Denominator of the orbit equation
         mu_over_h = mu/h
@@ -103,6 +119,7 @@ class Satellite():
         self._r = self._radius(nu, t_asymp, p, den)
 
         # Kinematics
+        self._vel_pf = self._pf_velocity(nu)
         v_azim = self._azimuthal_velocity(nu, t_asymp, mu_over_h, den)
         self._v_azim = v_azim
         v_radial = self._radial_velocity(mu_over_h, e, nu)
@@ -130,15 +147,18 @@ class Satellite():
     def _specific_ang_momentum(mu: float, p: float) -> float:
         return np.sqrt(mu*p)
 
-    def _pf_position(self, nu: float, t_asymp: float) -> tuple[float]:
-        orbit_eq = self._orbit.orbit_eq
+    def _pf_position(self, nu: float, t_asymp: float) -> NDArray[np.float64]:
+        pos_eq = self._pos_pf_eq
+
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
                 nu_offset = (nu/abs(nu))*np.deg2rad(0.01)
-                x_close_to_inf, y_close_to_inf = orbit_eq.x(nu - nu_offset), orbit_eq.y(nu - nu_offset)
-                return (x_close_to_inf/abs(x_close_to_inf))*np.inf, (y_close_to_inf/abs(y_close_to_inf))*np.inf
+                x_close_to_inf, y_close_to_inf = pos_eq(nu_offset)
+                return np.array([(x_close_to_inf/abs(x_close_to_inf))*np.inf, (y_close_to_inf/abs(y_close_to_inf))*np.inf])
 
-        return orbit_eq.x(nu), orbit_eq.y(nu)
+        return pos_eq(nu)
 
+    def _pf_velocity(self, nu: float) -> NDArray[np.float64]:
+        return self._vel_pf_eq(nu)
 
     def _azimuthal_velocity(self, nu: float, t_asymp: float, mu_over_h: float, den: float) -> float:
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
