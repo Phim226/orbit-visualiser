@@ -2,13 +2,13 @@ name: Python Tests
 
 on:
     push:
-        branches: [main, refactor, feature]
+        branches: [main]
         paths:
           - 'src/**'
           - 'tests/**'
 
     pull_request:
-        branches: [main]
+        branches: [main, refactor, feature]
 
 jobs:
  test:
