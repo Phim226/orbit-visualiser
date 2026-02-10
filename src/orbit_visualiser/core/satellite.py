@@ -5,6 +5,8 @@ from math import pi
 from orbit_visualiser.core.common.orbit_formulae import perifocal_position_eq, perifocal_velocity_eq
 from orbit_visualiser.core.orbit import Orbit, CentralBody
 
+# TODO: Split formulae from Satellite class.
+# TODO: Update satellite properties when true anomaly is set rather than calling it explicitly outside the class
 class Satellite():
 
 

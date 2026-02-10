@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from math import pi
 import numpy as np
 
+# TODO: Split formulae from Orbit class.
+# TODO: Update orbit properties when eccentricity of radius of periapsis is set rather than calling it explicitly outside the class
 class Orbit():
 
 
