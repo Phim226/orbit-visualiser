@@ -38,12 +38,10 @@ The orbiting satellite is assumed to have negligible mass. All higher-order pert
 - Python 3.8 or later
 - Git (optional but recommended, for cloning the repository)
 
-## Python dependencies
+## Python dependencies (also listed in requirements.txt)
 
 - numpy
 - matplotlib
-
-These are also listed in the requirements.txt file.
 
 ## How to use
 Clone the repository:
@@ -52,25 +50,69 @@ Clone the repository:
 git clone https://github.com/Phim226/orbit-visualiser.git
 ```
 
-Navigate to project folder:
+Navigate to the project folder:
 
 ```bash
 cd orbit-visualiser
 ```
+Create a virtual environment:
 
-Install dependencies:
+```python
+python -m venv .venv
+```
+
+Activate the environment:
+
+### Windows
+*Windows Powershell*:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+- **Warning**: On some Windows systems, Powershell might block this command depending on the script execution policy. If you see an error like:
+
+  ```powershell
+  ...\.venv\Scripts\Activate.ps1 cannot be loaded because running scripts is disabled on this system.
+  ```
+  Then you can run:
+
+  ```powershell
+  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+  ```
+  to **temporarily** allow scripts in the current terminal session. 
+
+*Windows Command Prompt*:
 
 ```bash
+.venv\Scripts\activate.bat
+```
+This should work without changing any execution policies.
+### Linux/macOS
+
+```bash
+source .venv/bin/activate
+```
+
+If you see (.venv) at the start of your prompt, then the virtual environment is active. 
+
+Install dependencies and the package in editable mode (make sure this is done within the virtual environment):
+
+```python
+python.exe -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Install the package locally (if you want to make changes include the -e option after "install" to make it an editable installation):
-```bash
-pip install .
-```
+The ```-e``` in requirements.txt ensures that the package is editable, which ensures that any changes to the source code are immediately reflected when running the program.
 
 Run the program:
 
-```bash
+```python
 python src/orbit_visualiser/main.py
 ```
+
+When you're finished using the program or making changes then run:
+
+```bash
+deactivate
+```
+to deactivate the virtual environment. When returning to the program, activate venv again using the commands above. So long as the project folder or .venv folder hasn't changed then you shouldn't need to reinstall any dependencies.
