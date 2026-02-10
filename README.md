@@ -57,16 +57,31 @@ Navigate to project folder:
 ```bash
 cd orbit-visualiser
 ```
-
-Install dependencies:
+Create a virtual environment:
 
 ```bash
-pip install -r requirements.txt
+python -m venv -venv
 ```
 
-Install the package locally (if you want to make changes include the -e option after "install" to make it an editable installation):
+Activate the environment:
+
+### Windows
+
 ```bash
-pip install .
+.venv\Scripts\Activate.ps1
+```
+
+### Linux/macOS
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies (including the editable package):
+
+```bash
+python.exe -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
 Run the program:
