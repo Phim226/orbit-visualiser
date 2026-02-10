@@ -5,6 +5,7 @@ All notable changes to this project will be documented here.
 # Unreleased
 - Certain orbital parameters can be displayed in the plot
 - PerifocalOrbitEq refactored to live in the Satellite class
+- Better separation of orbital entity behaviour and calculation
 
 # 0.4.3 - 09/02/2026
 - Implemented automatic testing

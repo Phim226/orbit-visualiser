@@ -35,7 +35,7 @@ class OrbitVisualiser():
 
 # TODO: Write tests as I go.
 # TODO: Add variable presets (Earth - ISS, Earth - Geostationary, Mars - Phobos etc).
-# Test change
+# TODO: Write proper docstrings
 if __name__ == "__main__":
     root = Tk()
 

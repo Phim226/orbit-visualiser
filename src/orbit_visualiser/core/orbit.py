@@ -1,25 +1,9 @@
-from typing import Callable
 from dataclasses import dataclass
 from math import pi
 import numpy as np
 
-# TODO: Move PerifocalOrbitEq to satellite.py.
-# TODO: Expand PerifocalOrbitEq to include velocity calculation as well.
-class PerifocalOrbitEq():
-
-    def __init__(self, e: float, p: float):
-        self._x: Callable[[float], float] = lambda t : p*(np.cos(t)/(1+e*np.cos(t)))
-        self._y: Callable[[float], float] = lambda t : p*(np.sin(t)/(1+e*np.cos(t)))
-
-    @property
-    def x(self) -> Callable[[float], float]:
-        return self._x
-
-    @property
-    def y(self) -> Callable[[float], float]:
-        return self._y
-
-
+# TODO: Split formulae from Orbit class.
+# TODO: Update orbit properties when eccentricity of radius of periapsis is set rather than calling it explicitly outside the class
 class Orbit():
 
 
@@ -80,10 +64,6 @@ class Orbit():
     @property
     def is_closed(self) -> bool:
         return self._is_closed
-
-    @property
-    def orbit_eq(self) -> PerifocalOrbitEq:
-        return PerifocalOrbitEq(self._e, self._p)
 
     def orbital_angles(self) -> tuple[float]:
         if self._e < 1:
