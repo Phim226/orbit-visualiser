@@ -18,16 +18,17 @@ def two_body_pf_ode(mu: float, t: float, state: NDArray[np.float64], ) -> NDArra
 
 sat = Satellite(Orbit(), CentralBody())
 
-x = sat.r
+r = sat.r
+mu = sat._central_body.mu
+period = sat.period
+
+x = r
 y = 0
 v_x = 0
-v_y = np.sqrt(sat._central_body.mu/sat.r)
+v_y = np.sqrt(mu/r)
 
-T_expected = 2*np.pi*np.sqrt(sat.r**3 / sat._central_body.mu)
-print(T_expected, sat.period)
+t = np.linspace(0, period, 1000)
 
-t = np.linspace(0, sat.period, 1000)
-
-sol = solve_ivp(partial(two_body_pf_ode, sat._central_body.mu), [0, sat.period], [x, y, v_x, v_y], t_eval = t, rtol=1e-10, atol=1e-12)
+sol = solve_ivp(partial(two_body_pf_ode, mu), [0, sat.period], [x, y, v_x, v_y], t_eval = t, rtol=1e-10, atol=1e-12)
 
 print(sol.y[:, -1])
