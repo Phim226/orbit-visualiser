@@ -1,3 +1,4 @@
+import sys
 from tkinter import Tk
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, OrbitConfigController
@@ -9,7 +10,11 @@ class OrbitVisualiser():
 
     def __init__(self, root: Tk):
         root.title("2D Orbit Visualiser")
-        root.state("zoomed")
+
+        if sys.platform.startswith("win"):
+            root.state("zoomed")
+        else:
+            root.state("normal")
 
         orbit: Orbit = Orbit()
         central_body: CentralBody = CentralBody()
