@@ -58,7 +58,7 @@ cd orbit-visualiser
 Create a virtual environment:
 
 ```python
-python -m venv .venv
+python3 -m venv .venv
 ```
 
 Activate the environment:
