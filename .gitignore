@@ -7,3 +7,6 @@ __pycache__/
 
 # Build metadata
 *egg-info/
+
+# virtual environment files
+.venv/
