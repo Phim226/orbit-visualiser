@@ -10,3 +10,4 @@ __pycache__/
 
 # virtual environment files
 .venv/
+.venv-win/
