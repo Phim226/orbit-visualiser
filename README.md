@@ -98,7 +98,7 @@ If you see (.venv) at the start of your prompt, then the virtual environment is 
 Install dependencies and the package in editable mode (make sure this is done within the virtual environment):
 
 ```python
-python.exe -m pip install --upgrade pip
+python3 -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
