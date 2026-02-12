@@ -38,11 +38,13 @@ The orbiting satellite is assumed to have negligible mass. All higher-order pert
 - Python 3.8 or later
 - Git (optional but recommended, for cloning the repository)
 
-## Python dependencies (also listed in requirements.txt)
+## Python dependencies
 
 - numpy
 - matplotlib
 - scipy
+
+These are also listed in requirements.txt.
 
 ## How to use
 Clone the repository:
@@ -117,3 +119,58 @@ When you're finished using the program or making changes then run:
 deactivate
 ```
 to deactivate the virtual environment. When returning to the program, activate venv again using the commands above. So long as the project folder or .venv folder hasn't changed then you shouldn't need to reinstall any dependencies.
+
+## Using Orbit Propagation
+As of the current version (v0.4.4) there is no CLI or GUI functionality for the orbit propagation. Navigate to src/orbit_visualiser/core/propagation.py, and go to the bottom of the file to the code snippet:
+```python
+if __name__ == "__main__":
+
+    satellite = Satellite(Orbit(), CentralBody())
+    init_conditions = get_init_conditions(satellite)
+
+    sol = run_orbit_prop(satellite, init_conditions, satellite.period)
+    print(init_conditions)
+    print(sol.y[:, -1])
+
+    r0 = np.linalg.norm(init_conditions[:2])
+    rf = np.linalg.norm(sol.y[:2, -1])
+
+    print(f"Difference in radius after propagating: {rf - r0}")
+```
+You can alter the construction of the satellite object by altering the construction of Orbit and CentralBody. The current model is completely analytical so the orbit is passed to the satellite, which then informs its state based on the satellite's true anomaly. The Orbit class takes eccentricity and the radius of periapsis as arguments, and the CentralBody class takes radius and gravitational parameter. 
+
+In its current form the only initial conditions you can get are the state of the satellite at periapsis, but future functionality will allow for the initial conditions at any true anomaly (which can be set in the Satellite construction, or by calling satellite.nu = nu_new).
+
+The third argument of run_orbit_prop is the end time of the propagation. So running it with an end time of satellite.period will propagate the orbit by 1 full orbit. In order to get accurate results you should keep the end time on the order of 10 or at most 100 periods. The integrators used by scipy aren't symplectic, so there is significant energy drift over longer propagations. 
+
+The current print statements are just quick sanity checks to show that after a whole number of orbits the satellite is returning to roughly the same spot and with roughly the same velocity.
+
+As an example if you wanted to propagate the ISS then you might edit the above code snippet to:
+```python
+if __name__ == "__main__":
+    # Approximate eccentricity and radius of periapsis (in km) for the ISS
+    orbit = Orbit(e = 0.0002267, rp = 7108)
+
+    # The default values for CentralBody are the radius (at the equator, in km) and gravitational parameter of earth
+    earth = CentralBody()
+
+    # Creates the ISS satellite object, with the default true anomaly of 0 rads
+    iss = Satellite(orbit, earth)
+
+    # Gets the array [x, y, v_x, v_y] of the perifocal positions (km) and velocity (km/s) of the ISS at periapsis
+    init_conditions = get_init_conditions(satellite)
+
+    # Runs the propagation for 1 period, returning the ISS back to periapsis
+    sol = run_orbit_prop(iss, init_conditions, iss.period)
+
+    
+    print(init_conditions)
+
+    # Grabs the array of solutions (sol.y) and prints the last entry
+    print(sol.y[:, -1])
+
+    r0 = np.linalg.norm(init_conditions[:2])
+    rf = np.linalg.norm(sol.y[:2, -1])
+
+    print(f"Difference in radius after propagating: {rf - r0}")
+```
