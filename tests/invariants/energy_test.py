@@ -3,10 +3,10 @@ import numpy as np
 from typing import Callable
 from numpy.typing import NDArray
 from orbit_visualiser.core import Orbit, Satellite
-from tests.test_cases import standard_test_cases
+from tests.test_cases import full_test_cases
 
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", standard_test_cases)
+@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", full_test_cases)
 def test_specific_energy_conservation(
     satellite_factory: Callable[[float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
@@ -36,7 +36,7 @@ def test_specific_energy_conservation(
 
         assert np.isclose(specific_energy, vis_viva_energy)
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", standard_test_cases)
+@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", full_test_cases)
 def test_specific_and_characteristic_energy_relation(
     satellite_factory: Callable[[float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
