@@ -3,15 +3,15 @@
 All notable changes to this project will be documented here.
 
 # Unreleased
-- Implemented orbital simulation functionality
+- Implemented orbit propagation
 - Certain orbital parameters can now be displayed in the plot
-- PerifocalOrbitEq refactored to live in the Satellite class
 - Better separation of orbital entity behaviour and calculation
 
 # 0.4.3 - 09/02/2026
 - Implemented automatic testing
 - Tests architecture rewritten
 - Wrote invariants unit tests
+- PerifocalOrbitEq refactored to live in the Satellite class
 
 # 0.4.2 - 08/02/2026
 - Refactored config builder and controller into variable, property and display builders/controllers
