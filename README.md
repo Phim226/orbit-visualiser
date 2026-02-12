@@ -1,6 +1,6 @@
 # Orbit Visualiser
 
-The Orbit Visualiser is a 2D Keplerian orbit visualisation tool for modelling the motion of a satellite around a central body, written in Python. The focus of this tool is on orbital geometry and satellite kinematics. Currently there is no simulation-based functionality.
+The Orbit Visualiser is a 2D Keplerian orbit visualisation tool for modelling the motion of a satellite around a central body, written in Python. The focus of this tool is on orbital geometry and satellite kinematics. Has basic orbital propagation.
 
 ## Features
 
@@ -27,7 +27,7 @@ The orbiting satellite is assumed to have negligible mass. All higher-order pert
 ## Potential future improvements
 
 - Introduce argument of periapsis as an orbital geometry parameter
-- Simulate orbital motion
+- Improve simulation of orbital motion
 - Expand orbital modelling to 3 dimensions
 - Include perturbations into the model
 - Expand modelling to R3BP or N-body system

@@ -3,9 +3,12 @@
 All notable changes to this project will be documented here.
 
 # Unreleased
-- Implemented orbit propagation
 - Certain orbital parameters can now be displayed in the plot
 - Better separation of orbital entity behaviour and calculation
+
+# 0.4.4
+- Implemented basic orbit propagation
+- Wrote orbit propagation tests
 
 # 0.4.3 - 09/02/2026
 - Implemented automatic testing
