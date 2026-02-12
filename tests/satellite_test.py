@@ -1,10 +1,9 @@
 import pytest
-from math import pi
 import numpy as np
 from typing import Callable
 from numpy.typing import NDArray
 from orbit_visualiser.core import Satellite, Orbit
-from tests.test_cases import standard_test_cases, standard_open_test_cases
+from tests.test_cases import full_test_cases, standard_open_test_cases
 
 # TODO: implement sanity tests (use different formulae for the same value and check they are equal)
 
@@ -29,11 +28,14 @@ def test_satellite_velocity_sanity(
         satellite.nu = nu
         satellite.update_satellite_properties()
 
-        v = np.sqrt(satellite.v_inf**2 + satellite.v_esc**2)
+        v_vals = [
+            np.hypot(satellite.v_inf, satellite.v_esc),
+            np.hypot(satellite.v_azim, satellite.v_radial)
+        ]
 
-        assert np.isclose(v, satellite.v)
+        assert np.allclose(v_vals, satellite.v)
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", standard_test_cases)
+@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", full_test_cases)
 def test_satellite_azimuthal_velocity_sanity(
     satellite_factory: Callable[[float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
@@ -66,7 +68,7 @@ def test_satellite_azimuthal_velocity_sanity(
 
         assert np.allclose(v_azim_vals, satellite.v_azim)
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", standard_test_cases)
+@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", full_test_cases)
 def test_satellite_radial_velocity_sanity(
     satellite_factory: Callable[[float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],

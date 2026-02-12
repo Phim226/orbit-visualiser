@@ -42,6 +42,7 @@ The orbiting satellite is assumed to have negligible mass. All higher-order pert
 
 - numpy
 - matplotlib
+- scipy
 
 ## How to use
 Clone the repository:
@@ -79,7 +80,7 @@ Activate the environment:
   ```powershell
   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
   ```
-  to **temporarily** allow scripts in the current terminal session. 
+  to **temporarily** allow scripts in the current terminal session.
 
 *Windows Command Prompt*:
 
@@ -93,7 +94,7 @@ This should work without changing any execution policies.
 source .venv/bin/activate
 ```
 
-If you see (.venv) at the start of your prompt, then the virtual environment is active. 
+If you see (.venv) at the start of your prompt, then the virtual environment is active.
 
 Install dependencies and the package in editable mode (make sure this is done within the virtual environment):
 

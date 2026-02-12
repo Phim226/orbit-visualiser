@@ -119,12 +119,11 @@ class Satellite():
         self._r = self._radius(nu, t_asymp, p, den)
 
         # Kinematics
-        self._vel_pf = self._pf_velocity(nu)
-        v_azim = self._azimuthal_velocity(nu, t_asymp, mu_over_h, den)
-        self._v_azim = v_azim
-        v_radial = self._radial_velocity(mu_over_h, e, nu)
-        self._v_radial = v_radial
-        self._v = self._velocity(v_azim, v_radial)
+        vel_pf = self._pf_velocity(nu)
+        self._vel_pf = vel_pf
+        self._v_azim = self._azimuthal_velocity(nu, t_asymp, mu_over_h, den)
+        self._v_radial = self._radial_velocity(mu_over_h, e, nu)
+        self._v = self._velocity(vel_pf[0], vel_pf[1])
         self._v_esc = self._escape_velocity(nu, mu, self._r, t_asymp)
         self._v_inf = self._excess_velocity(mu, abs(a))
         self._gam = self._flight_angle(e, nu, t_asymp, den)
@@ -172,8 +171,8 @@ class Satellite():
 
         return mu_over_h*e*np.sin(nu)
 
-    def _velocity(self, v_azim: float, v_radial: float) -> float:
-        return np.hypot(v_azim, v_radial)
+    def _velocity(self, v_x: float, v_y: float) -> float:
+        return np.hypot(v_x, v_y)
 
     def _radius(self, nu: float, t_asymp: float, p: float, den: float) -> float:
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
