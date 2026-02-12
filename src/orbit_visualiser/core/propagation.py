@@ -6,6 +6,7 @@ from numpy.typing import NDArray
 from orbit_visualiser.core.orbit import Orbit
 from orbit_visualiser.core.satellite import Satellite, CentralBody
 
+# TODO: Implement CLI input.
 
 def two_body_pf_ode(mu: float, t: float, state: NDArray[np.float64], ) -> NDArray[np.float64]:
     """
@@ -20,7 +21,7 @@ def two_body_pf_ode(mu: float, t: float, state: NDArray[np.float64], ) -> NDArra
     t : float
         Unused time argument. Necessary for the way scipy uses functions to numerically integrate.
     state : NDArray[np.float64]
-        The current state [x, dx]
+        The current state [x, dx], with x in km and dx in km/s.
 
     Returns
     -------
@@ -45,7 +46,7 @@ def get_init_conditions(satellite: Satellite, at: str = "periapsis") -> NDArray[
     satellite : Satellite
         The satellite object, which contains information about its analytical orbit.
     at : str, optional
-        An optional parameter to choose where the in the analytical orbit the initial conditions are
+        An optional parameter to choose where in the analytical orbit the initial conditions are
         taken from, by default "periapsis".
 
     Returns
@@ -71,7 +72,7 @@ def run_orbit_prop(satellite: Satellite, init_conditions: NDArray[np.float64], t
     init_conditions : NDArray[np.float64]
         The initial conditions for the propagation.
     t_end : float
-        The end time of the propagation. It should be on the order of a single orbital period
+        The end time of the propagation. It should be on the order of at most 10 orbital periods
         since the integrator (RK45) isn't symplectic, so will suffer from energy drift over long
         propagations.
     period_frac_per_step : int, optional
@@ -100,9 +101,8 @@ if __name__ == "__main__":
 
     satellite = Satellite(Orbit(), CentralBody())
     init_conditions = get_init_conditions(satellite)
-    t_span = [0, satellite.period]
 
-    sol = run_orbit_prop(satellite, init_conditions, t_span)
+    sol = run_orbit_prop(satellite, init_conditions, satellite.period)
     print(init_conditions)
     print(sol.y[:, -1])
 
