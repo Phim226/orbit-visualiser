@@ -19,9 +19,8 @@ def test_1p_propagation_vel(
     """
     satellite: Satellite = satellite_factory(e, rp, mu)
     init_conditions = get_init_conditions(satellite)
-    t_span = [0, satellite.period]
 
-    prop = run_orbit_prop(satellite, init_conditions, t_span)
+    prop = run_orbit_prop(satellite, init_conditions, satellite.period)
 
     vel_at_rp = init_conditions[2:]
     prop_vel_at_rp = prop.y[2:, -1]
@@ -42,9 +41,8 @@ def test_1p_propagation_pos(
     """
     satellite: Satellite = satellite_factory(e, rp, mu)
     init_conditions = get_init_conditions(satellite)
-    t_span = [0, satellite.period]
 
-    prop = run_orbit_prop(satellite, init_conditions, t_span)
+    prop = run_orbit_prop(satellite, init_conditions, satellite.period)
 
     pos_at_rp = init_conditions[:2]
     prop_pos_at_rp = prop.y[:2, -1]
@@ -65,9 +63,8 @@ def test_1p_phase_shift(
     """
     satellite: Satellite = satellite_factory(e, rp, mu)
     init_conditions = get_init_conditions(satellite)
-    t_span = [0, satellite.period]
 
-    prop = run_orbit_prop(satellite, init_conditions, t_span)
+    prop = run_orbit_prop(satellite, init_conditions, satellite.period)
 
     prop_pos_at_rp = prop.y[:2, -1]
     phase_shift = np.arctan2(prop_pos_at_rp[1], prop_pos_at_rp[0])

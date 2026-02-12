@@ -1,5 +1,6 @@
 from scipy.integrate import solve_ivp
 from functools import partial
+from math import ceil
 import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core.orbit import Orbit
@@ -83,7 +84,7 @@ def run_orbit_prop(satellite: Satellite, init_conditions: NDArray[np.float64], t
         The object containing the results of the numerical integration. The array containing the
         [x, dx] values can be accessed by calling result.y
     """
-    t = np.linspace(0, t_end, t_end*period_frac_per_step)
+    t = np.linspace(0, t_end, ceil((t_end/satellite.period)*period_frac_per_step))
 
     result = solve_ivp(
         partial(two_body_pf_ode, satellite._central_body.mu),
