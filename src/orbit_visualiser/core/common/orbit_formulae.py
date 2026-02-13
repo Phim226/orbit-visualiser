@@ -47,7 +47,7 @@ def perifocal_velocity_eq(e: float, mu: float, h: float) -> Callable[[float], ND
     return _callable
 
 
-def orbital_type(e: float) -> OrbitType:
+def orbit_type(e: float) -> OrbitType:
     """
     Returns the orbit type bases on the eccentricity.
 
@@ -73,7 +73,7 @@ def orbital_type(e: float) -> OrbitType:
     elif e > 1:
         return OrbitType.HYPERBOLIC
 
-def orbital_closure(orbit_type: OrbitType) -> bool:
+def orbit_closed(orbit_type: OrbitType) -> bool:
     """
     Returns a boolean for whether the orbit is closed. Circular and elliptical orbits are closed
     so return True, parabolic and hyperbolic are open so return False.
@@ -95,3 +95,156 @@ def orbital_closure(orbit_type: OrbitType) -> bool:
         OrbitType.HYPERBOLIC: False
     }
     return closure_dict[orbit_type]
+
+def semi_parameter_from_periapsis(e: float, rp: float) -> float:
+    """
+    Calculates the semi-parameter using the eccentricity and radius of periapsis.
+
+    Parameters
+    ----------
+    e : float
+        Eccentricity
+    rp : float
+        Radius of periapsis (km)
+
+    Returns
+    -------
+    float
+        Semi-parameter (km)
+    """
+    return rp*(1 + e)
+
+def semimajor_axis_from_periapsis(orbit_type: OrbitType, e: float, rp: float) -> float:
+    """
+    Calculates the semimajor axis using the eccentricity and radius of periapsis.
+
+    Parameters
+    ----------
+    orbit_type : OrbitType
+        The orbit type enum
+    e : float
+        Eccentricity
+    rp : float
+        Radius of periapsis (km)
+
+    Returns
+    -------
+    float
+        Semi-major axis (km)
+    """
+    if orbit_type is OrbitType.PARABOLIC:
+        return np.inf
+
+    return rp/(1 - e)
+
+def semiminor_axis_from_semimajor(orbit_type: OrbitType, e: float, a: float) -> float:
+    """
+    Calculates the semi-minor axis using the eccentricity and semi-major axis.
+
+    Parameters
+    ----------
+    orbit_type : OrbitType
+        The orbit type enum
+    e : float
+        Eccentricity
+    a : float
+        Semi-major axis (km)
+
+    Returns
+    -------
+    float
+        Semi-minor axis (km)
+    """
+    if orbit_type is OrbitType.HYPERBOLIC:
+        return a*np.sqrt(e**2 - 1)
+
+    elif orbit_closed(orbit_type):
+        return a*np.sqrt(1 - e**2)
+
+    return np.inf
+
+def apoapsis_from_semimajor(orbit_type: OrbitType, e: float, a: float) -> float:
+    """
+    Calculates the radius of apoapsis using the eccentricity and semi-major axis.
+
+    Parameters
+    ----------
+    orbit_type : OrbitType
+        The orbit type enum
+    e : float
+        Eccentricity
+    a : float
+        Semi-major axis (km)
+
+    Returns
+    -------
+    float
+        Radius of apoapsis (km)
+    """
+    if orbit_type is OrbitType.PARABOLIC:
+        return np.inf
+
+    return a*(1 + e)
+
+def asymptote_anomaly(orbit_type: OrbitType, e: float) -> float:
+    """
+    Calculate the asymptote of the true anomaly for open orbits using the eccentricity.
+
+    Parameters
+    ----------
+    orbit_type : OrbitType
+        The orbit type enum
+    e : float
+        Eccentricity
+
+    Returns
+    -------
+    float
+        The true anomaly of the asymptote (rads)
+    """
+    if orbit_closed(orbit_type):
+        return np.nan
+
+    return np.arccos(-1/e)
+
+def turning_angle(orbit_type: OrbitType, e: float) -> float:
+    """
+    Calculate the turning angle for open orbits using the eccentricity
+
+    Parameters
+    ----------
+    orbit_type : OrbitType
+        The orbit type enum
+    e : float
+        Eccentricity
+
+    Returns
+    -------
+    float
+        The turning angle (rads)
+    """
+    if orbit_closed(orbit_type):
+        return np.nan
+
+    return 2*np.arcsin(1/e)
+
+def aiming_radius_from_semiminor(orbit_type: OrbitType, b: float) -> float:
+    """
+    Calculate the aiming radius for hyperbolic orbits using the semi-minor axis
+
+    Parameters
+    ----------
+    orbit_type : OrbitType
+        The orbit type enum
+    b : float
+        Semi-minor axis (km)
+
+    Returns
+    -------
+    float
+        Aiming radius (km)
+    """
+    if orbit_type is not OrbitType.HYPERBOLIC:
+        return np.nan
+
+    return -b
