@@ -60,6 +60,7 @@ def perifocal_velocity_eq(e: float, mu: float, h: float) -> Callable[[float], ND
     """
     def _callable(nu: float) -> NDArray[np.float64]:
         return (mu/h)*np.array([-np.sin(nu), e + np.cos(nu)])
+
     return _callable
 
 
@@ -264,3 +265,28 @@ def aiming_radius_from_semiminor(orbit_type: OrbitType, b: float) -> float:
         return np.nan
 
     return -b
+
+def specific_ang_momentum(mu: float, p: float) -> float:
+    """
+    Calculates the specific angular momentum of a satellite using the gravitational parameter and
+    the semi-parameter.
+
+    Parameters
+    ----------
+    mu : float
+        Gravitational parameter (km^3/s^2)
+    p : float
+        Semi-parameter (km)
+
+    Returns
+    -------
+    float
+        The specific angular momentum (km^2/s)
+    """
+    return np.sqrt(mu*p)
+
+def radial_azimuthal_velocity(
+        orbit_type: OrbitType,
+        nu: float
+) -> NDArray[np.float64]:
+    pass
