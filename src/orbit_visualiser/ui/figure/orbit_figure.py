@@ -153,14 +153,14 @@ class OrbitFigure():
     @staticmethod
     def _zoom_factory(ax: Axes, base_scale = 2.):
         def zoom_fun(event):
-            # get the current x and y limits
             cur_xlim = ax.get_xlim()
             cur_ylim = ax.get_ylim()
-            # set the range
+
             cur_xrange = (cur_xlim[1] - cur_xlim[0])*.5
             cur_yrange = (cur_ylim[1] - cur_ylim[0])*.5
             plot_centre_x = (cur_xlim[1] + cur_xlim[0])/2
             plot_centre_y = (cur_ylim[1] + cur_ylim[0])/2
+
             if event.button == 'up':
                 # deal with zoom in
                 scale_factor = 1/base_scale
@@ -171,17 +171,15 @@ class OrbitFigure():
                 # deal with something that should never happen
                 scale_factor = 1
                 print(event.button)
-            # set new limits
+
             ax.set_xlim([plot_centre_x - cur_xrange*scale_factor,
                         plot_centre_x + cur_xrange*scale_factor])
             ax.set_ylim([plot_centre_y - cur_yrange*scale_factor,
                         plot_centre_y + cur_yrange*scale_factor])
-            ax.figure.canvas.draw_idle() # force re-draw the next time the GUI refreshes
+            ax.figure.canvas.draw_idle()
 
-        fig = ax.get_figure() # get the figure of interest
-        # attach the call back
+        fig = ax.get_figure()
         fig.canvas.mpl_connect('scroll_event',zoom_fun)
 
-        #return the function
         return zoom_fun
 
