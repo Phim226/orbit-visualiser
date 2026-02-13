@@ -187,9 +187,9 @@ class Satellite():
         pos_eq = self._pos_pf_eq
 
         if np.isclose(abs(nu), t_asymp, atol = 0.0001, rtol = 0):
-                nu_offset = (nu/abs(nu))*np.deg2rad(0.01)
+                nu_offset = np.sign(nu)*np.deg2rad(0.01)
                 x_close_to_inf, y_close_to_inf = pos_eq(nu_offset)
-                return np.array([(x_close_to_inf/abs(x_close_to_inf))*np.inf, (y_close_to_inf/abs(y_close_to_inf))*np.inf])
+                return np.array([np.sign(x_close_to_inf)*np.inf, np.sign(y_close_to_inf)*np.inf])
 
         return pos_eq(nu)
 
