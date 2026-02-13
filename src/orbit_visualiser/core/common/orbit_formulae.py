@@ -1,16 +1,8 @@
 import numpy as np
 from numpy.typing import NDArray
-from enum import Enum
 from typing import Callable
+from orbit_visualiser.core.common.types import OrbitType
 
-class OrbitType(Enum):
-    """
-    Enum representing the conic type of an analytical Keplerian orbit.
-    """
-    CIRCULAR = 1
-    ELLIPTICAL = 2
-    PARABOLIC = 3
-    HYPERBOLIC = 4
 
 def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.float64]]:
     """
