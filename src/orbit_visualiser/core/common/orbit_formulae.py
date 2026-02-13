@@ -11,7 +11,7 @@ def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.fl
     e : float
         Eccentricity
     p : float
-        Semi-parameter
+        Semi-parameter (km)
 
     Returns
     -------
@@ -31,9 +31,9 @@ def perifocal_velocity_eq(e: float, mu: float, h: float) -> Callable[[float], ND
     e  : float
         Eccentricity
     mu : float
-        Gravitational parameter
+        Gravitational parameter (km^3/s^2)
     h  : float
-        Specific angular momentum
+        Specific angular momentum (km^2/s)
 
     Returns
     -------
