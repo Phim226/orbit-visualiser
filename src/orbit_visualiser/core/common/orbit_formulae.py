@@ -1,6 +1,16 @@
 import numpy as np
 from numpy.typing import NDArray
+from enum import Enum
 from typing import Callable
+
+class OrbitType(Enum):
+    """
+    Enum representing the conic type of an analytical Keplerian orbit.
+    """
+    CIRCULAR = 1
+    ELLIPTICAL = 2
+    PARABOLIC = 3
+    HYPERBOLIC = 4
 
 def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.float64]]:
     """
@@ -43,3 +53,53 @@ def perifocal_velocity_eq(e: float, mu: float, h: float) -> Callable[[float], ND
     def _callable(nu: float) -> NDArray[np.float64]:
         return (mu/h)*np.array([-np.sin(nu), e + np.cos(nu)])
     return _callable
+
+
+def orbital_type(e: float) -> OrbitType:
+    """
+    Returns the orbit type bases on the eccentricity.
+
+    Parameters
+    ----------
+    e : float
+        Eccentricity
+
+    Returns
+    -------
+    OrbitType
+        The OrbitType enum
+    """
+    if e == 0:
+        return OrbitType.CIRCULAR
+
+    elif 0 < e < 1:
+        return OrbitType.ELLIPTICAL
+
+    elif e == 1:
+        return OrbitType.PARABOLIC
+
+    elif e > 1:
+        return OrbitType.HYPERBOLIC
+
+def orbital_closure(orbit_type: OrbitType) -> bool:
+    """
+    Returns a boolean for whether the orbit is closed. Circular and elliptical orbits are closed
+    so return True, parabolic and hyperbolic are open so return False.
+
+    Parameters
+    ----------
+    orbit_type : OrbitType
+        The orbit type enum
+
+    Returns
+    -------
+    bool
+        Boolean value representing the closure of the orbit
+    """
+    closure_dict: dict[OrbitType, bool] = {
+        OrbitType.CIRCULAR: True,
+        OrbitType.ELLIPTICAL: True,
+        OrbitType.PARABOLIC: False,
+        OrbitType.HYPERBOLIC: False
+    }
+    return closure_dict[orbit_type]
