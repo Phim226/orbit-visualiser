@@ -18,10 +18,26 @@ def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.fl
     Returns
     -------
     Callable[[float], NDArray[np.float64]]
-        The perifocal orbit equation, taking the true anomaly as an argument
+        The perifocal orbit equation, taking the true anomaly (rads) and the true anomaly of the
+        asymptote (rads) as arguments
     """
-    def _callable(nu: float) -> NDArray[np.float64]:
-        return p*(1/(1 + e*np.cos(nu)))*np.array([np.cos(nu), np.sin(nu)])
+    def _callable(nu: float, asymp_anomaly: float) -> NDArray[np.float64]:
+        pf_pos_eq: Callable = lambda nu: p*(1/(1 + e*np.cos(nu)))*np.array([np.cos(nu), np.sin(nu)])
+
+        # If the true anomaly at the true anomaly of the asymptote then the satellite is at infinity,
+        # but since this is returning the perifocal position then we need to put the appropriate sign
+        # in front of the x and y infinities.
+        if np.isclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0):
+                # The true anomaly and the x and y values 'near' infinity are guaranteed to be
+                # non-zero in this part of the code, so we can safely use the sign function.
+                nu_offset = np.sign(nu)*np.deg2rad(0.01)
+                nu_close_to_inf = nu - nu_offset
+                x_close_to_inf, y_close_to_inf = pf_pos_eq(nu_close_to_inf)
+
+                return np.array([np.sign(x_close_to_inf)*np.inf, np.sign(y_close_to_inf)*np.inf])
+
+        return pf_pos_eq(nu)
+
     return _callable
 
 def perifocal_velocity_eq(e: float, mu: float, h: float) -> Callable[[float], NDArray[np.float64]]:
