@@ -4,7 +4,10 @@ All notable changes to this project will be documented here.
 
 # Unreleased
 - Certain orbital parameters can now be displayed in the plot
-- Better separation of orbital entity behaviour and calculation
+- Refactored the design architecture of the core objects
+- Created file containing orbital and kinematic helper functions
+- Wrote unit tests for helper functions
+- Refactored GUI layer, orbit propagation script and tests to align with new core design
 
 # 0.4.4
 - Implemented basic orbit propagation
