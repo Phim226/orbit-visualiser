@@ -1,9 +1,46 @@
 import numpy as np
 from numpy.typing import NDArray
-from typing import Callable
+from typing import Callable, Sequence
 from math import pi
 from orbit_visualiser.core.common.orbit_formulae import perifocal_position_eq, perifocal_velocity_eq
 from orbit_visualiser.core.orbit import Orbit, CentralBody
+
+class NewSatellite():
+    """
+    Represents a satellite orbiting a central body. Tracks the dynamical state.
+
+    Parameters
+    ----------
+    r : Sequence | NDArray[np.float64]
+        The initial position vector of the satellite (km)
+    v : float
+        The initial velocity vector of the satellite (km/s)
+    central_body: CentralBody
+        The CentralBody object representing the body that the satellite is orbiting
+    """
+
+    def __init__(
+            self,
+            r: Sequence | NDArray[np.float64],
+            v: Sequence | NDArray[np.float64],
+            central_body: CentralBody
+        ):
+        self._r = r
+        self._v = v
+        self._central_body = central_body
+
+    @property
+    def r(self) -> Sequence | NDArray[np.float64]:
+        return self._r
+
+    @property
+    def v(self) -> Sequence | NDArray[np.float64]:
+        return self._v
+
+    @property
+    def central_body(self) -> CentralBody:
+        return self._central_body
+
 
 # TODO: Split formulae from Satellite class.
 # TODO: Update satellite properties when true anomaly is set rather than calling it explicitly outside the class
