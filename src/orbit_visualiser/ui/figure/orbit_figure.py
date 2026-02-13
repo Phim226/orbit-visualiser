@@ -93,7 +93,7 @@ class OrbitFigure():
             self._orbit.rp, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B"
         )
 
-        self.plot_periapsis_point()
+        #self.plot_periapsis_point()
 
         f = self._zoom_factory(self._ax, 1.1)
 
