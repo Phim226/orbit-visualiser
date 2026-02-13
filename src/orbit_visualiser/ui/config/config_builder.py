@@ -57,7 +57,7 @@ class OrbitConfigBuilder(Builder):
             format_value: Callable
     ) -> None:
         self._variables_builder.build_variables_frame(reset, validate_input, slider_changed)
-        self._display_builder.build_display_options_frame()
+        #self._display_builder.build_display_options_frame()
 
         sep = Separator(self._config_frame, orient = "vertical")
         sep.pack(side = "left", fill = "y", padx = 6, expand = True)
