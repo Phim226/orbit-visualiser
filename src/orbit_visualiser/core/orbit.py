@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from math import pi
 import numpy as np
-from orbit_visualiser.core.satellite import NewSatellite
 
 @dataclass
 class CentralBody():
@@ -18,32 +17,7 @@ class CentralBody():
     mu: float = 398600.0 # gravitational parameter in km³/s² = Gm
     r: float = 6378.0 # radius in km
 
-class NewOrbit():
-    """
-    Represents the instantaneous analytical orbit of a satellite. If there are no perturbations
-    (oblateness, drag, a third body, etc) then for given inputs the orbit will be fixed. If
-    perturbations are present then that causes orbital elements to change over time, represented
-    by the changing state of this object.
 
-    Parameters
-    ----------
-    satellite: Satellite
-        The satellite object
-    central_body: CentralBody
-        The CentralBody object representing the body that the satellite is orbiting
-    """
-
-    def __init__(self, satellite: NewSatellite, central_body: CentralBody):
-        self._satellite = satellite
-        self._central_body = central_body
-
-    @property
-    def satellite(self) -> NewSatellite:
-        return self._satellite
-
-    @property
-    def central_body(self) -> CentralBody:
-        return self._central_body
 
 # TODO: Split formulae from Orbit class.
 # TODO: Update orbit properties when eccentricity of radius of periapsis is set rather than calling it explicitly outside the class
