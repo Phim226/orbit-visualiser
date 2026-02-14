@@ -66,9 +66,23 @@ class NewOrbit():
             vel: Sequence | NDArray[np.float64],
             mu: float
     ):
-        self.pos = pos
-        self.vel = vel
-        self.mu = mu
+        self._pos = pos
+        self._vel = vel
+        self._mu = mu
+
+        self.compute_orbital_elements(pos, vel, mu)
+
+    @property
+    def position(self) -> Sequence | NDArray[np.float64]:
+        return self._pos
+
+    @property
+    def velocity(self) -> Sequence | NDArray[np.float64]:
+        return self._vel
+
+    @property
+    def gravitational_parameter(self) -> float:
+        return self._mu
 
 
     @classmethod
