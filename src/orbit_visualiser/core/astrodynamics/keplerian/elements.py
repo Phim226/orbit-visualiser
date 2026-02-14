@@ -1,24 +1,83 @@
 from math import pi
 import numpy as np
+from numpy.typing import NDArray
 from orbit_visualiser.core.astrodynamics.types import OrbitType
 
-def semi_parameter(e: float, rp: float) -> float:
+def eccentricity_vector_from_state(r: NDArray[np.float64], v: NDArray[np.float64], mu: float) -> NDArray[np.float64]:
     """
-    Calculates the semi-parameter using the eccentricity and radius of periapsis.
+    Calculates the eccentricity vector from the position and velocity vectors of a satellite and
+    the gravitational parameter.
 
     Parameters
     ----------
-    e : float
+    r : NDArray[np.float64]
+        Position vector of the satellite (km)
+    v : NDArray[np.float64]
+        Velocity vector of the satellite (km/s)
+    mu : float
+        Gravitational parameter (km^3/s^2)
+
+    Returns
+    -------
+    NDArray[np.float64]
+        _description_
+    """
+    return (1/mu)*((np.linalg.norm(v)**2 - mu/np.linalg.norm(r))*r - np.dot(r, v)*v)
+
+def eccentricity_from_state(r: NDArray[np.float64], v: NDArray[np.float64], mu: float) -> float:
+    """
+    Calculates the eccentricity from the position and velocity vectors of a satellite and
+    the gravitational parameter.
+
+    Parameters
+    ----------
+    r : NDArray[np.float64]
+        Position vector of the satellite (km)
+    v : NDArray[np.float64]
+        Velocity vector of the satellite (km/s)
+    mu : float
+        Gravitational parameter (km^3/s^2)
+
+    Returns
+    -------
+    float
         Eccentricity
-    rp : float
-        Radius of periapsis (km)
+    """
+    return np.linalg.norm(eccentricity_vector_from_state(r, v, mu))
+
+def true_anomaly_from_state(r: NDArray[np.float64]) -> float:
+    """
+    Calculates the true anomaly from the current position vector.
+
+    Parameters
+    ----------
+    r : NDArray[np.float64]
+        Position vector of the satellite (km)
+
+    Returns
+    -------
+    float
+        True anomaly (rads)
+    """
+    return np.atan2(r[1], r[0])
+
+def semi_parameter(h: float, mu: float) -> float:
+    """
+    Calculates the semi-parameter using the gravitational parameter and specific angular momentum.
+
+    Parameters
+    ----------
+    h : float
+        Specific angular momentum (km^2/s)
+    mu : float
+        Gravitational parameter (km^3/s^2)
 
     Returns
     -------
     float
         Semi-parameter (km)
     """
-    return rp*(1 + e)
+    return h**2/mu
 
 def semimajor_axis(orbit_type: OrbitType, e: float, rp: float) -> float:
     """
@@ -68,6 +127,24 @@ def semiminor_axis(orbit_type: OrbitType, e: float, a: float) -> float:
         return a*np.sqrt(e**2 - 1)
 
     return np.inf
+
+def periapsis(p: float, e: float) -> float:
+    """
+    Calculates the radius of periapsis from the semi-parameter and eccentricity.
+
+    Parameters
+    ----------
+    p : float
+        Semi-parameter (km)
+    e : float
+        Eccentricity
+
+    Returns
+    -------
+    float
+        Radius of periapsis (km)
+    """
+    return p/(1 + e)
 
 def apoapsis(orbit_type: OrbitType, e: float, a: float) -> float:
     """
