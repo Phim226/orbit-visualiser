@@ -1,10 +1,29 @@
 import numpy as np
+from numpy.typing import NDArray
 from orbit_visualiser.core.astrodynamics.types import OrbitType
+
+def specific_ang_momentum_from_state(r: NDArray[np.float64], v: NDArray[np.float64]) -> NDArray[np.float64]:
+    """
+    Calculates the specific angular momentum vector from the position and velocity vectors of a satellite.
+
+    Parameters
+    ----------
+    r : NDArray[np.float64]
+        Position vector (km)
+    v : NDArray[np.float64]
+        Velocity vector (km/s)
+
+    Returns
+    -------
+    NDArray[np.float64]
+        Specific angular momentum vector (km^2/s)
+    """
+    return np.cross(r, v)
 
 def specific_ang_momentum(mu: float, p: float) -> float:
     """
-    Calculates the specific angular momentum of a satellite using the gravitational parameter and
-    the semi-parameter.
+    Calculates the magnitude of the specific angular momentum of a satellite using the gravitational
+    parameter and the semi-parameter.
 
     Parameters
     ----------
@@ -93,3 +112,24 @@ def excess_velocity(orbit_type: OrbitType, mu: float, a: float) -> float:
         return np.nan
 
     return np.sqrt(mu/a)
+
+def vis_viva_speed(r: float, a: float, mu: float) -> float:
+    """
+    Calculates orbital speed using the vis viva equation from the radial length, semi-major axis
+    and gravitational parameter.
+
+    Parameters
+    ----------
+    r : float
+        The magnitude of the radius (km)
+    a : float
+        Semi-major axis (km)
+    mu : float
+        Gravitational parameter (km^3/s^2)
+
+    Returns
+    -------
+    float
+        Orbital speed (km/s)
+    """
+    return np.sqrt(mu((2/r) - (1/a)))
