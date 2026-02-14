@@ -43,7 +43,7 @@ def semimajor_axis(orbit_type: OrbitType, e: float, rp: float) -> float:
 
     return rp/(1 - e)
 
-def semiminor_axis(orbit_type: OrbitType, closed: bool, e: float, a: float) -> float:
+def semiminor_axis(orbit_type: OrbitType, e: float, a: float) -> float:
     """
     Calculates the semi-minor axis using the eccentricity and semi-major axis.
 
@@ -51,8 +51,6 @@ def semiminor_axis(orbit_type: OrbitType, closed: bool, e: float, a: float) -> f
     ----------
     orbit_type : OrbitType
         The orbit type enum
-    closed: bool
-        Boolean representing if the orbit is closed
     e : float
         Eccentricity
     a : float
@@ -63,11 +61,11 @@ def semiminor_axis(orbit_type: OrbitType, closed: bool, e: float, a: float) -> f
     float
         Semi-minor axis (km)
     """
-    if orbit_type is OrbitType.HYPERBOLIC:
-        return a*np.sqrt(e**2 - 1)
-
-    elif closed:
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return a*np.sqrt(1 - e**2)
+
+    elif orbit_type is OrbitType.HYPERBOLIC:
+        return a*np.sqrt(e**2 - 1)
 
     return np.inf
 
@@ -94,14 +92,14 @@ def apoapsis(orbit_type: OrbitType, e: float, a: float) -> float:
 
     return a*(1 + e)
 
-def asymptote_anomaly(closed: bool, e: float) -> float:
+def asymptote_anomaly(orbit_type: OrbitType, e: float) -> float:
     """
     Calculate the asymptote of the true anomaly for open orbits using the eccentricity.
 
     Parameters
     ----------
-    closed : bool
-        Boolean representing if the orbit is closed
+    orbit_type : OrbitType
+        The orbit type enum
     e : float
         Eccentricity
 
@@ -110,19 +108,19 @@ def asymptote_anomaly(closed: bool, e: float) -> float:
     float
         The true anomaly of the asymptote (rads)
     """
-    if closed:
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return np.nan
 
     return np.arccos(-1/e)
 
-def turning_angle(closed: bool, e: float) -> float:
+def turning_angle(orbit_type: OrbitType, e: float) -> float:
     """
     Calculate the turning angle for open orbits using the eccentricity
 
     Parameters
     ----------
-    closed : bool
-        Boolean representing if the orbit is closed
+    orbit_type : OrbitType
+        The orbit type enum
     e : float
         Eccentricity
 
@@ -131,7 +129,7 @@ def turning_angle(closed: bool, e: float) -> float:
     float
         The turning angle (rads)
     """
-    if closed:
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return np.nan
 
     return 2*np.arcsin(1/e)
@@ -157,14 +155,14 @@ def aiming_radius(orbit_type: OrbitType, b: float) -> float:
 
     return -b
 
-def orbital_period(closed: bool, mu: float, a: float) -> float:
+def orbital_period(orbit_type: OrbitType, mu: float, a: float) -> float:
     """
     Calculates the orbital period of closed orbits.
 
     Parameters
     ----------
-    closed : bool
-        Boolean representing if the orbit is closed
+    orbit_type : OrbitType
+        The orbit type enum
     mu : float
         Gravitational parameter (km^3/s^2)
     a : float
@@ -175,7 +173,7 @@ def orbital_period(closed: bool, mu: float, a: float) -> float:
     float
         The orbital period (s)
     """
-    if not closed:
+    if orbit_type not in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return np.nan
 
     return (2*pi/np.sqrt(mu))*np.sqrt(a)**3

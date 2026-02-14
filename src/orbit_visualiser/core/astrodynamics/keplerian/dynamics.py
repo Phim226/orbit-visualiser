@@ -43,7 +43,7 @@ def specific_orbital_energy(orbit_type: OrbitType, mu: float, a: float) -> float
 
     return -mu/(2*a)
 
-def characteristic_energy(orbit_type: OrbitType, closed: bool, mu: float, a: float) -> float:
+def characteristic_energy(orbit_type: OrbitType, mu: float, a: float) -> float:
     """
     Calculates the characteristic energy from the semi-major axis and gravitational parameter.
 
@@ -51,8 +51,6 @@ def characteristic_energy(orbit_type: OrbitType, closed: bool, mu: float, a: flo
     ----------
     orbit_type : OrbitType
         The orbit type enum
-    closed : bool
-        Boolean representing if the orbit is closed
     mu : float
         Gravitational parameter (km^3/s^2)
     a : float
@@ -67,20 +65,20 @@ def characteristic_energy(orbit_type: OrbitType, closed: bool, mu: float, a: flo
         return 0.0
 
     c3 = mu/a
-    if closed:
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         c3 *= -1
 
     return c3
 
-def excess_velocity(closed: bool, mu: float, a: float) -> float:
+def excess_velocity(orbit_type: OrbitType, mu: float, a: float) -> float:
     """
     Calculates the hyperbolic excess velocity (the velocity magnitude at infinity) for open orbits
     from the semimajor axis and gravitational parameter.
 
     Parameters
     ----------
-    closed : bool
-        Boolean representing if the orbit is closed
+    orbit_type : OrbitType
+        The orbit type enum
     mu : float
         Gravitational parameter (km^3/s^2)
     a : float
@@ -91,7 +89,7 @@ def excess_velocity(closed: bool, mu: float, a: float) -> float:
     float
         The hyperbolic excess velocity (km/s)
     """
-    if closed:
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return np.nan
 
     return np.sqrt(mu/a)
