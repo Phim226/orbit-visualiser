@@ -155,7 +155,23 @@ def speed(velocity: NDArray[np.float64]) -> float:
     """
     return np.linalg.norm(velocity)
 
-def radius(nu: float, asymp_anomaly: float, p: float, e: float) -> float:
+def radius_from_state(r: NDArray[np.float64]) -> float:
+    """
+    Radial magnitude helper function.
+
+    Parameters
+    ----------
+    r : NDArray[np.float64]
+        Position vector (km)
+
+    Returns
+    -------
+    float
+        Magnitude of the radius vector (km)
+    """
+    return np.linalg.norm(r)
+
+def radius_from_orbit_eq(nu: float, asymp_anomaly: float, p: float, e: float) -> float:
     """
     Calculates the magnitude of the radius using the orbit equation and the semi-parameter.
 
