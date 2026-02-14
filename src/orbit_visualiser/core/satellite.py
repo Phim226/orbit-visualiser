@@ -2,8 +2,12 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import Callable, Sequence
 from math import pi
-from orbit_visualiser.core.astrodynamics.keplerian import perifocal_position_eq, perifocal_velocity_eq
+from orbit_visualiser.core.astrodynamics.keplerian.state import (perifocal_position_eq, perifocal_velocity_eq,
+                                                                 speed)
+from orbit_visualiser.core.astrodynamics.keplerian.elements import semi_parameter
+from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum
 from orbit_visualiser.core.orbit import Orbit, CentralBody
+from orbit_visualiser.core.neworbit import NewOrbit
 
 class NewSatellite():
     """
