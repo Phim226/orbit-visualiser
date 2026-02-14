@@ -16,9 +16,9 @@ class NewSatellite():
 
     Parameters
     ----------
-    r : Sequence | NDArray[np.float64]
+    position : Sequence | NDArray[np.float64]
         The initial position vector of the satellite (km)
-    v : float
+    velocity : float
         The initial velocity vector of the satellite (km/s)
     central_body: CentralBody
         The CentralBody object representing the body that the satellite is orbiting
