@@ -2,7 +2,7 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import Callable, Sequence
 from math import pi
-from orbit_visualiser.core.common.orbit_formulae import perifocal_position_eq, perifocal_velocity_eq
+from orbit_visualiser.core.astrodynamics.keplerian import perifocal_position_eq, perifocal_velocity_eq
 from orbit_visualiser.core.orbit import Orbit, CentralBody
 
 class NewSatellite():

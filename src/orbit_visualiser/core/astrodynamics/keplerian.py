@@ -1,9 +1,44 @@
 import numpy as np
 from math import pi
 from numpy.typing import NDArray
-from typing import Callable
-from orbit_visualiser.core.common.types import OrbitType
+from typing import Callable, Literal
+from orbit_visualiser.core.astrodynamics.types import OrbitType
 
+def state_pf_from_e_rp(e: float, rp: float, mu: float, nu: float, state: Literal["pos", "vel", "both"] = "both") -> list[NDArray[np.float64]]:
+    """
+    Takes the eccentricity, radius of periapsis, gravitational parameter and true anomaly and returns
+    the perifocal position and velocity vectors of a satellite at the given true anomaly on an
+    analytical Keplerian orbit defined by the eccentricity and radius of periapsis.
+
+    Parameters
+    ----------
+    e : float
+        Eccentricity
+    rp : float
+        Radius of periapsis (km)
+    mu : float
+        Gravitational parameter (km^3/s^2)
+    nu : float
+        True anomaly (rads)
+    state : Literal["pos", "vel", "both"]
+        String literal indicating the state vector(s) being returned, default = both
+    Returns
+    -------
+    list[NDArray[np.float64]]
+        A list containing the numpy arrays of the perifocal position (km) and perifocal velocity (km/s)
+    """
+    p = semi_parameter(e, rp)
+    h = specific_ang_momentum(mu, p)
+
+    r = perifocal_position_eq(e, p)(nu)
+    v = perifocal_velocity_eq(e, mu, h)(nu)
+
+    if state == "pos":
+        return [r]
+    elif state == "vel":
+        return [v]
+    elif state == "both":
+        return [r, v]
 
 def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.float64]]:
     """
@@ -22,7 +57,7 @@ def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.fl
         The perifocal orbit equation, taking the true anomaly (rads) and the true anomaly of the
         asymptote (rads) as arguments
     """
-    def _callable(nu: float, asymp_anomaly: float) -> NDArray[np.float64]:
+    def _callable(nu: float, asymp_anomaly: float = np.nan) -> NDArray[np.float64]:
         pf_pos_eq: Callable = lambda nu: p*(1/(1 + e*np.cos(nu)))*np.array([np.cos(nu), np.sin(nu)])
 
         # If the true anomaly at the true anomaly of the asymptote then the satellite is at infinity,
