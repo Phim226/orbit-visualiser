@@ -3,9 +3,10 @@ from numpy.typing import NDArray
 from typing import Callable, Sequence
 from math import pi
 from orbit_visualiser.core.astrodynamics.keplerian.state import (perifocal_position_eq, perifocal_velocity_eq,
-                                                                 speed)
-from orbit_visualiser.core.astrodynamics.keplerian.elements import semi_parameter
-from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum
+                                                                 speed, radial_azimuthal_velocity, escape_velocity,
+                                                                 radius_from_state, flight_angle)
+from orbit_visualiser.core.astrodynamics.keplerian.anomlies import mean_anomaly, eccentric_anomaly
+from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum_from_state
 from orbit_visualiser.core.orbit import Orbit, CentralBody
 from orbit_visualiser.core.neworbit import NewOrbit
 
@@ -25,26 +26,105 @@ class NewSatellite():
 
     def __init__(
             self,
-            r: Sequence | NDArray[np.float64],
-            v: Sequence | NDArray[np.float64],
+            position: Sequence | NDArray[np.float64],
+            velocity: Sequence | NDArray[np.float64],
             central_body: CentralBody
         ):
-        self._r = r
-        self._v = v
+        self._pos = position
+        self._vel = velocity
         self._central_body = central_body
 
     @property
-    def r(self) -> Sequence | NDArray[np.float64]:
-        return self._r
+    def position(self) -> Sequence | NDArray[np.float64]:
+        """
+        Perifocal position of the satellite.
+
+        Returns
+        -------
+        Sequence | NDArray[np.float64]
+            Perifocal position vector (km)
+        """
+        return self._pos
 
     @property
-    def v(self) -> Sequence | NDArray[np.float64]:
-        return self._v
+    def velocity(self) -> Sequence | NDArray[np.float64]:
+        """
+        Perifocal velocity of the satellite.
+
+        Returns
+        -------
+        Sequence | NDArray[np.float64]
+            Perifocal velocity vector (km/s)
+        """
+        return self._vel
 
     @property
     def central_body(self) -> CentralBody:
         return self._central_body
 
+    @property
+    def orbit(self) -> NewOrbit:
+        return NewOrbit(self._pos, self._vel, self._central_body.mu)
+
+    @property
+    def radius(self) -> float:
+        return radius_from_state(self._pos)
+
+    @property
+    def speed(self) -> float:
+        return speed(self._vel)
+
+    @property
+    def radial_azimuthal_velocity(self) -> NDArray[np.float64]:
+        orbit = self.orbit
+        return radial_azimuthal_velocity(
+            orbit.orbit_type,
+            orbit.true_anomaly,
+            self.central_body.mu,
+            self.specific_angular_momentum,
+            orbit.eccentricity,
+            orbit.asymptote_anomaly
+        )
+
+    @property
+    def flight_angle(self) -> float:
+        orbit = self.orbit
+        return flight_angle(orbit.true_anomaly, orbit.asymptote_anomaly, orbit.eccentricity)
+
+    @property
+    def escape_velocity(self) -> float:
+        orbit = self.orbit
+        return escape_velocity(
+            orbit.true_anomaly,
+            orbit.asymptote_anomaly,
+            self.central_body.mu,
+            self.radius
+        )
+
+    @property
+    def specific_angular_momentum(self) -> float:
+        return specific_ang_momentum_from_state(self._pos, self._vel)
+
+    @property
+    def eccentric_anomaly(self) -> float:
+        orbit = self.orbit
+        return eccentric_anomaly(
+            orbit.orbit_type,
+            orbit.eccentricity,
+            orbit.true_anomaly,
+            orbit.asymptote_anomaly
+        )
+
+    @property
+    def mean_anomaly(self) -> float:
+        orbit = self.orbit
+        return mean_anomaly(
+            orbit.orbit_type,
+            orbit.eccentricity,
+            orbit.true_anomaly,
+            self.eccentric_anomaly,
+            orbit.asymptote_anomaly
+        )
 
 # TODO: Split formulae from Satellite class.
 # TODO: Update satellite properties when true anomaly is set rather than calling it explicitly outside the class
