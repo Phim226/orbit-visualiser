@@ -1,3 +1,4 @@
+import numpy as np
 from orbit_visualiser.core.astrodynamics.types import OrbitType
 
 def orbit_type(e: float) -> OrbitType:
@@ -14,13 +15,13 @@ def orbit_type(e: float) -> OrbitType:
     OrbitType
         The OrbitType enum
     """
-    if e == 0:
+    if np.isclose(e, 0):
         return OrbitType.CIRCULAR
 
     elif 0 < e < 1:
         return OrbitType.ELLIPTICAL
 
-    elif e == 1:
+    elif np.isclose(e, 1):
         return OrbitType.PARABOLIC
 
     elif e > 1:
