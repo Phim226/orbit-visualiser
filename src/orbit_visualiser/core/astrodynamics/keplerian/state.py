@@ -6,7 +6,14 @@ from orbit_visualiser.core.astrodynamics.types import OrbitType
 from orbit_visualiser.core.astrodynamics.keplerian.elements import semi_parameter_from_eccentricity
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum
 
-def state_pf_from_e_rp(e: float, rp: float, mu: float, nu: float, state: Literal["pos", "vel", "both"] = "both") -> list[NDArray[np.float64]]:
+def state_pf_from_e_rp(
+        e: float,
+        rp: float,
+        mu: float,
+        nu: float,
+        asymptote_anomaly: float,
+        state: Literal["pos", "vel", "both"] = "both"
+    ) -> list[NDArray[np.float64]]:
     """
     Takes the eccentricity, radius of periapsis, gravitational parameter and true anomaly, and returns
     the perifocal position and velocity vectors of a satellite at the given true anomaly on an
@@ -22,6 +29,8 @@ def state_pf_from_e_rp(e: float, rp: float, mu: float, nu: float, state: Literal
         Gravitational parameter (km^3/s^2)
     nu : float
         True anomaly (rads)
+    asymptote_anomaly : float
+        The true anomaly of the asymptote (rads)
     state : Literal["pos", "vel", "both"]
         String literal indicating the state vector(s) being returned, default = both
     Returns
@@ -32,7 +41,7 @@ def state_pf_from_e_rp(e: float, rp: float, mu: float, nu: float, state: Literal
     p = semi_parameter_from_eccentricity(e, rp)
     h = specific_ang_momentum(mu, p)
 
-    r = perifocal_position_eq(e, p)(nu)
+    r = perifocal_position_eq(e, p)(nu, asymptote_anomaly)
     v = perifocal_velocity_eq(e, mu, h)(nu)
 
     if state == "pos":
@@ -60,12 +69,13 @@ def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.fl
         asymptote (rads) as arguments
     """
     def _callable(nu: float, asymp_anomaly: float = np.nan) -> NDArray[np.float64]:
-        pf_pos_eq: Callable = lambda nu: p*(1/(1 + e*np.cos(nu)))*np.array([np.cos(nu), np.sin(nu)])
+        print(f"e = {e}, p = {p}, nu = {nu}, t_asymp = {asymp_anomaly}")
+        pf_pos_eq: Callable = lambda t: p*(1/(1 + e*np.cos(t)))*np.array([np.cos(t), np.sin(t)])
 
         # If the true anomaly is the true anomaly of the asymptote then the satellite is at infinity,
         # but since this is returning the perifocal position then we need to put the appropriate sign
         # in front of the x and y infinities.
-        if np.allclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0):
+        if np.allclose(abs(nu), asymp_anomaly, atol = 0.001, rtol = 0):
                 # The true anomaly and the x and y values 'near' infinity are guaranteed to be
                 # non-zero here, so we can safely use the sign function.
                 nu_offset = np.sign(nu)*np.deg2rad(0.01)
@@ -240,7 +250,7 @@ def flight_angle(nu: float, asymp_anomaly: float, e: float) -> float:
         The satellite flight angle (rads)
     """
     if np.isclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0):
-        return (nu/abs(nu))*pi/2
+        return np.sign(nu)*pi/2
 
     return np.arctan2(e*np.sin(nu), 1 + e*np.cos(nu))
 
