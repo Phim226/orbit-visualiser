@@ -61,7 +61,7 @@ def true_anomaly_from_state(r: NDArray[np.float64]) -> float:
     """
     return np.atan2(r[1], r[0])
 
-def semi_parameter(h: float, mu: float) -> float:
+def semi_parameter_from_momentum(h: float, mu: float) -> float:
     """
     Calculates the semi-parameter using the gravitational parameter and specific angular momentum.
 
@@ -78,6 +78,24 @@ def semi_parameter(h: float, mu: float) -> float:
         Semi-parameter (km)
     """
     return h**2/mu
+
+def semi_parameter_from_eccentricity(e: float, rp: float) -> float:
+    """
+    Calculates the semi-parameter using the eccentricity and radius of periapsis.
+
+    Parameters
+    ----------
+    e : float
+        Eccentricity
+    rp : float
+        Radius of periapsis (km)
+
+    Returns
+    -------
+    float
+        Semi-parameter (km)
+    """
+    return rp*(1 + e)
 
 def semimajor_axis(orbit_type: OrbitType, e: float, rp: float) -> float:
     """

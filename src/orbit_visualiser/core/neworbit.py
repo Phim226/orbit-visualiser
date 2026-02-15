@@ -3,7 +3,7 @@ from typing import Sequence
 import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core.astrodynamics.keplerian.state import state_pf_from_e_rp
-from orbit_visualiser.core.astrodynamics.keplerian.elements import (eccentricity_from_state, semi_parameter,
+from orbit_visualiser.core.astrodynamics.keplerian.elements import (eccentricity_from_state, semi_parameter_from_momentum,
                                                                     periapsis, semimajor_axis, semiminor_axis,
                                                                     apoapsis, asymptote_anomaly, turning_angle,
                                                                     aiming_radius, orbital_period, mean_motion,
@@ -131,7 +131,7 @@ class NewOrbit():
         self.eccentricity = eccentricity_from_state(pos, vel, mu)
         self.true_anomaly = true_anomaly_from_state(pos)
         self.orbit_type = orbit_type(self.eccentricity)
-        self.semi_parameter = semi_parameter(specific_ang_momentum_from_state(pos, vel), mu)
+        self.semi_parameter = semi_parameter_from_momentum(specific_ang_momentum_from_state(pos, vel), mu)
         self.radius_of_periapsis = periapsis(self.semi_parameter, self.eccentricity)
         self.semimajor_axis = semimajor_axis(self.orbit_type, self.eccentricity, self.radius_of_periapsis)
         self.semiminor_axis = semiminor_axis(self.orbit_type, self.eccentricity, self.semimajor_axis)
@@ -139,9 +139,9 @@ class NewOrbit():
         self.asymptote_anomaly = asymptote_anomaly(self.orbit_type, self.eccentricity)
         self.turning_angle = turning_angle(self.orbit_type, self.eccentricity)
         self.aiming_radius = aiming_radius(self.orbit_type, self.semiminor_axis)
-        self.orbital_period = orbital_period(self.orbit_type, self.mu, self.semimajor_axis)
-        self.mean_motion = mean_motion(self.orbit_type, self.orbital_period, self.mu, self.semi_parameter, self.semimajor_axis)
-        self.specific_energy = specific_orbital_energy(self.orbit_type, self.mu, self.semimajor_axis)
-        self.characteristic_energy = characteristic_energy(self.orbit_type, self.mu, self.semimajor_axis)
-        self.hyperbolic_excess_velocity = excess_velocity(self.orbit_type, self.mu, self.semimajor_axis)
+        self.orbital_period = orbital_period(self.orbit_type, mu, self.semimajor_axis)
+        self.mean_motion = mean_motion(self.orbit_type, self.orbital_period, mu, self.semi_parameter, self.semimajor_axis)
+        self.specific_energy = specific_orbital_energy(self.orbit_type, mu, self.semimajor_axis)
+        self.characteristic_energy = characteristic_energy(self.orbit_type, mu, self.semimajor_axis)
+        self.hyperbolic_excess_velocity = excess_velocity(self.orbit_type, mu, self.semimajor_axis)
 

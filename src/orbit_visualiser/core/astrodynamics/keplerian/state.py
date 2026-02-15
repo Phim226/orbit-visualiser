@@ -3,7 +3,7 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import Callable, Literal
 from orbit_visualiser.core.astrodynamics.types import OrbitType
-from orbit_visualiser.core.astrodynamics.keplerian.elements import semi_parameter
+from orbit_visualiser.core.astrodynamics.keplerian.elements import semi_parameter_from_eccentricity
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum
 
 def state_pf_from_e_rp(e: float, rp: float, mu: float, nu: float, state: Literal["pos", "vel", "both"] = "both") -> list[NDArray[np.float64]]:
@@ -29,7 +29,7 @@ def state_pf_from_e_rp(e: float, rp: float, mu: float, nu: float, state: Literal
     list[NDArray[np.float64]]
         A list containing the numpy arrays of the perifocal position (km) and perifocal velocity (km/s)
     """
-    p = semi_parameter(e, rp)
+    p = semi_parameter_from_eccentricity(e, rp)
     h = specific_ang_momentum(mu, p)
 
     r = perifocal_position_eq(e, p)(nu)
@@ -65,7 +65,7 @@ def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.fl
         # If the true anomaly is the true anomaly of the asymptote then the satellite is at infinity,
         # but since this is returning the perifocal position then we need to put the appropriate sign
         # in front of the x and y infinities.
-        if np.isclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0):
+        if np.allclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0):
                 # The true anomaly and the x and y values 'near' infinity are guaranteed to be
                 # non-zero here, so we can safely use the sign function.
                 nu_offset = np.sign(nu)*np.deg2rad(0.01)
