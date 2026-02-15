@@ -2,7 +2,7 @@ import numpy as np
 from math import pi
 from orbit_visualiser.core.astrodynamics.types import OrbitType
 
-def eccentric_anomaly(orbit_type: OrbitType, e: float, nu: float, asymp_anomaly: float) -> float:
+def eccentric_anomaly(orbit_type: OrbitType, e: float, nu: float) -> float:
     """
     Calculates the eccentric anomaly, using different formulae based on orbit type.
 
@@ -14,8 +14,6 @@ def eccentric_anomaly(orbit_type: OrbitType, e: float, nu: float, asymp_anomaly:
         Eccentricity
     nu : float
         True anomaly (rads)
-    asymp_anomaly : float
-        True anomaly of the asymptote (rads)
 
     Returns
     -------
@@ -36,13 +34,10 @@ def eccentric_anomaly(orbit_type: OrbitType, e: float, nu: float, asymp_anomaly:
         return np.nan
 
     elif orbit_type is OrbitType.HYPERBOLIC:
-        if np.isclose(abs(nu), asymp_anomaly):
-            return np.sign(nu)*np.inf
-
         return 2*np.arctanh(np.sqrt((e - 1)/(e + 1))*np.tan(nu/2))
 
 
-def mean_anomaly(orbit_type: OrbitType, e: float, nu: float, e_anomaly: float, asymp_anomaly: float) -> float:
+def mean_anomaly(orbit_type: OrbitType, e: float, nu: float, e_anomaly: float) -> float:
     """
     Calculates the mean anomaly, using different formulae based on orbit type.
 
@@ -56,17 +51,13 @@ def mean_anomaly(orbit_type: OrbitType, e: float, nu: float, e_anomaly: float, a
         True anomaly (rads)
     e_anomaly : float
         The eccentric anomaly (rads)
-    asymp_anomaly : float
-        True anomaly of the asymptote (rads)
+
 
     Returns
     -------
     float
         The mean anomaly (rads)
     """
-    if np.isclose(abs(nu), asymp_anomaly):
-        return (np.sign(nu))*np.inf
-
     if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return e_anomaly - e*np.sin(e_anomaly)
 
