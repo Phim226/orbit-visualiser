@@ -6,6 +6,8 @@ from orbit_visualiser.ui.config.variables_panel.variables_panel_builder import  
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.core.satellite import NewSatellite
 from orbit_visualiser.core.neworbit import NewOrbit
+from orbit_visualiser.core.astrodynamics.keplerian.elements import asymptote_anomaly
+from orbit_visualiser.core.astrodynamics.types import OrbitType
 
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
 # TODO: Allow for fractional manual inputs.
@@ -26,9 +28,8 @@ class VariablesController():
 
         self._satellite = satellite
 
-
-
     def reset_state(self) -> None:
+        init_values = []
         var_props = self._builder.variable_specs
         for name, value in list(var_props.items()):
             init_value = value.init_value
@@ -38,7 +39,9 @@ class VariablesController():
             entry.delete(0, 1000)
             entry.insert(0, f"{init_value: 0.{value.decimal_places}f}".strip())
 
-            setattr(var_props[name].obj, name, init_value) # this is where we need to create orbit from elements and update satellite
+            init_values.append(init_value)
+
+        self._update_satellite_state(*init_values)
 
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
@@ -113,25 +116,34 @@ class VariablesController():
             "e": self._builder.e_var.get(),
             "rp": self._builder.rp_var.get(),
             "mu": self._builder.mu_var.get(),
-            "nu": self._builder.nu_var.get(),
+            "nu": np.deg2rad(self._builder.nu_var.get()),
         }
         new_values[variable] = new_val
 
-        orbit = NewOrbit.from_orbital_elements(*new_values.values())
-        self._satellite.position = orbit.position
-        self._satellite.velocity = orbit.velocity
-        self._satellite.central_body.mu = new_values["mu"]
-
         # The value of the eccentricity determines the range of possible true anomaly values, which
         # this if block checks for.
+        t_asymp = np.nan
         if variable == "e":
             if new_val >= 1:
-                t_asymp = self._satellite.orbit.asymptote_anomaly
+                t_asymp = asymptote_anomaly(OrbitType.HYPERBOLIC, new_val)
                 t_asymp_slider_lim = round(np.degrees(t_asymp), 2)
                 self._builder.nu_slider.configure(from_ = -t_asymp_slider_lim, to = t_asymp_slider_lim)
 
+                nu = self._satellite.orbit.true_anomaly
+                if nu < -t_asymp:
+                    new_values["nu"] = -t_asymp
+                elif nu > t_asymp:
+                    new_values["nu"] = t_asymp
             else:
                 self._builder.nu_slider.configure(from_ = 0, to = 360)
 
+        self._update_satellite_state(*new_values.values(), t_asymp)
+
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
+
+    def _update_satellite_state(self, e: float, rp: float, mu: float, nu: float, asymptote_anomaly: float = np.nan) -> None:
+        orbit = NewOrbit.from_orbital_elements(e, rp, mu, nu, asymptote_anomaly)
+        self._satellite.position = orbit.position
+        self._satellite.velocity = orbit.velocity
+        self._satellite.central_body.mu = mu
