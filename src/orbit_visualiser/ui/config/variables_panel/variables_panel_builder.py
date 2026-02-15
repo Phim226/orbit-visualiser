@@ -5,6 +5,7 @@ import numpy as np
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui.common.builder import Builder
 from orbit_visualiser.ui.common.specs import VariableSpec
+from orbit_visualiser.ui.common.presets import initial_config
 
 
 class VariablesBuilder(Builder):
@@ -12,49 +13,42 @@ class VariablesBuilder(Builder):
 
     def __init__(
             self,
-            options_frame: Frame,
-            orbit: Orbit,
-            central_body: CentralBody,
-            satellite: Satellite
+            options_frame: Frame
     ):
         self._options_frame = options_frame
 
         self._e_specs: VariableSpec = VariableSpec(
             "Eccentricity",
-            orbit,
             None,
-            lambda orbit: orbit.e,
-            orbit.e,
+            lambda sat: sat.orbit.eccentricity,
+            initial_config.eccentricity,
             (0, 5),
             3,
             (85, 4)
         )
         self._rp_specs: VariableSpec = VariableSpec(
             "Radius of periapsis",
-            orbit,
             "km",
-            lambda orbit: orbit.rp,
-            orbit.rp,
-            (central_body.r + 1, 200_000),
+            lambda sat: sat.orbit.periapsis,
+            initial_config.radius_of_periapsis,
+            (initial_config.radius + 1, 200_000),
             0,
             (160, 4)
         )
         self._mu_specs: VariableSpec = VariableSpec(
             "Gravitational parameter",
-            central_body,
             "km³/s²",
-            lambda central_body: central_body.mu,
-            central_body.mu,
+            lambda sat: sat.central_body.mu,
+            initial_config.gravitational_parameter,
             (1, 1_000_000),
             0,
             (198, 4)
         )
         self._nu_specs: VariableSpec = VariableSpec(
             "True anomaly",
-            satellite,
             "°",
-            lambda sat: np.degrees(sat.nu),
-            np.degrees(satellite.nu),
+            lambda sat: np.degrees(sat.orbit.true_anomaly),
+            np.degrees(initial_config.true_anomaly),
             (0, 360),
             2,
             (115, 4)
