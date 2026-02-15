@@ -59,7 +59,11 @@ def true_anomaly_from_state(r: NDArray[np.float64]) -> float:
     float
         True anomaly (rads)
     """
-    return np.atan2(r[1], r[0])
+    true_anomaly = np.atan2(r[1], r[0])
+    if true_anomaly < 0:
+        return true_anomaly + 2*pi
+
+    return true_anomaly
 
 def semi_parameter_from_momentum(h: float, mu: float) -> float:
     """
