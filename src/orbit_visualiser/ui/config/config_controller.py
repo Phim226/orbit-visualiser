@@ -34,7 +34,8 @@ class OrbitConfigController():
             variable: str,
             event: Event
     ) -> None:
-        return self._variables_controller.validate_manual_input(variable, source_object, event)
+        self._variables_controller.validate_manual_input(variable, event)
+        self._properties_controller.update_display()
 
     def reset_state(self) -> Callable:
         return self._variables_controller.reset_state()
@@ -45,13 +46,11 @@ class OrbitConfigController():
     def slider_changed(
             self,
             variable: str,
-            source_object: Orbit | Satellite | CentralBody,
             input_type: str,
             new_val: str | float
     ) -> None:
         self._variables_controller.update_variable(
             variable,
-            source_object,
             input_type,
             new_val
         )
