@@ -31,6 +31,9 @@ class NewSatellite():
             velocity: Sequence | NDArray[np.float64],
             central_body: CentralBody
         ):
+        if not np.all(np.isfinite(position)) or not np.all(np.isfinite(velocity)):
+            raise ValueError("State vectors must only contain finite values.")
+
         self._pos = position
         self._vel = velocity
         self._central_body = central_body

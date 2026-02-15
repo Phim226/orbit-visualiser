@@ -64,6 +64,10 @@ class NewOrbit():
     velocity : Sequence | NDArray[np.float64]
     mu : float
 
+    def __post_init__(self):
+        if not np.all(np.isfinite(self.position)) or not np.all(np.isfinite(self.velocity)):
+            raise ValueError("State vectors must only contain finite values.")
+
     @cached_property
     def eccentricity(self) -> float:
         return eccentricity_from_state(self.position, self.velocity, self.mu)
@@ -147,7 +151,8 @@ class NewOrbit():
             A new instance of Orbit
         """
         asymp_anomaly = asymptote_anomaly(orbit_type(e), e)
-        if np.isclose(abs(nu), asymp_anomaly):
+        nu = abs(nu)
+        if np.isclose(nu, asymp_anomaly) or nu > asymp_anomaly:
             raise ValueError("State isn't defined at infinity")
 
         r, v = state_pf_from_e_rp(e, rp, mu, nu)
