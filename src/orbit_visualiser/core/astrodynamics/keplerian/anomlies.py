@@ -37,7 +37,7 @@ def eccentric_anomaly(orbit_type: OrbitType, e: float, nu: float, asymp_anomaly:
 
     elif orbit_type is OrbitType.HYPERBOLIC:
         if np.isclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0):
-            return (nu/abs(nu))*np.inf
+            return np.sign(nu)*np.inf
 
         return 2*np.arctanh(np.sqrt((e - 1)/(e + 1))*np.tan(nu/2))
 
