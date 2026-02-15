@@ -26,7 +26,7 @@ class OrbitFigure():
     ):
         self._root = root
 
-        self._sat = satellite
+        self._satellite = satellite
 
         self._figure_frame: Frame = Frame(root)
         self._figure_frame.pack(
@@ -79,20 +79,20 @@ class OrbitFigure():
 
     def _initialise_plot(self) -> None:
         # Plot the initial orbit
-        orbit = self._sat.orbit
+        orbit = self._satellite.orbit
         nu = self._get_anomaly_data(orbit)
         x, y = perifocal_position_eq(orbit.eccentricity, orbit.semi_parameter)(nu)
         self._line, = self._ax.plot(x, y, color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)
 
         # Plot the central body
         self._ax.add_patch(
-            Circle((0, 0), radius = self._sat.central_body.r, fill = True, zorder = 10,
+            Circle((0, 0), radius = self._satellite.central_body.r, fill = True, zorder = 10,
                    facecolor = "#4C6A92", edgecolor = "#3C5474")
         )
 
         # Plot the satellite
         self._sat_point, = self._ax.plot(
-            self._sat.orbit.radius_of_periapsis, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B"
+            self._satellite.orbit.radius_of_periapsis, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B"
         )
 
         #self.plot_periapsis_point()
@@ -124,7 +124,7 @@ class OrbitFigure():
         return np.linspace(anomaly_range[0], anomaly_range[1], OrbitFigure.NUM_POINTS)
 
     def redraw_orbit(self) -> None:
-        orbit = self._sat.orbit
+        orbit = self._satellite.orbit
         nu = self._get_anomaly_data(orbit)
         x, y = perifocal_position_eq(orbit.eccentricity, orbit.semi_parameter)(nu)
         self._line.set_data(x, y)
@@ -132,7 +132,7 @@ class OrbitFigure():
         self._canvas.draw_idle()
 
     def redraw_satellite(self) -> None:
-        x, y = self._sat.position
+        x, y = self._satellite.position
         self._sat_point.set_data((x,), (y,))
 
         self._canvas.draw_idle()
@@ -148,7 +148,7 @@ class OrbitFigure():
     def plot_periapsis_point(self) -> None:
 
         self._rp_point, = self._ax.plot(
-            self._sat.orbit.radius_of_periapsis,
+            self._satellite.orbit.radius_of_periapsis,
             0,
             ms = 3,
             marker = "o",
@@ -158,7 +158,7 @@ class OrbitFigure():
         )
         self._rp_annotation = self._ax.annotate(
             "$r_p$",
-            xy = (self._sat.orbit.radius_of_periapsis, 0),
+            xy = (self._satellite.orbit.radius_of_periapsis, 0),
             xycoords = "data",
             xytext = OrbitFigure.DISPLAY_TEXT_OFFSET,
             textcoords = "offset points"
