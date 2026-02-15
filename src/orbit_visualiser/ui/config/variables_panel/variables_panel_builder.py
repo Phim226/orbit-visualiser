@@ -6,6 +6,7 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui.common.builder import Builder
 from orbit_visualiser.ui.common.specs import VariableSpec
 from orbit_visualiser.ui.common.presets import initial_config
+from orbit_visualiser.core.satellite import NewSatellite
 
 
 class VariablesBuilder(Builder):
@@ -13,9 +14,12 @@ class VariablesBuilder(Builder):
 
     def __init__(
             self,
-            options_frame: Frame
+            options_frame: Frame,
+            satellite: NewSatellite
     ):
         self._options_frame = options_frame
+
+        self._satellite = satellite
 
         self._e_specs: VariableSpec = VariableSpec(
             "Eccentricity",
@@ -29,7 +33,7 @@ class VariablesBuilder(Builder):
         self._rp_specs: VariableSpec = VariableSpec(
             "Radius of periapsis",
             "km",
-            lambda sat: sat.orbit.periapsis,
+            lambda sat: sat.orbit.radius_of_periapsis,
             initial_config.radius_of_periapsis,
             (initial_config.radius + 1, 200_000),
             0,
@@ -152,8 +156,6 @@ class VariablesBuilder(Builder):
             validate_input: Callable,
             slider_changed: Callable
     ) -> tuple[Scale, Entry]:
-        obj = spec.obj
-
         frame = Frame(root, width = 265, height = 60)
 
         slider = self._build_slider(
@@ -164,8 +166,8 @@ class VariablesBuilder(Builder):
         )
 
         entry = Entry(frame, width = 10)
-        entry.insert(0, f"{spec.getter(obj): 0.{spec.decimal_places}f}".strip())
-        entry.bind("<Return>", partial(validate_input, variable, obj))
+        entry.insert(0, f"{spec.getter(self._satellite): 0.{spec.decimal_places}f}".strip())
+        entry.bind("<Return>", partial(validate_input, variable, self._satellite))
         x, y = spec.entry_pos
         entry.place(x = x, y = y)
 
@@ -185,18 +187,17 @@ class VariablesBuilder(Builder):
 
         slider_name = f"_{variable}_slider"
         lims = spec.slider_lims
-        obj = spec.obj
         units = spec.units
         label = f"{spec.label}{"" if units is None else f" ({units})"} = "
         self.__setattr__(
             slider_name,
             Scale(root, from_ = lims[0], to = lims[1], resolution = 1/10**spec.decimal_places, length = 260,
                   orient = "horizontal", variable = slider_var,
-                  command = partial(slider_changed, variable, obj, "slider"),
+                  command = partial(slider_changed, variable, self._satellite, "slider"),
                   label = label, font = self._slider_font)
         )
 
-        slider_var.set(spec.getter(obj))
+        slider_var.set(spec.getter(self._satellite))
 
         slider: Scale = self.__getattribute__(slider_name)
         slider.place(x = 0, y = 0, anchor = "nw")
