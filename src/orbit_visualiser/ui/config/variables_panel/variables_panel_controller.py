@@ -138,7 +138,12 @@ class VariablesController():
             else:
                 self._builder.nu_slider.configure(from_ = 0, to = 360)
 
-        self._update_satellite_state(*new_values.values())
+        try:
+            self._update_satellite_state(*new_values.values())
+
+        except ValueError:
+            messagebox.showwarning("Warning", "State cannot be evaluated at infinity")
+            return
 
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
