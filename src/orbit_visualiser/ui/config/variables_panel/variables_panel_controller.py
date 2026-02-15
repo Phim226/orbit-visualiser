@@ -8,6 +8,7 @@ from orbit_visualiser.core.satellite import NewSatellite
 from orbit_visualiser.core.neworbit import NewOrbit
 from orbit_visualiser.core.astrodynamics.keplerian.elements import asymptote_anomaly
 from orbit_visualiser.core.astrodynamics.types import OrbitType
+from orbit_visualiser.ui.common.utils import floor_to_decimals
 
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
 # TODO: Allow for fractional manual inputs.
@@ -122,14 +123,14 @@ class VariablesController():
 
         # The value of the eccentricity determines the range of possible true anomaly values, which
         # this if block checks for.
-        t_asymp = np.nan
+        t_asymp = self._satellite.orbit.asymptote_anomaly
         if variable == "e":
             if new_val >= 1:
-                t_asymp = asymptote_anomaly(OrbitType.HYPERBOLIC, new_val)
-                t_asymp_slider_lim = round(np.degrees(t_asymp), 2)
+                t_asymp = np.degrees(asymptote_anomaly(OrbitType.HYPERBOLIC, new_val))
+                t_asymp_slider_lim = floor_to_decimals(t_asymp, 2)
                 self._builder.nu_slider.configure(from_ = -t_asymp_slider_lim, to = t_asymp_slider_lim)
 
-                nu = self._satellite.orbit.true_anomaly
+                nu = self._satellite.true_anomaly
                 if nu < -t_asymp:
                     new_values["nu"] = -t_asymp
                 elif nu > t_asymp:
