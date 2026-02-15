@@ -75,7 +75,7 @@ def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.fl
         # If the true anomaly is the true anomaly of the asymptote then the satellite is at infinity,
         # but since this is returning the perifocal position then we need to put the appropriate sign
         # in front of the x and y infinities.
-        if np.allclose(abs(nu), asymp_anomaly, atol = 0.001, rtol = 0):
+        if np.allclose(abs(nu), asymp_anomaly):
                 # The true anomaly and the x and y values 'near' infinity are guaranteed to be
                 # non-zero here, so we can safely use the sign function.
                 nu_offset = np.sign(nu)*np.deg2rad(0.01)
@@ -144,7 +144,7 @@ def radial_azimuthal_velocity(
         The radial-azimuthal velocity vector [v_radial, v_azimuthal] (km/s)
     """
     v_rad = 0.0 if orbit_type is OrbitType.CIRCULAR else (mu/h)*e*np.sin(nu)
-    v_azim = (0.0 if np.isclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0)
+    v_azim = (0.0 if np.isclose(abs(nu), asymp_anomaly)
               else (mu/h)*(1 + e*np.cos(nu)))
 
     return np.array([v_rad, v_azim])
@@ -201,7 +201,7 @@ def radius_from_orbit_eq(nu: float, asymp_anomaly: float, p: float, e: float) ->
     float
         The length of the radius vector (km)
     """
-    if np.isclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0):
+    if np.isclose(abs(nu), asymp_anomaly):
         return np.inf
 
     return p/(1 + e*np.cos(nu))
@@ -226,7 +226,7 @@ def escape_velocity(nu: float, asymp_anomaly: float, mu: float, r: float) -> flo
     float
         The escape velocity (km/s)
     """
-    if np.isclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0):
+    if np.isclose(abs(nu), asymp_anomaly):
         return 0.0
 
     return np.sqrt(2*mu/r)
@@ -249,7 +249,7 @@ def flight_angle(nu: float, asymp_anomaly: float, e: float) -> float:
     float
         The satellite flight angle (rads)
     """
-    if np.isclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0):
+    if np.isclose(abs(nu), asymp_anomaly):
         return np.sign(nu)*pi/2
 
     return np.arctan2(e*np.sin(nu), 1 + e*np.cos(nu))

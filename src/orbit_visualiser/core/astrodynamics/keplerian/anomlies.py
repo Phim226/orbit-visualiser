@@ -36,7 +36,7 @@ def eccentric_anomaly(orbit_type: OrbitType, e: float, nu: float, asymp_anomaly:
         return np.nan
 
     elif orbit_type is OrbitType.HYPERBOLIC:
-        if np.isclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0):
+        if np.isclose(abs(nu), asymp_anomaly):
             return np.sign(nu)*np.inf
 
         return 2*np.arctanh(np.sqrt((e - 1)/(e + 1))*np.tan(nu/2))
@@ -64,7 +64,7 @@ def mean_anomaly(orbit_type: OrbitType, e: float, nu: float, e_anomaly: float, a
     float
         The mean anomaly (rads)
     """
-    if np.isclose(abs(nu), asymp_anomaly, atol = 0.0001, rtol = 0):
+    if np.isclose(abs(nu), asymp_anomaly):
         return (np.sign(nu))*np.inf
 
     if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
