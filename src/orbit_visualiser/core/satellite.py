@@ -7,6 +7,7 @@ from orbit_visualiser.core.astrodynamics.keplerian.state import (perifocal_posit
                                                                  radius_from_state, flight_angle, time_since_periapsis)
 from orbit_visualiser.core.astrodynamics.keplerian.anomlies import mean_anomaly, eccentric_anomaly
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum_from_state
+from orbit_visualiser.core.astrodynamics.keplerian.elements import true_anomaly_from_state
 from orbit_visualiser.core.orbit import Orbit, CentralBody
 from orbit_visualiser.core.neworbit import NewOrbit
 
@@ -79,6 +80,10 @@ class NewSatellite():
         return radius_from_state(self._pos)
 
     @property
+    def true_anomaly(self) -> float:
+        return true_anomaly_from_state(self.position)
+
+    @property
     def speed(self) -> float:
         return speed(self._vel)
 
@@ -87,7 +92,7 @@ class NewSatellite():
         orbit = self.orbit
         return radial_azimuthal_velocity(
             orbit.orbit_type,
-            orbit.true_anomaly,
+            self.true_anomaly,
             self.central_body.mu,
             self.specific_angular_momentum,
             orbit.eccentricity,
@@ -97,13 +102,13 @@ class NewSatellite():
     @property
     def flight_angle(self) -> float:
         orbit = self.orbit
-        return flight_angle(orbit.true_anomaly, orbit.asymptote_anomaly, orbit.eccentricity)
+        return flight_angle(self.true_anomaly, orbit.asymptote_anomaly, orbit.eccentricity)
 
     @property
     def escape_velocity(self) -> float:
         orbit = self.orbit
         return escape_velocity(
-            orbit.true_anomaly,
+            self.true_anomaly,
             orbit.asymptote_anomaly,
             self.central_body.mu,
             self.radius
@@ -119,7 +124,7 @@ class NewSatellite():
         return eccentric_anomaly(
             orbit.orbit_type,
             orbit.eccentricity,
-            orbit.true_anomaly,
+            self.true_anomaly,
             orbit.asymptote_anomaly
         )
 
@@ -129,7 +134,7 @@ class NewSatellite():
         return mean_anomaly(
             orbit.orbit_type,
             orbit.eccentricity,
-            orbit.true_anomaly,
+            self.true_anomaly,
             self.eccentric_anomaly,
             orbit.asymptote_anomaly
         )

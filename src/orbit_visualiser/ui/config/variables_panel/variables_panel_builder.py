@@ -51,7 +51,7 @@ class VariablesBuilder(Builder):
         self._nu_specs: VariableSpec = VariableSpec(
             "True anomaly",
             "°",
-            lambda sat: np.degrees(sat.orbit.true_anomaly),
+            lambda sat: np.degrees(sat.true_anomaly),
             np.degrees(initial_config.true_anomaly),
             (0, 360),
             2,

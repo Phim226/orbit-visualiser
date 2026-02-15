@@ -7,8 +7,7 @@ from orbit_visualiser.core.astrodynamics.keplerian.state import state_pf_from_e_
 from orbit_visualiser.core.astrodynamics.keplerian.elements import (eccentricity_from_state, semi_parameter_from_momentum,
                                                                     periapsis, semimajor_axis, semiminor_axis,
                                                                     apoapsis, asymptote_anomaly, turning_angle,
-                                                                    aiming_radius, orbital_period, mean_motion,
-                                                                    true_anomaly_from_state)
+                                                                    aiming_radius, orbital_period, mean_motion)
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import (specific_orbital_energy, characteristic_energy,
                                                                     excess_velocity, specific_ang_momentum_from_state)
 from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type
@@ -68,10 +67,6 @@ class NewOrbit():
     @cached_property
     def eccentricity(self) -> float:
         return eccentricity_from_state(self.position, self.velocity, self.mu)
-
-    @cached_property
-    def true_anomaly(self) -> float:
-        return true_anomaly_from_state(self.position)
 
     @cached_property
     def orbit_type(self) -> OrbitType:
