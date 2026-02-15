@@ -155,7 +155,7 @@ As an example if you wanted to propagate the ISS then you might edit the above c
 ```python
 if __name__ == "__main__":
     # Approximate eccentricity and radius of periapsis (in km) for the ISS
-    orbit = Orbit(e = 0.0002267, rp = 7108)
+    orbit = Orbit(e = 0.0002267, rp = 6778)
 
     # The default values for CentralBody are the radius (at the equator, in km) and gravitational parameter of earth
     earth = CentralBody()
