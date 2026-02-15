@@ -111,7 +111,7 @@ def excess_velocity(orbit_type: OrbitType, mu: float, a: float) -> float:
     if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return np.nan
 
-    return np.sqrt(mu/a)
+    return np.sqrt(mu/abs(a))
 
 def vis_viva_speed(r: float, a: float, mu: float) -> float:
     """
