@@ -83,11 +83,7 @@ def characteristic_energy(orbit_type: OrbitType, mu: float, a: float) -> float:
     if orbit_type is OrbitType.PARABOLIC:
         return 0.0
 
-    c3 = mu/a
-    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
-        c3 *= -1
-
-    return c3
+    return -mu/a
 
 def excess_velocity(orbit_type: OrbitType, mu: float, a: float) -> float:
     """
