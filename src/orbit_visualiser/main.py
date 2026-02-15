@@ -4,8 +4,6 @@ from orbit_visualiser.core import Orbit, Satellite
 from orbit_visualiser.core.neworbit import NewOrbit, CentralBody
 from orbit_visualiser.core.satellite import NewSatellite
 from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, OrbitConfigController
-from orbit_visualiser.core.astrodynamics.keplerian.elements import asymptote_anomaly
-from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type
 from orbit_visualiser.ui.common.presets import initial_config
 
 class OrbitVisualiser():
@@ -25,8 +23,7 @@ class OrbitVisualiser():
             initial_config.eccentricity,
             initial_config.radius_of_periapsis,
             initial_config.gravitational_parameter,
-            initial_config.true_anomaly,
-            asymptote_anomaly(orbit_type(initial_config.eccentricity), initial_config.eccentricity)
+            initial_config.true_anomaly
         )
 
         central_body: CentralBody = CentralBody(

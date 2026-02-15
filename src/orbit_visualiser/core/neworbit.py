@@ -125,7 +125,7 @@ class NewOrbit():
         return excess_velocity(self.orbit_type, self.mu, self.semimajor_axis)
 
     @classmethod
-    def from_orbital_elements(cls, e: float, rp: float, mu: float, nu: float, asymptote_anomaly: float):
+    def from_orbital_elements(cls, e: float, rp: float, mu: float, nu: float):
         """
         Alternative constructor for the Orbit class. Takes the orbital elements eccentricity,
         radius of perapsis, the gravitational parameter and the true anomaly as arguments.
@@ -146,7 +146,10 @@ class NewOrbit():
         Orbit
             A new instance of Orbit
         """
-        r, v = state_pf_from_e_rp(e, rp, mu, nu, asymptote_anomaly)
+        asymp_anomaly = asymptote_anomaly(orbit_type(e), e)
+        if abs(nu) >= asymp_anomaly:
+            raise ValueError("")
+        r, v = state_pf_from_e_rp(e, rp, mu, nu)
         return cls(r, v, mu)
 
 

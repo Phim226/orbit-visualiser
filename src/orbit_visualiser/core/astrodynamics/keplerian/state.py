@@ -11,7 +11,6 @@ def state_pf_from_e_rp(
         rp: float,
         mu: float,
         nu: float,
-        asymptote_anomaly: float,
         state: Literal["pos", "vel", "both"] = "both"
     ) -> list[NDArray[np.float64]]:
     """
@@ -29,8 +28,6 @@ def state_pf_from_e_rp(
         Gravitational parameter (km^3/s^2)
     nu : float
         True anomaly (rads)
-    asymptote_anomaly : float
-        The true anomaly of the asymptote (rads)
     state : Literal["pos", "vel", "both"]
         String literal indicating the state vector(s) being returned, default = both
     Returns
@@ -41,7 +38,7 @@ def state_pf_from_e_rp(
     p = semi_parameter_from_eccentricity(e, rp)
     h = specific_ang_momentum(mu, p)
 
-    r = perifocal_position_eq(e, p)(nu, asymptote_anomaly)
+    r = perifocal_position_eq(e, p)(nu)
     v = perifocal_velocity_eq(e, mu, h)(nu)
 
     if state == "pos":
@@ -68,23 +65,8 @@ def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.fl
         The perifocal orbit equation, taking the true anomaly (rads) and the true anomaly of the
         asymptote (rads) as arguments
     """
-    def _callable(nu: float, asymp_anomaly: float = np.nan) -> NDArray[np.float64]:
-        print(f"e = {e}, p = {p}, nu = {nu}, t_asymp = {asymp_anomaly}")
-        pf_pos_eq: Callable = lambda t: p*(1/(1 + e*np.cos(t)))*np.array([np.cos(t), np.sin(t)])
-
-        # If the true anomaly is the true anomaly of the asymptote then the satellite is at infinity,
-        # but since this is returning the perifocal position then we need to put the appropriate sign
-        # in front of the x and y infinities.
-        if np.allclose(abs(nu), asymp_anomaly):
-                # The true anomaly and the x and y values 'near' infinity are guaranteed to be
-                # non-zero here, so we can safely use the sign function.
-                nu_offset = np.sign(nu)*np.deg2rad(0.01)
-                nu_close_to_inf = nu - nu_offset
-                x_close_to_inf, y_close_to_inf = pf_pos_eq(nu_close_to_inf)
-
-                return np.array([np.sign(x_close_to_inf)*np.inf, np.sign(y_close_to_inf)*np.inf])
-
-        return pf_pos_eq(nu)
+    def _callable(nu: float) -> NDArray[np.float64]:
+        return p*(1/(1 + e*np.cos(nu)))*np.array([np.cos(nu), np.sin(nu)])
 
     return _callable
 

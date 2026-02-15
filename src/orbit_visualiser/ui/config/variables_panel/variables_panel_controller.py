@@ -123,28 +123,28 @@ class VariablesController():
 
         # The value of the eccentricity determines the range of possible true anomaly values, which
         # this if block checks for.
-        t_asymp = self._satellite.orbit.asymptote_anomaly
         if variable == "e":
             if new_val >= 1:
-                t_asymp = np.degrees(asymptote_anomaly(OrbitType.HYPERBOLIC, new_val))
-                t_asymp_slider_lim = floor_to_decimals(t_asymp, 2)
+                # Slider should never allow for users to input the true anomaly of the asymptote
+                t_asymp_offset = np.degrees(asymptote_anomaly(OrbitType.HYPERBOLIC, new_val)) - 0.01
+                t_asymp_slider_lim = floor_to_decimals(t_asymp_offset, 2)
                 self._builder.nu_slider.configure(from_ = -t_asymp_slider_lim, to = t_asymp_slider_lim)
 
-                nu = self._satellite.true_anomaly
-                if nu < -t_asymp:
-                    new_values["nu"] = -t_asymp
-                elif nu > t_asymp:
-                    new_values["nu"] = t_asymp
+                nu = new_values["nu"]
+                if nu < -t_asymp_offset:
+                    new_values["nu"] = -t_asymp_offset
+                elif nu > t_asymp_offset:
+                    new_values["nu"] = t_asymp_offset
             else:
                 self._builder.nu_slider.configure(from_ = 0, to = 360)
 
-        self._update_satellite_state(*new_values.values(), t_asymp)
+        self._update_satellite_state(*new_values.values())
 
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
 
-    def _update_satellite_state(self, e: float, rp: float, mu: float, nu: float, asymptote_anomaly: float = np.nan) -> None:
-        orbit = NewOrbit.from_orbital_elements(e, rp, mu, nu, asymptote_anomaly)
+    def _update_satellite_state(self, e: float, rp: float, mu: float, nu: float) -> None:
+        orbit = NewOrbit.from_orbital_elements(e, rp, mu, nu)
         self._satellite.position = orbit.position
         self._satellite.velocity = orbit.velocity
         self._satellite.central_body.mu = mu
