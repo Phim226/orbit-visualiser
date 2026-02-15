@@ -4,7 +4,7 @@ from typing import Callable, Sequence
 from math import pi
 from orbit_visualiser.core.astrodynamics.keplerian.state import (perifocal_position_eq, perifocal_velocity_eq,
                                                                  speed, radial_azimuthal_velocity, escape_velocity,
-                                                                 radius_from_state, flight_angle)
+                                                                 radius_from_state, flight_angle, time_since_periapsis)
 from orbit_visualiser.core.astrodynamics.keplerian.anomlies import mean_anomaly, eccentric_anomaly
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum_from_state
 from orbit_visualiser.core.orbit import Orbit, CentralBody
@@ -124,6 +124,18 @@ class NewSatellite():
             orbit.true_anomaly,
             self.eccentric_anomaly,
             orbit.asymptote_anomaly
+        )
+
+    @property
+    def time_since_periapsis(self) -> float:
+        orbit = self.orbit
+        return time_since_periapsis(
+            orbit.orbit_type,
+            self.mean_anomaly,
+            orbit.orbital_period,
+            orbit.semi_parameter,
+            self.specific_angular_momentum,
+            orbit.eccentricity
         )
 
 # TODO: Split formulae from Satellite class.
