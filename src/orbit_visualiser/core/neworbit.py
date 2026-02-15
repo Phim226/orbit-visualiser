@@ -148,7 +148,8 @@ class NewOrbit():
         """
         asymp_anomaly = asymptote_anomaly(orbit_type(e), e)
         if abs(nu) >= asymp_anomaly:
-            raise ValueError("")
+            raise ValueError("State isn't defined at infinity")
+
         r, v = state_pf_from_e_rp(e, rp, mu, nu)
         return cls(r, v, mu)
 
