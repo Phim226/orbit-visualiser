@@ -46,6 +46,10 @@ class NewSatellite():
         """
         return self._pos
 
+    @position.setter
+    def position(self, new_pos: Sequence | NDArray[np.float64]) -> None:
+        self._pos = new_pos
+
     @property
     def velocity(self) -> Sequence | NDArray[np.float64]:
         """
@@ -57,6 +61,10 @@ class NewSatellite():
             Perifocal velocity vector (km/s)
         """
         return self._vel
+
+    @velocity.setter
+    def velocity(self, new_vel: Sequence | NDArray[np.float64]) -> None:
+        self._vel = new_vel
 
     @property
     def central_body(self) -> CentralBody:
