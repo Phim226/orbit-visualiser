@@ -34,7 +34,8 @@ class OrbitConfigController():
             variable: str,
             event: Event
     ) -> None:
-        return self._variables_controller.validate_manual_input(variable, event)
+        self._variables_controller.validate_manual_input(variable, event)
+        self._properties_controller.update_display()
 
     def reset_state(self) -> Callable:
         return self._variables_controller.reset_state()
