@@ -167,7 +167,7 @@ class VariablesBuilder(Builder):
 
         entry = Entry(frame, width = 10)
         entry.insert(0, f"{spec.getter(self._satellite): 0.{spec.decimal_places}f}".strip())
-        entry.bind("<Return>", partial(validate_input, variable, self._satellite))
+        entry.bind("<Return>", partial(validate_input, variable))
         x, y = spec.entry_pos
         entry.place(x = x, y = y)
 
@@ -193,7 +193,7 @@ class VariablesBuilder(Builder):
             slider_name,
             Scale(root, from_ = lims[0], to = lims[1], resolution = 1/10**spec.decimal_places, length = 260,
                   orient = "horizontal", variable = slider_var,
-                  command = partial(slider_changed, variable, self._satellite, "slider"),
+                  command = partial(slider_changed, variable, "slider"),
                   label = label, font = self._slider_font)
         )
 
