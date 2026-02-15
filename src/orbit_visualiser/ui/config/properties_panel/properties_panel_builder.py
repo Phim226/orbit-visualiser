@@ -29,7 +29,7 @@ class PropertiesBuilder(Builder):
             "asymptote_anomal" : PropertySpec("Anomaly of asymptote", "°", lambda sat: np.degrees(sat.orbit.asymptote_anomaly)),
             "turn_angle" : PropertySpec("Turning angle", "°", lambda sat: np.degrees(sat.orbit.turning_angle)),
             "aim_radius" : PropertySpec("Aiming radius", "km", lambda sat: sat.orbit.aiming_radius),
-            "spec_energy" : PropertySpec("Specific orbital energy", "km²/s²", lambda sat: sat.orbit.specific_orbital_energy),
+            "spec_energy" : PropertySpec("Specific orbital energy", "km²/s²", lambda sat: sat.orbit.specific_energy),
             "char_energy" : PropertySpec("Characteristic energy", "km²/s²", lambda sat: sat.orbit.characteristic_energy),
             "excess_velocity" : PropertySpec("Excess velocity", "km/s", lambda sat: sat.orbit.hyperbolic_excess_velocity)
         }
