@@ -25,14 +25,13 @@ class OrbitConfigController():
         self._orbit = orbit
         self._sat = satellite
 
-        self._variables_controller = VariablesController(figure, builder.variables_builder, orbit, satellite, central_body)
+        self._variables_controller = VariablesController(figure, builder.variables_builder, satellite)
         self._properties_controller = PropertiesController(builder.properties_builder, satellite)
 
 
     def validate_manual_input(
             self,
             variable: str,
-            source_object: Orbit | Satellite | CentralBody,
             event: Event
     ) -> None:
         return self._variables_controller.validate_manual_input(variable, source_object, event)
