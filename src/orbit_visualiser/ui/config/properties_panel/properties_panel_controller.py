@@ -1,6 +1,7 @@
 import numpy as np
 from orbit_visualiser.ui.config.properties_panel.properties_panel_builder import PropertiesBuilder
 from orbit_visualiser.core.satellite import NewSatellite
+from orbit_visualiser.core.astrodynamics.types import OrbitType
 
 # TODO: Properly display very large values in the properties panel without them being cut off.
 
@@ -17,9 +18,9 @@ class PropertiesController():
             unit = spec.units
             getattr(self._builder, f"{property}_str").set(self.format_display_value(new_value, unit))
 
-    def format_display_value(self, value: float | str, units: str | None) -> str:
+    def format_display_value(self, value: float | OrbitType, units: str | None) -> str:
         if units is None:
-            return value.capitalize()
+            return value.name.lower().capitalize()
 
         if np.isclose(value, 0):
             value = 0.00
