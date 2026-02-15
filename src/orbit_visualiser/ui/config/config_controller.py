@@ -35,7 +35,8 @@ class OrbitConfigController():
             source_object: Orbit | Satellite | CentralBody,
             event: Event
     ) -> None:
-        return self._variables_controller.validate_manual_input(variable, source_object, event)
+        self._variables_controller.validate_manual_input(variable, source_object, event)
+        self._properties_controller.update_display()
 
     def reset_state(self) -> Callable:
         return self._variables_controller.reset_state()
