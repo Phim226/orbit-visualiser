@@ -73,55 +73,55 @@ class NewOrbit():
         return orbit_type(self.eccentricity)
 
     @cached_property
-    def semi_parameter(self) -> OrbitType:
+    def semi_parameter(self) -> float:
         return semi_parameter_from_momentum(specific_ang_momentum_from_state(self.position, self.velocity), self.mu)
 
     @cached_property
-    def radius_of_periapsis(self) -> OrbitType:
+    def radius_of_periapsis(self) -> float:
         return periapsis(self.semi_parameter, self.eccentricity)
 
     @cached_property
-    def semimajor_axis(self) -> OrbitType:
+    def semimajor_axis(self) -> float:
         return semimajor_axis(self.orbit_type, self.eccentricity, self.radius_of_periapsis)
 
     @cached_property
-    def semiminor_axis(self) -> OrbitType:
+    def semiminor_axis(self) -> float:
         return semiminor_axis(self.orbit_type, self.eccentricity, self.semimajor_axis)
 
     @cached_property
-    def radius_of_apoapsis(self) -> OrbitType:
+    def radius_of_apoapsis(self) -> float:
         return apoapsis(self.orbit_type, self.eccentricity, self.semimajor_axis)
 
     @cached_property
-    def asymptote_anomaly(self) -> OrbitType:
+    def asymptote_anomaly(self) -> float:
         return asymptote_anomaly(self.orbit_type, self.eccentricity)
 
     @cached_property
-    def turning_angle(self) -> OrbitType:
+    def turning_angle(self) -> float:
         return turning_angle(self.orbit_type, self.eccentricity)
 
     @cached_property
-    def aiming_radius(self) -> OrbitType:
+    def aiming_radius(self) -> float:
         return aiming_radius(self.orbit_type, self.semiminor_axis)
 
     @cached_property
-    def orbital_period(self) -> OrbitType:
+    def orbital_period(self) -> float:
         return orbital_period(self.orbit_type, self.mu, self.semimajor_axis)
 
     @cached_property
-    def mean_motion(self) -> OrbitType:
+    def mean_motion(self) -> float:
         return mean_motion(self.orbit_type, self.orbital_period, self.mu, self.semi_parameter, self.semimajor_axis)
 
     @cached_property
-    def specific_energy(self) -> OrbitType:
+    def specific_energy(self) -> float:
         return specific_orbital_energy(self.orbit_type, self.mu, self.semimajor_axis)
 
     @cached_property
-    def characteristic_energy(self) -> OrbitType:
+    def characteristic_energy(self) -> float:
         return characteristic_energy(self.orbit_type, self.mu, self.semimajor_axis)
 
     @cached_property
-    def hyperbolic_excess_velocity(self) -> OrbitType:
+    def hyperbolic_excess_velocity(self) -> float:
         return excess_velocity(self.orbit_type, self.mu, self.semimajor_axis)
 
     @classmethod
