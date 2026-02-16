@@ -3,18 +3,19 @@ import numpy as np
 from numpy.typing import NDArray
 from math import pi
 from typing import Callable
-from orbit_visualiser.core import Satellite, Orbit, CentralBody
+from orbit_visualiser.core import Satellite, Orbit, CentralBody, asymptote_anomaly, orbit_type
 
 # ---------- True anomaly grids --------------------
 @pytest.fixture(scope = "session")
 def closed_anomaly_grid() -> NDArray[np.float64]:
-    return np.linspace(0, 2*pi, 20)
+    return np.linspace(0, 2*pi, 10)
 
 @pytest.fixture(scope = "session")
 def open_anomaly_grid() -> Callable[[Orbit, int], NDArray[np.float64]]:
-    def _create_grid(orbit: Orbit, num: int = 50) -> NDArray[np.float64]:
-        orbit_angles = orbit.orbital_angles()
-        return np.linspace(orbit_angles[0], orbit_angles[1], num)
+    def _create_grid(e: float, num: int = 20) -> NDArray[np.float64]:
+        t_asymp = asymptote_anomaly(orbit_type(e), e)
+        offset = 0.0001
+        return np.linspace(-t_asymp + offset, t_asymp - offset, num)
     return _create_grid
 
 # ---------- Orbital object factories --------------
