@@ -25,8 +25,7 @@ def eccentric_anomaly(orbit_type: OrbitType, e: float, nu: float) -> float:
 
     elif orbit_type is OrbitType.ELLIPTICAL:
         e_anomaly = 2*np.arctan(np.sqrt((1 - e)/(1 + e))*np.tan(nu/2))
-        if e_anomaly < 0:
-            return e_anomaly + 2*pi
+        e_anomaly = np.where(e_anomaly < 0, e_anomaly + 2*pi, e_anomaly)
 
         return e_anomaly
 
