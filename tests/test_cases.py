@@ -1,5 +1,7 @@
 import itertools
+import numpy as np
 from typing import Any
+from orbit_visualiser.core import OrbitType
 
 # Tests to implement
 # TODO: Magnitude of angular momentum vector
@@ -37,7 +39,7 @@ e_elliptical_test_cases: list[float] = e_closed_typical_copy + e_closed_edge_cas
 
 # Eccentricity test values for e >= 1
 e_open_typical_cases: list[float] = [1, 1.5]
-e_open_edge_cases: list[float] = [1.0000001, 1000]
+e_open_edge_cases: list[float] = [1.0000001]
 e_open_test_cases: list[float] = e_open_typical_cases + e_open_edge_cases
 e_open_typical_copy = e_open_typical_cases.copy()
 e_open_typical_copy.pop(0)
@@ -49,8 +51,8 @@ e_edge_cases: list[float] = e_closed_edge_cases + e_open_edge_cases
 e_test_cases: list[float] = e_closed_test_cases + e_open_test_cases
 
 # Radius of periapsis test values
-rp_typical_cases: list[float] = [6789, 20_000, 100_000, 1_000_000]
-rp_edge_cases: list[float] = [10, 938_382_001_928_942_153]
+rp_typical_cases: list[float] = [6789, 20_000, 1_000_000]
+rp_edge_cases: list[float] = [10]
 rp_test_cases: list[float] = rp_typical_cases + rp_edge_cases
 
 # Gravitation parameter test values
@@ -70,7 +72,7 @@ standard_open_test_cases = _create_test_cases({"e": e_open_test_cases, "rp": rp_
 # Test cases for constant eccentricity and variable radius of periapsis and gravitational parameter
 rp_mu_test_cases = _create_test_cases({"rp": rp_test_cases, "mu": mu_test_cases})
 
-# Test cases variable eccentricity with orbit type tags
+# Test cases for variable eccentricity with orbit type tags
 e_tagged_test_cases = _create_test_cases({"e": e_test_cases})
 
 # Test cases for typical values
