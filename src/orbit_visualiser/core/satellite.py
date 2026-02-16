@@ -127,8 +127,7 @@ class NewSatellite():
         return eccentric_anomaly(
             orbit.orbit_type,
             orbit.eccentricity,
-            self.true_anomaly,
-            orbit.asymptote_anomaly
+            self.true_anomaly
         )
 
     @property
@@ -138,8 +137,7 @@ class NewSatellite():
             orbit.orbit_type,
             orbit.eccentricity,
             self.true_anomaly,
-            self.eccentric_anomaly,
-            orbit.asymptote_anomaly
+            self.eccentric_anomaly
         )
 
     @property
