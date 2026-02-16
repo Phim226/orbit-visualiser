@@ -128,4 +128,4 @@ def vis_viva_speed(r: float, a: float, mu: float) -> float:
     float
         Orbital speed (km/s)
     """
-    return np.sqrt(mu((2/r) - (1/a)))
+    return np.sqrt(mu*((2/r) - (1/a)))
