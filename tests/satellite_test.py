@@ -2,19 +2,18 @@ import pytest
 import numpy as np
 from typing import Callable
 from numpy.typing import NDArray
-from orbit_visualiser.core import Satellite, Orbit
+from orbit_visualiser.core import Satellite, Orbit, OrbitType
 from tests.test_cases import full_test_cases, standard_open_test_cases
 
 # TODO: implement sanity tests (use different formulae for the same value and check they are equal)
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", standard_open_test_cases)
+@pytest.mark.parametrize("e, rp, mu, orbit_type", standard_open_test_cases)
 def test_satellite_velocity_sanity(
     satellite_factory: Callable[[float, float, float], Satellite],
     open_anomaly_grid: Callable[[Orbit, int], NDArray[np.float64]],
     e: float,
     rp: float,
     mu: float,
-    closure: str,
     orbit_type: str
 ):
     """
@@ -35,7 +34,7 @@ def test_satellite_velocity_sanity(
 
         assert np.allclose(v_vals, satellite.v)
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", full_test_cases)
+@pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_satellite_azimuthal_velocity_sanity(
     satellite_factory: Callable[[float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
@@ -43,7 +42,6 @@ def test_satellite_azimuthal_velocity_sanity(
     e: float,
     rp: float,
     mu: float,
-    closure: str,
     orbit_type: str
 ):
     """
@@ -51,7 +49,7 @@ def test_satellite_azimuthal_velocity_sanity(
     """
     satellite: Satellite = satellite_factory(e, rp, mu)
 
-    if closure == "closed":
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         anomaly_grid = closed_anomaly_grid
     else:
         anomaly_grid = open_anomaly_grid(satellite._orbit)
@@ -68,7 +66,7 @@ def test_satellite_azimuthal_velocity_sanity(
 
         assert np.allclose(v_azim_vals, satellite.v_azim)
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", full_test_cases)
+@pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_satellite_radial_velocity_sanity(
     satellite_factory: Callable[[float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
@@ -76,7 +74,6 @@ def test_satellite_radial_velocity_sanity(
     e: float,
     rp: float,
     mu: float,
-    closure: str,
     orbit_type: str
 ):
     """
@@ -84,7 +81,7 @@ def test_satellite_radial_velocity_sanity(
     """
     satellite: Satellite = satellite_factory(e, rp, mu)
 
-    if closure == "closed":
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         anomaly_grid = closed_anomaly_grid
     else:
         anomaly_grid = open_anomaly_grid(satellite._orbit)

@@ -13,19 +13,17 @@ def _create_test_cases(values_dict: dict[str, list[float]], tag_orbits: bool = T
     if "e" in values_dict and tag_orbits:
         for values in test_cases:
             e = values[0]
-            values.append("closed" if e < 1 else "open")
 
-            orbit_type: str
-            if e == 0:
-                orbit_type = "circular"
+            if np.isclose(e, 0):
+                orbit_type = OrbitType.CIRCULAR
             elif 0 < e < 1:
-                orbit_type = "elliptical"
-            elif e == 1:
-                orbit_type = "parabolic"
-            else:
-                orbit_type = "hyperbolic"
-            values.append(orbit_type)
+                orbit_type = OrbitType.ELLIPTICAL
+            elif np.isclose(e, 1):
+                orbit_type = OrbitType.PARABOLIC
+            elif e > 1:
+                orbit_type = OrbitType.HYPERBOLIC
 
+            values.append(orbit_type)
 
     return test_cases
 

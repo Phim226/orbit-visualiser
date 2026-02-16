@@ -2,11 +2,11 @@ import pytest
 import numpy as np
 from typing import Callable
 from numpy.typing import NDArray
-from orbit_visualiser.core import Orbit, Satellite
+from orbit_visualiser.core import Orbit, Satellite, OrbitType
 from tests.test_cases import full_test_cases
 
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", full_test_cases)
+@pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_specific_energy_conservation(
     satellite_factory: Callable[[float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
@@ -14,12 +14,11 @@ def test_specific_energy_conservation(
     e: float,
     rp: float,
     mu: float,
-    closure: str,
     orbit_type: str
 ):
     satellite: Satellite = satellite_factory(e, rp, mu)
 
-    if closure == "closed":
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         anomaly_grid = closed_anomaly_grid
     else:
         anomaly_grid = open_anomaly_grid(satellite._orbit)
@@ -36,7 +35,7 @@ def test_specific_energy_conservation(
 
         assert np.isclose(specific_energy, vis_viva_energy)
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", full_test_cases)
+@pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_specific_and_characteristic_energy_relation(
     satellite_factory: Callable[[float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
@@ -44,12 +43,11 @@ def test_specific_and_characteristic_energy_relation(
     e: float,
     rp: float,
     mu: float,
-    closure: str,
     orbit_type: str
 ):
     satellite: Satellite = satellite_factory(e, rp, mu)
 
-    if closure == "closed":
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         anomaly_grid = closed_anomaly_grid
     else:
         anomaly_grid = open_anomaly_grid(satellite._orbit)
