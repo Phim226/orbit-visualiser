@@ -303,7 +303,7 @@ def mean_motion(orbit_type: OrbitType, period: float, mu: float, p: float, a: fl
         return 2*pi/period
 
     elif orbit_type is OrbitType.PARABOLIC:
-        return 2*np.sqrt(mu/p)
+        return 2*np.sqrt(mu/(p**3))
 
     elif orbit_type is OrbitType.HYPERBOLIC:
-        return 2*np.sqrt(mu/abs(a**3))
+        return np.sqrt(mu/abs(a**3))
