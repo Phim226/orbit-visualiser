@@ -36,7 +36,7 @@ def two_body_pf_ode(mu: float, t: float, state: NDArray[np.float64], ) -> NDArra
 
     return np.array([v_x, v_y, a_x, a_y])
 
-def get_init_conditions_from_elements(orbit: Orbit) -> NDArray[np.float64]:
+def get_init_conditions_from_orbit(orbit: Orbit) -> NDArray[np.float64]:
     """
     Takes orbital elements and returns the initial conditions (position and velocity) for orbit propagation.
 
@@ -53,7 +53,7 @@ def get_init_conditions_from_elements(orbit: Orbit) -> NDArray[np.float64]:
     """
     return np.concatenate((orbit.position, orbit.velocity))
 
-def run_orbit_prop(orbit: Orbit, init_conditions: NDArray[np.float64], t_end: float, period_frac_per_step: int = 500):
+def run_orbit_prop(orbit: Orbit, t_end: float, period_frac_per_step: int = 500):
     """
     Run the orbit propagation for the satellite. Uses the RK45 algorithm.
 
@@ -61,8 +61,6 @@ def run_orbit_prop(orbit: Orbit, init_conditions: NDArray[np.float64], t_end: fl
     ----------
     orbit: NewOrbit
         The orbit on which the satellite is being propagated.
-    init_conditions : NDArray[np.float64]
-        The initial conditions for the propagation.
     t_end : float
         The end time of the propagation. It should be on the order of at most 10 orbital periods
         since the integrator (RK45) isn't symplectic, so will suffer from energy drift over long
@@ -79,6 +77,8 @@ def run_orbit_prop(orbit: Orbit, init_conditions: NDArray[np.float64], t_end: fl
     """
     t = np.linspace(0, t_end, ceil((t_end/orbit.orbital_period)*period_frac_per_step))
 
+    init_conditions = get_init_conditions_from_orbit(orbit)
+
     result = solve_ivp(
         partial(two_body_pf_ode, orbit.mu),
         [0, t_end],
@@ -92,9 +92,10 @@ def run_orbit_prop(orbit: Orbit, init_conditions: NDArray[np.float64], t_end: fl
 if __name__ == "__main__":
 
     orbit = Orbit.from_orbital_elements(e = 0.0, rp = 50_000.0, mu = 398_600.0, nu = 0.0)
-    init_conditions = np.concatenate((orbit.position, orbit.velocity))
 
-    sol = run_orbit_prop(orbit, init_conditions, orbit.orbital_period)
+    sol = run_orbit_prop(orbit, orbit.orbital_period)
+
+    init_conditions = get_init_conditions_from_orbit(orbit)
     print(init_conditions)
     print(sol.y[:, -1])
 
