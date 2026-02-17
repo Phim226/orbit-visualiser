@@ -20,7 +20,7 @@ def eccentricity_vector_from_state(r: NDArray[np.float64], v: NDArray[np.float64
     Returns
     -------
     NDArray[np.float64]
-        _description_
+        The eccentricity vector
     """
     return (1/mu)*((np.linalg.norm(v)**2 - mu/np.linalg.norm(r))*r - np.dot(r, v)*v)
 
