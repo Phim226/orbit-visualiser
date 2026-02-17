@@ -173,7 +173,7 @@ if __name__ == "__main__":
 
     print(f"Difference in radius after propagating: {rf - r0}")
 ```
-The running the script will run the propagation and print out the results.
+Then running the script will run the propagation and print out the results.
 
 Alternatively, you can pass the initial position, velocity and gravitational parameter directly to Orbit. By using
 ```python
