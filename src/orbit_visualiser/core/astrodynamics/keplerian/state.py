@@ -39,8 +39,8 @@ def state_pf_from_e_rp(
     p = semi_parameter_from_eccentricity(e, rp)
     h = specific_ang_momentum(mu, p)
 
-    r = perifocal_position_eq(e, p)(nu)
-    v = perifocal_velocity_eq(e, mu, h)(nu)
+    r = perifocal_position(e, p, nu)
+    v = perifocal_velocity(e, mu, h, nu)
 
     if state == "pos":
         return [r]
@@ -49,9 +49,9 @@ def state_pf_from_e_rp(
     elif state == "both":
         return [r, v]
 
-def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.float64]]:
+def perifocal_position(e: float, p: float, nu: float) -> NDArray[np.float64]:
     """
-    Perifocal orbit equation factory.
+    Perifocal orbit equation.
 
     Parameters
     ----------
@@ -59,40 +59,38 @@ def perifocal_position_eq(e: float, p: float) -> Callable[[float], NDArray[np.fl
         Eccentricity
     p : float
         Semi-parameter (km)
+    nu : float
+        True anomaly (rads)
 
     Returns
     -------
-    Callable[[float], NDArray[np.float64]]
-        The perifocal orbit equation, taking the true anomaly (rads) and the true anomaly of the
-        asymptote (rads) as arguments
+    NDArray[np.float64]
+        The numpy array of the perifocal orbital position
     """
-    def _callable(nu: float) -> NDArray[np.float64]:
-        return p*(1/(1 + e*np.cos(nu)))*np.array([np.cos(nu), np.sin(nu)])
+    return p*(1/(1 + e*np.cos(nu)))*np.array([np.cos(nu), np.sin(nu)])
 
-    return _callable
-
-def perifocal_velocity_eq(e: float, mu: float, h: float) -> Callable[[float], NDArray[np.float64]]:
+def perifocal_velocity(e: float, mu: float, h: float, nu: float) -> NDArray[np.float64]:
     """
-    Perifocal velocity equation factory.
+    The perifocal velocity equation.
 
     Parameters
     ----------
-    e  : float
+    e : float
         Eccentricity
     mu : float
         Gravitational parameter (km^3/s^2)
-    h  : float
+    h : float
         Specific angular momentum (km^2/s)
+    nu : float
+        True anomaly (rads)
 
     Returns
     -------
-    Callable[[float], NDArray[np.float64]]
-        The perifocal velocity equation, taking the true anomaly as an argument
+    NDArray[np.float64]
+        The numpy array of the perifocal velocity
     """
-    def _callable(nu: float) -> NDArray[np.float64]:
-        return (mu/h)*np.array([-np.sin(nu), e + np.cos(nu)])
+    return (mu/h)*np.array([-np.sin(nu), e + np.cos(nu)])
 
-    return _callable
 
 def radial_azimuthal_velocity(
         nu: float,
