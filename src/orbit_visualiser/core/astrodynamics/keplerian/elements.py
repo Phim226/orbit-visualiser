@@ -120,7 +120,7 @@ def semimajor_axis(orbit_type: OrbitType, e: float, rp: float) -> float:
         Semi-major axis (km)
     """
     if orbit_type is OrbitType.PARABOLIC:
-        return np.inf
+        return np.nan
 
     return rp/(1 - e)
 
@@ -148,7 +148,7 @@ def semiminor_axis(orbit_type: OrbitType, e: float, a: float) -> float:
     elif orbit_type is OrbitType.HYPERBOLIC:
         return a*np.sqrt(e**2 - 1)
 
-    return np.inf
+    return np.nan
 
 def periapsis(p: float, e: float) -> float:
     """
@@ -187,7 +187,7 @@ def apoapsis(orbit_type: OrbitType, e: float, a: float) -> float:
         Radius of apoapsis (km)
     """
     if orbit_type is OrbitType.PARABOLIC:
-        return np.inf
+        return np.nan
 
     return a*(1 + e)
 
