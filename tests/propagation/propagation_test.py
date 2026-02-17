@@ -1,14 +1,14 @@
 import pytest
 import numpy as np
 from typing import Callable
-from orbit_visualiser.core import Satellite, run_orbit_prop, get_init_conditions
+from orbit_visualiser.core import NewOrbit, run_orbit_prop, get_init_conditions_from_elements
 from tests.test_cases import typical_closed_test_cases
 
 # TODO: Improve testing tolerances across difference orbit sizes and eccentricities.
 
 @pytest.mark.parametrize("e, rp, mu", typical_closed_test_cases)
 def test_1p_propagation_vel(
-        satellite_factory: Callable[[float, float, float], Satellite],
+        orbit_factory_from_elements: Callable[[float, float, float, float], NewOrbit],
         e: float,
         rp: float,
         mu: float
@@ -17,10 +17,10 @@ def test_1p_propagation_vel(
     Test that the velocity of a propagated satellite after a single period from periapsis for
     typical closed orbits is within an acceptable tolerance to the analytical solution.
     """
-    satellite: Satellite = satellite_factory(e, rp, mu)
-    init_conditions = get_init_conditions(satellite)
+    orbit: NewOrbit = orbit_factory_from_elements(e, rp, mu, 0.0)
+    init_conditions = get_init_conditions_from_elements(orbit)
 
-    prop = run_orbit_prop(satellite, init_conditions, satellite.period)
+    prop = run_orbit_prop(orbit, init_conditions, orbit.orbital_period)
 
     vel_at_rp = init_conditions[2:]
     prop_vel_at_rp = prop.y[2:, -1]
@@ -30,7 +30,7 @@ def test_1p_propagation_vel(
 
 @pytest.mark.parametrize("e, rp, mu", typical_closed_test_cases)
 def test_1p_propagation_pos(
-        satellite_factory: Callable[[float, float, float], Satellite],
+        orbit_factory_from_elements: Callable[[float, float, float, float], NewOrbit],
         e: float,
         rp: float,
         mu: float
@@ -39,10 +39,10 @@ def test_1p_propagation_pos(
     Test that the position of a propagated satellite after a single period from periapsis for
     typical closed orbits is within an acceptable tolerance to the analytical solution.
     """
-    satellite: Satellite = satellite_factory(e, rp, mu)
-    init_conditions = get_init_conditions(satellite)
+    orbit: NewOrbit = orbit_factory_from_elements(e, rp, mu, 0.0)
+    init_conditions = get_init_conditions_from_elements(orbit)
 
-    prop = run_orbit_prop(satellite, init_conditions, satellite.period)
+    prop = run_orbit_prop(orbit, init_conditions, orbit.orbital_period)
 
     pos_at_rp = init_conditions[:2]
     prop_pos_at_rp = prop.y[:2, -1]
@@ -52,7 +52,7 @@ def test_1p_propagation_pos(
 
 @pytest.mark.parametrize("e, rp, mu", typical_closed_test_cases)
 def test_1p_phase_shift(
-        satellite_factory: Callable[[float, float, float], Satellite],
+        orbit_factory_from_elements: Callable[[float, float, float, float], NewOrbit],
         e: float,
         rp: float,
         mu: float
@@ -61,10 +61,10 @@ def test_1p_phase_shift(
     Test that the phase shift of a propagated satellite after a single period from periapsis for
     typical closed orbits is within an acceptable tolerance to the analytical solution.
     """
-    satellite: Satellite = satellite_factory(e, rp, mu)
-    init_conditions = get_init_conditions(satellite)
+    orbit: NewOrbit = orbit_factory_from_elements(e, rp, mu, 0.0)
+    init_conditions = get_init_conditions_from_elements(orbit)
 
-    prop = run_orbit_prop(satellite, init_conditions, satellite.period)
+    prop = run_orbit_prop(orbit, init_conditions, orbit.orbital_period)
 
     prop_pos_at_rp = prop.y[:2, -1]
     phase_shift = np.arctan2(prop_pos_at_rp[1], prop_pos_at_rp[0])
