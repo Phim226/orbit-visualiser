@@ -114,7 +114,7 @@ class NewOrbit():
 
     @cached_property
     def mean_motion(self) -> float:
-        return mean_motion(self.orbit_type, self.orbital_period, self.mu, self.semi_parameter, self.semimajor_axis)
+        return mean_motion(self.orbit_type, self.mu, self.semi_parameter, self.semimajor_axis)
 
     @cached_property
     def specific_energy(self) -> float:
