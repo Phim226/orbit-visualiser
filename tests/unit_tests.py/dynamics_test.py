@@ -61,7 +61,8 @@ def test_characteristic_energy(mu: float, a: float, expected: float):
 
 @pytest.mark.parametrize("orbit_type, mu, a, expected", [
     (OrbitType.CIRCULAR, 398_600.0, 50_000.0, np.nan),
-    (OrbitType.HYPERBOLIC, 398_600.0, -50_000.0, np.sqrt(398_600.0/abs(-50_000.0)))
+    (OrbitType.HYPERBOLIC, 398_600.0, -50_000.0, np.sqrt(398_600.0/abs(-50_000.0))),
+    (OrbitType.PARABOLIC, 398_600.0, np.nan, 0.0),
 ])
 def test_excess_velocity(orbit_type: OrbitType, mu: float, a: float, expected: float):
     """
