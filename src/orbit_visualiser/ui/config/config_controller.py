@@ -25,17 +25,16 @@ class OrbitConfigController():
         self._orbit = orbit
         self._sat = satellite
 
-        self._variables_controller = VariablesController(figure, builder.variables_builder, orbit, satellite, central_body)
-        self._properties_controller = PropertiesController(builder.properties_builder)
+        self._variables_controller = VariablesController(figure, builder.variables_builder, satellite)
+        self._properties_controller = PropertiesController(builder.properties_builder, satellite)
 
 
     def validate_manual_input(
             self,
             variable: str,
-            source_object: Orbit | Satellite | CentralBody,
             event: Event
     ) -> None:
-        self._variables_controller.validate_manual_input(variable, source_object, event)
+        self._variables_controller.validate_manual_input(variable, event)
         self._properties_controller.update_display()
 
     def reset_state(self) -> Callable:
@@ -47,13 +46,11 @@ class OrbitConfigController():
     def slider_changed(
             self,
             variable: str,
-            source_object: Orbit | Satellite | CentralBody,
             input_type: str,
             new_val: str | float
     ) -> None:
         self._variables_controller.update_variable(
             variable,
-            source_object,
             input_type,
             new_val
         )

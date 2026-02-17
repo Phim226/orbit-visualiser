@@ -2,98 +2,86 @@ import pytest
 import numpy as np
 from typing import Callable
 from numpy.typing import NDArray
-from orbit_visualiser.core import Satellite, Orbit
+from orbit_visualiser.core import OrbitType, Satellite
 from tests.test_cases import full_test_cases, standard_open_test_cases
 
 # TODO: implement sanity tests (use different formulae for the same value and check they are equal)
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", standard_open_test_cases)
-def test_satellite_velocity_sanity(
-    satellite_factory: Callable[[float, float, float], Satellite],
-    open_anomaly_grid: Callable[[Orbit, int], NDArray[np.float64]],
+@pytest.mark.parametrize("e, rp, mu, orbit_type", standard_open_test_cases)
+def test_satellite_orbital_speed_sanity(
+    satellite_factory_from_elements: Callable[[float, float, float, float], Satellite],
+    open_anomaly_grid: Callable[[float, int], NDArray[np.float64]],
     e: float,
     rp: float,
     mu: float,
-    closure: str,
     orbit_type: str
 ):
     """
-    Sanity test to check that different formulae for the velocity give the same result.
+    Sanity test to check that different formulae for the orbital speed give the same result.
     """
-    satellite: Satellite = satellite_factory(e, rp, mu)
-
-    anomaly_grid = open_anomaly_grid(satellite._orbit)
+    anomaly_grid = open_anomaly_grid(e = e)
 
     for nu in anomaly_grid:
-        satellite.nu = nu
-        satellite.update_satellite_properties()
+        satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
 
         v_vals = [
-            np.hypot(satellite.v_inf, satellite.v_esc),
-            np.hypot(satellite.v_azim, satellite.v_radial)
+            np.hypot(satellite.orbit.hyperbolic_excess_velocity, satellite.escape_velocity),
+            np.linalg.norm(satellite.radial_azimuthal_velocity)
         ]
 
-        assert np.allclose(v_vals, satellite.v)
+        assert np.allclose(v_vals, satellite.speed)
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", full_test_cases)
+@pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_satellite_azimuthal_velocity_sanity(
-    satellite_factory: Callable[[float, float, float], Satellite],
+    satellite_factory_from_elements: Callable[[float, float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
-    open_anomaly_grid: Callable[[Orbit, int], NDArray[np.float64]],
+    open_anomaly_grid: Callable[[float, int], NDArray[np.float64]],
     e: float,
     rp: float,
     mu: float,
-    closure: str,
     orbit_type: str
 ):
     """
     Sanity test to check that different formulae for the azimuthal velocity give the same result.
     """
-    satellite: Satellite = satellite_factory(e, rp, mu)
-
-    if closure == "closed":
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         anomaly_grid = closed_anomaly_grid
     else:
-        anomaly_grid = open_anomaly_grid(satellite._orbit)
+        anomaly_grid = open_anomaly_grid(e)
 
     for nu in anomaly_grid:
-        satellite.nu = nu
-        satellite.update_satellite_properties()
+        satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
 
         v_azim_vals = [
-            satellite.h/satellite.r,
-            satellite.v*np.cos(satellite.gam)
+            satellite.specific_angular_momentum/satellite.radius,
+            satellite.speed*np.cos(satellite.flight_angle)
         ]
 
 
-        assert np.allclose(v_azim_vals, satellite.v_azim)
+        assert np.allclose(v_azim_vals, satellite.radial_azimuthal_velocity[1])
 
-@pytest.mark.parametrize("e, rp, mu, closure, orbit_type", full_test_cases)
+@pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_satellite_radial_velocity_sanity(
-    satellite_factory: Callable[[float, float, float], Satellite],
+    satellite_factory_from_elements: Callable[[float, float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
-    open_anomaly_grid: Callable[[Orbit, int], NDArray[np.float64]],
+    open_anomaly_grid: Callable[[float, int], NDArray[np.float64]],
     e: float,
     rp: float,
     mu: float,
-    closure: str,
     orbit_type: str
 ):
     """
     Sanity test to check that different formulae for the radial velocity give the same result.
     """
-    satellite: Satellite = satellite_factory(e, rp, mu)
-
-    if closure == "closed":
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         anomaly_grid = closed_anomaly_grid
     else:
-        anomaly_grid = open_anomaly_grid(satellite._orbit)
+        anomaly_grid = open_anomaly_grid(e)
 
     for nu in anomaly_grid:
-        satellite.nu = nu
-        satellite.update_satellite_properties()
+        satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu)
 
-        v_radial = satellite.v*np.sin(satellite.gam)
+        v_radial = satellite.speed*np.sin(satellite.flight_angle)
 
-        assert np.isclose(v_radial, satellite.v_radial)
+        assert np.isclose(v_radial, satellite.radial_azimuthal_velocity[0])
 

@@ -9,7 +9,6 @@ T = TypeVar("T")
 @dataclass(frozen = True)
 class PropertySpec(Generic[T]):
     label: str
-    obj: Orbit | Satellite | CentralBody
     units: str | None
     getter: Callable[[T], float | bool]
 

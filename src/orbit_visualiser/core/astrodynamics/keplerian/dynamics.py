@@ -1,0 +1,132 @@
+import numpy as np
+from numpy.typing import NDArray
+from orbit_visualiser.core.astrodynamics.types import OrbitType
+
+def specific_ang_momentum_from_state(r: NDArray[np.float64], v: NDArray[np.float64]) -> NDArray[np.float64]:
+    """
+    Calculates the specific angular momentum vector from the position and velocity vectors of a satellite.
+
+    Parameters
+    ----------
+    r : NDArray[np.float64]
+        Position vector (km)
+    v : NDArray[np.float64]
+        Velocity vector (km/s)
+
+    Returns
+    -------
+    NDArray[np.float64]
+        Specific angular momentum vector (km^2/s)
+    """
+    return np.cross(r, v)
+
+def specific_ang_momentum(mu: float, p: float) -> float:
+    """
+    Calculates the magnitude of the specific angular momentum of a satellite using the gravitational
+    parameter and the semi-parameter.
+
+    Parameters
+    ----------
+    mu : float
+        Gravitational parameter (km^3/s^2)
+    p : float
+        Semi-parameter (km)
+
+    Returns
+    -------
+    float
+        The specific angular momentum (km^2/s)
+    """
+    return np.sqrt(mu*p)
+
+def specific_orbital_energy(mu: float, a: float) -> float:
+    """
+    Calculates the specific orbital energy using the gravitational parameter and semi-major axis.
+
+    Parameters
+    ----------
+    mu : float
+        Gravitational parameter (km^3/s^2)
+    a : float
+        Semi-major axis (km)
+
+    Returns
+    -------
+    float
+        The mechanical energy per unit mass (km^2/s^2)
+    """
+    if np.isclose(a, np.nan, equal_nan = True):
+        return 0.0
+
+    return -mu/(2*a)
+
+def characteristic_energy(mu: float, a: float) -> float:
+    """
+    Calculates the characteristic energy from the semi-major axis and gravitational parameter.
+
+    Parameters
+    ----------
+    orbit_type : OrbitType
+        The orbit type enum
+    mu : float
+        Gravitational parameter (km^3/s^2)
+    a : float
+        Semi-major axis (km)
+
+    Returns
+    -------
+    float
+        The characteristic energy (km^2/s^2)
+    """
+    if np.isclose(a, np.nan, equal_nan = True):
+        return 0.0
+
+    return -mu/a
+
+def excess_velocity(orbit_type: OrbitType, mu: float, a: float) -> float:
+    """
+    Calculates the hyperbolic excess velocity (the velocity magnitude at infinity) for open orbits
+    from the semimajor axis and gravitational parameter.
+
+    Parameters
+    ----------
+    orbit_type : OrbitType
+        The orbit type enum
+    mu : float
+        Gravitational parameter (km^3/s^2)
+    a : float
+        Semi-major axis (km)
+
+    Returns
+    -------
+    float
+        The hyperbolic excess velocity (km/s)
+    """
+    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
+        return np.nan
+
+    elif orbit_type is OrbitType.PARABOLIC:
+        return 0.0
+
+    return np.sqrt(mu/abs(a))
+
+def vis_viva_speed(r: float, a: float, mu: float) -> float:
+    """
+    Calculates orbital speed using the vis viva equation from the radial length, semi-major axis
+    and gravitational parameter.
+
+    Parameters
+    ----------
+    r : float
+        The magnitude of the radius (km)
+    a : float
+        Semi-major axis (km)
+    mu : float
+        Gravitational parameter (km^3/s^2)
+
+    Returns
+    -------
+    float
+        Orbital speed (km/s)
+    """
+    return np.sqrt(mu*((2/r) - (1/a)))

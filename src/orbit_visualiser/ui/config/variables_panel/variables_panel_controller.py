@@ -3,7 +3,8 @@ from decimal import Decimal
 import numpy as np
 from orbit_visualiser.ui.figure.orbit_figure import OrbitFigure
 from orbit_visualiser.ui.config.variables_panel.variables_panel_builder import  VariablesBuilder
-from orbit_visualiser.core import Orbit, Satellite, CentralBody
+from orbit_visualiser.core import Orbit, Satellite, asymptote_anomaly
+from orbit_visualiser.ui.common.utils import floor_to_decimals
 
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
 # TODO: Allow for fractional manual inputs.
@@ -17,19 +18,15 @@ class VariablesController():
             self,
             figure: OrbitFigure,
             builder: VariablesBuilder,
-            orbit: Orbit,
-            satellite: Satellite,
-            central_body: CentralBody
+            satellite: Satellite
     ):
         self._orbit_fig = figure
         self._builder = builder
 
-        self._orbit = orbit
-        self._sat = satellite
-        self._central_body = central_body
-
+        self._satellite = satellite
 
     def reset_state(self) -> None:
+        init_values = []
         var_props = self._builder.variable_specs
         for name, value in list(var_props.items()):
             init_value = value.init_value
@@ -39,10 +36,9 @@ class VariablesController():
             entry.delete(0, 1000)
             entry.insert(0, f"{init_value: 0.{value.decimal_places}f}".strip())
 
-            setattr(var_props[name].obj, name, init_value)
+            init_values.append(init_value)
 
-        self._orbit.update_orbital_properties()
-        self._sat.update_satellite_properties()
+        self._update_satellite_state(*init_values)
 
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
@@ -51,7 +47,6 @@ class VariablesController():
     def validate_manual_input(
             self,
             variable: str,
-            source_object: Orbit | Satellite | CentralBody,
             event: Event
     ) -> None:
         new_val = getattr(self._builder, f"{variable}_entry").get().strip()
@@ -68,7 +63,7 @@ class VariablesController():
 
         # When e < 1 then the orbit is periodic, and so the true anomaly is as well.
         if variable == "nu":
-            if self._orbit.e < 1 and (new_val_float < 0 or new_val_float > 360):
+            if self._satellite.orbit.eccentricity < 1 and (new_val_float < 0 or new_val_float > 360):
                 # float(new_val) will kill off any decimal points when new_val has extremely large
                 # absolute value (around 16 digits due to limitations of 64bit double precision
                 # for python floats). The Decimal class retains that information. If the angle is
@@ -82,18 +77,17 @@ class VariablesController():
                 )
 
             else:
-                t_asymp = np.degrees(self._orbit.t_asymp)
+                t_asymp = np.degrees(self._satellite.orbit.asymptote_anomaly)
                 if new_val_float < -t_asymp:
                     new_val_float = -t_asymp
                 elif new_val_float > t_asymp:
                     new_val_float = t_asymp
 
-        self.update_variable(variable, source_object, "entry", new_val_float)
+        self.update_variable(variable, "entry", new_val_float)
 
     def update_variable(
             self,
             variable: str,
-            source_object: Orbit | Satellite | CentralBody,
             input_type: str,
             new_val: str | float
     ) -> None:
@@ -115,27 +109,43 @@ class VariablesController():
         if variable == "nu":
             new_val = np.deg2rad(float(new_val))
 
-        setattr(source_object, variable, new_val)
-
-
-        self._orbit.update_orbital_properties()
-        self._sat.update_satellite_properties()
+        new_values = {
+            "e": self._builder.e_var.get(),
+            "rp": self._builder.rp_var.get(),
+            "mu": self._builder.mu_var.get(),
+            "nu": np.deg2rad(self._builder.nu_var.get()),
+        }
+        new_values[variable] = new_val
 
         # The value of the eccentricity determines the range of possible true anomaly values, which
         # this if block checks for.
         if variable == "e":
             if new_val >= 1:
-                t_asymp = self._orbit.t_asymp
-                t_asymp_slider_lim = round(np.degrees(t_asymp), 2)
+                # Slider should never allow for users to input the true anomaly of the asymptote
+                t_asymp_offset = np.degrees(asymptote_anomaly(new_val)) - 0.01
+                t_asymp_slider_lim = floor_to_decimals(t_asymp_offset, 2)
                 self._builder.nu_slider.configure(from_ = -t_asymp_slider_lim, to = t_asymp_slider_lim)
-                nu = self._sat.nu
-                if nu < -t_asymp:
-                    self._sat.nu = -t_asymp
-                elif nu > t_asymp:
-                    self._sat.nu = t_asymp
 
+                nu = new_values["nu"]
+                if nu < -t_asymp_offset:
+                    new_values["nu"] = -t_asymp_offset
+                elif nu > t_asymp_offset:
+                    new_values["nu"] = t_asymp_offset
             else:
                 self._builder.nu_slider.configure(from_ = 0, to = 360)
 
+        try:
+            self._update_satellite_state(*new_values.values())
+
+        except ValueError:
+            messagebox.showwarning("Warning", "State cannot be evaluated at infinity")
+            return
+
         self._orbit_fig.redraw_orbit()
         self._orbit_fig.redraw_satellite()
+
+    def _update_satellite_state(self, e: float, rp: float, mu: float, nu: float) -> None:
+        orbit = Orbit.from_orbital_elements(e, rp, mu, nu)
+        self._satellite.position = orbit.position
+        self._satellite.velocity = orbit.velocity
+        self._satellite.central_body.mu = mu

@@ -33,9 +33,9 @@ class OrbitConfigBuilder(Builder):
         self._options_frame = Frame(self._config_frame, padx = 2)
         self._options_frame.pack(side = "left", anchor = "n", pady = (2, 0))
 
-        self._variables_builder = VariablesBuilder(self._options_frame, orbit, central_body, satellite)
+        self._variables_builder = VariablesBuilder(self._options_frame, satellite)
         self._display_builder = DisplayBuilder(self._options_frame)
-        self._properties_builder = PropertiesBuilder(self._config_frame, orbit, satellite)
+        self._properties_builder = PropertiesBuilder(self._config_frame, satellite)
 
     @property
     def variables_builder(self) -> VariablesBuilder:
