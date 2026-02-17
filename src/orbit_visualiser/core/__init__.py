@@ -1,5 +1,6 @@
 from .orbit import Orbit, CentralBody
-from .satellite import Satellite
+from .satellite import Satellite, NewSatellite
+from .neworbit import NewOrbit
 from .propagation import get_init_conditions, run_orbit_prop
 
 from .astrodynamics.types import OrbitType
