@@ -39,7 +39,7 @@ e_elliptical_test_cases: list[float] = e_closed_typical_copy + e_closed_edge_cas
 
 # Eccentricity test values for e >= 1
 e_open_typical_cases: list[float] = [1, 1.5]
-e_open_edge_cases: list[float] = [1.0001]
+e_open_edge_cases: list[float] = [1.000001]
 e_open_test_cases: list[float] = e_open_typical_cases + e_open_edge_cases
 e_open_typical_copy = e_open_typical_cases.copy()
 e_open_typical_copy.pop(0)

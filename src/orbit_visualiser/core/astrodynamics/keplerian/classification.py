@@ -21,7 +21,7 @@ def orbit_type(e: float) -> OrbitType:
     elif 0 < e < 1:
         return OrbitType.ELLIPTICAL
 
-    elif np.isclose(e, 1):
+    elif np.isclose(e, 1, atol = 1e-10, rtol = 1e-8):
         return OrbitType.PARABOLIC
 
     elif e > 1:
