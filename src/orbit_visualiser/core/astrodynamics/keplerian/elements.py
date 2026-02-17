@@ -277,7 +277,7 @@ def orbital_period(orbit_type: OrbitType, mu: float, a: float) -> float:
 
     return (2*pi/np.sqrt(mu))*np.sqrt(a)**3
 
-def mean_motion(orbit_type: OrbitType, period: float, mu: float, p: float, a: float) -> float:
+def mean_motion(orbit_type: OrbitType, mu: float, p: float, a: float) -> float:
     """
     Calculates the mean motion, using different formulae based on orbit type.
 
@@ -285,8 +285,6 @@ def mean_motion(orbit_type: OrbitType, period: float, mu: float, p: float, a: fl
     ----------
     orbit_type : OrbitType
         The orbit type enum
-    period : float
-        The orbital period (s)
     mu : float
         Gravitational parameter (km^3/s^2)
     p : float
@@ -299,11 +297,7 @@ def mean_motion(orbit_type: OrbitType, period: float, mu: float, p: float, a: fl
     float
         The mean motion (rads/s)
     """
-    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL) :
-        return 2*pi/period
-
-    elif orbit_type is OrbitType.PARABOLIC:
+    if orbit_type is OrbitType.PARABOLIC:
         return 2*np.sqrt(mu/(p**3))
 
-    elif orbit_type is OrbitType.HYPERBOLIC:
-        return np.sqrt(mu/abs(a**3))
+    return np.sqrt(mu/abs(a**3))
