@@ -175,7 +175,7 @@ if __name__ == "__main__":
 ```
 Then running the script will run the propagation and print out the results.
 
-Alternatively, you can pass the initial position, velocity and gravitational parameter directly to Orbit. By using
+Alternatively, you can pass the initial position, velocity and gravitational parameter directly to Orbit by using
 ```python
 orbit = Orbit(position = np.array([50_000.0, 0.0]), velocity = np.array([0.0, 2.82]), mu = 398600.0)
 ```
