@@ -7,7 +7,9 @@ All notable changes to this project will be documented here.
 - Refactored the design architecture of the core objects
 - Created file containing orbital and kinematic helper functions
 - Wrote unit tests for helper functions
-- Refactored GUI layer, orbit propagation script and tests to align with new core design
+- Refactored orbit propagation script and tests to align with new core design
+- Refactored invariant tests to align with new core design
+- Refactored GUI properties display panel to show current state and orbital elements
 
 # 0.4.4
 - Implemented basic orbit propagation
