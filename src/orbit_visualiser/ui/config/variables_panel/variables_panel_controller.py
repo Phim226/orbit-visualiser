@@ -7,7 +7,6 @@ from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.core.satellite import NewSatellite
 from orbit_visualiser.core.neworbit import NewOrbit
 from orbit_visualiser.core.astrodynamics.keplerian.elements import asymptote_anomaly
-from orbit_visualiser.core.astrodynamics.types import OrbitType
 from orbit_visualiser.ui.common.utils import floor_to_decimals
 
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
@@ -126,7 +125,7 @@ class VariablesController():
         if variable == "e":
             if new_val >= 1:
                 # Slider should never allow for users to input the true anomaly of the asymptote
-                t_asymp_offset = np.degrees(asymptote_anomaly(OrbitType.HYPERBOLIC, new_val)) - 0.01
+                t_asymp_offset = np.degrees(asymptote_anomaly(new_val)) - 0.01
                 t_asymp_slider_lim = floor_to_decimals(t_asymp_offset, 2)
                 self._builder.nu_slider.configure(from_ = -t_asymp_slider_lim, to = t_asymp_slider_lim)
 

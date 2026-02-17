@@ -86,27 +86,27 @@ class NewOrbit():
 
     @cached_property
     def semimajor_axis(self) -> float:
-        return semimajor_axis(self.orbit_type, self.eccentricity, self.radius_of_periapsis)
+        return semimajor_axis(self.eccentricity, self.radius_of_periapsis)
 
     @cached_property
     def semiminor_axis(self) -> float:
-        return semiminor_axis(self.orbit_type, self.eccentricity, self.semimajor_axis)
+        return semiminor_axis(self.eccentricity, self.semimajor_axis)
 
     @cached_property
     def radius_of_apoapsis(self) -> float:
-        return apoapsis(self.orbit_type, self.eccentricity, self.semimajor_axis)
+        return apoapsis(self.eccentricity, self.semimajor_axis)
 
     @cached_property
     def asymptote_anomaly(self) -> float:
-        return asymptote_anomaly(self.orbit_type, self.eccentricity)
+        return asymptote_anomaly(self.eccentricity)
 
     @cached_property
     def turning_angle(self) -> float:
-        return turning_angle(self.orbit_type, self.eccentricity)
+        return turning_angle(self.eccentricity)
 
     @cached_property
     def aiming_radius(self) -> float:
-        return aiming_radius(self.orbit_type, self.semiminor_axis)
+        return aiming_radius(self.semiminor_axis)
 
     @cached_property
     def orbital_period(self) -> float:
@@ -118,11 +118,11 @@ class NewOrbit():
 
     @cached_property
     def specific_energy(self) -> float:
-        return specific_orbital_energy(self.orbit_type, self.mu, self.semimajor_axis)
+        return specific_orbital_energy(self.mu, self.semimajor_axis)
 
     @cached_property
     def characteristic_energy(self) -> float:
-        return characteristic_energy(self.orbit_type, self.mu, self.semimajor_axis)
+        return characteristic_energy(self.mu, self.semimajor_axis)
 
     @cached_property
     def hyperbolic_excess_velocity(self) -> float:
@@ -150,7 +150,7 @@ class NewOrbit():
         Orbit
             A new instance of Orbit
         """
-        asymp_anomaly = asymptote_anomaly(orbit_type(e), e)
+        asymp_anomaly = asymptote_anomaly(e)
         nu = abs(nu)
         if np.isclose(nu, asymp_anomaly) or nu > asymp_anomaly:
             raise ValueError("State isn't defined at infinity")

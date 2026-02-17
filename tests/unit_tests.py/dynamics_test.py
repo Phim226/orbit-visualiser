@@ -35,28 +35,28 @@ def test_specific_angular_momentum(mu: float, p: float, expected: float):
     result = specific_ang_momentum(mu, p)
     assert np.isclose(result, expected)
 
-@pytest.mark.parametrize("orbit_type, mu, a, expected", [
-    (OrbitType.PARABOLIC, 398_600.0, 50_000.0, 0.0),
-    (OrbitType.CIRCULAR, 398_600.0, 50_000.0, -398_600.0/(2*50_000)),
-    (OrbitType.HYPERBOLIC, 398_600.0, -50_000.0, 398_600.0/(2*50_000))
+@pytest.mark.parametrize("mu, a, expected", [
+    (398_600.0, np.nan, 0.0),
+    (398_600.0, 50_000.0, -398_600.0/(2*50_000)),
+    (398_600.0, -50_000.0, 398_600.0/(2*50_000))
 ])
-def test_specific_orbital_energy(orbit_type: OrbitType, mu: float, a: float, expected: float):
+def test_specific_orbital_energy(mu: float, a: float, expected: float):
     """
     Test that the formula calculating the specific orbital energy gives the expected value.
     """
-    result = specific_orbital_energy(orbit_type, mu, a)
-    assert np.isclose(result, expected)
+    result = specific_orbital_energy(mu, a)
+    assert np.isclose(result, expected, equal_nan = True)
 
-@pytest.mark.parametrize("orbit_type, mu, a, expected", [
-    (OrbitType.PARABOLIC, 398_600.0, 50_000.0, 0.0),
-    (OrbitType.CIRCULAR, 398_600.0, 50_000.0, -398_600.0/50_000),
-    (OrbitType.HYPERBOLIC, 398_600.0, -50_000.0, 398_600.0/50_000)
+@pytest.mark.parametrize("mu, a, expected", [
+    (398_600.0, np.nan, 0.0),
+    (398_600.0, 50_000.0, -398_600.0/50_000),
+    (398_600.0, -50_000.0, 398_600.0/50_000)
 ])
-def test_characteristic_energy(orbit_type: OrbitType, mu: float, a: float, expected: float):
+def test_characteristic_energy(mu: float, a: float, expected: float):
     """
     Test that the formula calculating the characteristic energy gives the expected value.
     """
-    result = characteristic_energy(orbit_type, mu, a)
+    result = characteristic_energy(mu, a)
     assert np.isclose(result, expected)
 
 @pytest.mark.parametrize("orbit_type, mu, a, expected", [

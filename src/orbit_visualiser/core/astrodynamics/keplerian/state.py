@@ -5,6 +5,7 @@ from typing import Callable, Literal
 from orbit_visualiser.core.astrodynamics.types import OrbitType
 from orbit_visualiser.core.astrodynamics.keplerian.elements import semi_parameter_from_eccentricity
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum
+from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type
 
 def state_pf_from_e_rp(
         e: float,
@@ -94,7 +95,6 @@ def perifocal_velocity_eq(e: float, mu: float, h: float) -> Callable[[float], ND
     return _callable
 
 def radial_azimuthal_velocity(
-        orbit_type: OrbitType,
         nu: float,
         mu: float,
         h: float,
@@ -107,8 +107,6 @@ def radial_azimuthal_velocity(
 
     Parameters
     ----------
-    orbit_type : OrbitType
-        The orbit type enum
     nu : float
         True anomaly (rads)
     mu : float
@@ -125,7 +123,7 @@ def radial_azimuthal_velocity(
     NDArray[np.float64]
         The radial-azimuthal velocity vector [v_radial, v_azimuthal] (km/s)
     """
-    v_rad = 0.0 if orbit_type is OrbitType.CIRCULAR else (mu/h)*e*np.sin(nu)
+    v_rad = 0.0 if orbit_type(e) is OrbitType.CIRCULAR else (mu/h)*e*np.sin(nu)
     v_azim = (0.0 if np.isclose(abs(nu), asymp_anomaly)
               else (mu/h)*(1 + e*np.cos(nu)))
 
@@ -236,14 +234,12 @@ def flight_angle(nu: float, asymp_anomaly: float, e: float) -> float:
 
     return np.arctan2(e*np.sin(nu), 1 + e*np.cos(nu))
 
-def time_since_periapsis(orbit_type: OrbitType, m_anomaly: float, period: float, p: float, h: float, e: float) -> float:
+def time_since_periapsis(m_anomaly: float, period: float, p: float, h: float, e: float) -> float:
     """
     Calculates the time since periapsis, using different formulae based on orbit type.
 
     Parameters
     ----------
-    orbit_type : OrbitType
-        The orbit type enum
     m_anomaly : float
         The mean anomaly (rads)
     period : float
@@ -260,17 +256,12 @@ def time_since_periapsis(orbit_type: OrbitType, m_anomaly: float, period: float,
     float
         Time since periapsis (s)
     """
-    if np.isneginf(m_anomaly):
-        return -np.inf
-
-    elif np.isinf(m_anomaly):
-        return np.inf
-
-    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
+    type = orbit_type(e)
+    if type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return period*m_anomaly/(2*pi)
 
-    elif orbit_type is OrbitType.PARABOLIC:
+    elif type is OrbitType.PARABOLIC:
         return (p**2/h)*m_anomaly
 
-    elif orbit_type is OrbitType.HYPERBOLIC:
+    elif type is OrbitType.HYPERBOLIC:
         return (p**2/h)*(e**2 - 1)**(-1.5)*m_anomaly

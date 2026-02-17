@@ -94,7 +94,6 @@ class NewSatellite():
     def radial_azimuthal_velocity(self) -> NDArray[np.float64]:
         orbit = self.orbit
         return radial_azimuthal_velocity(
-            orbit.orbit_type,
             self.true_anomaly,
             self.central_body.mu,
             self.specific_angular_momentum,
@@ -125,7 +124,6 @@ class NewSatellite():
     def eccentric_anomaly(self) -> float:
         orbit = self.orbit
         return eccentric_anomaly(
-            orbit.orbit_type,
             orbit.eccentricity,
             self.true_anomaly
         )
@@ -134,7 +132,6 @@ class NewSatellite():
     def mean_anomaly(self) -> float:
         orbit = self.orbit
         return mean_anomaly(
-            orbit.orbit_type,
             orbit.eccentricity,
             self.true_anomaly,
             self.eccentric_anomaly
@@ -144,7 +141,6 @@ class NewSatellite():
     def time_since_periapsis(self) -> float:
         orbit = self.orbit
         return time_since_periapsis(
-            orbit.orbit_type,
             self.mean_anomaly,
             orbit.orbital_period,
             orbit.semi_parameter,

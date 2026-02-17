@@ -3,7 +3,7 @@ import numpy as np
 from numpy.typing import NDArray
 from math import pi
 from typing import Callable
-from orbit_visualiser.core import Satellite, Orbit, CentralBody, asymptote_anomaly, orbit_type
+from orbit_visualiser.core import Satellite, Orbit, CentralBody, asymptote_anomaly
 
 # ---------- True anomaly grids --------------------
 @pytest.fixture(scope = "session")
@@ -13,7 +13,7 @@ def closed_anomaly_grid() -> NDArray[np.float64]:
 @pytest.fixture(scope = "session")
 def open_anomaly_grid() -> Callable[[Orbit, int], NDArray[np.float64]]:
     def _create_grid(e: float, num: int = 20) -> NDArray[np.float64]:
-        t_asymp = asymptote_anomaly(orbit_type(e), e)
+        t_asymp = asymptote_anomaly(e)
         offset = 0.0001
         return np.linspace(-t_asymp + offset, t_asymp - offset, num)
     return _create_grid

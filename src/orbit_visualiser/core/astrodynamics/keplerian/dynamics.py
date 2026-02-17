@@ -39,14 +39,12 @@ def specific_ang_momentum(mu: float, p: float) -> float:
     """
     return np.sqrt(mu*p)
 
-def specific_orbital_energy(orbit_type: OrbitType, mu: float, a: float) -> float:
+def specific_orbital_energy(mu: float, a: float) -> float:
     """
     Calculates the specific orbital energy using the gravitational parameter and semi-major axis.
 
     Parameters
     ----------
-    orbit_type : OrbitType
-        The orbit type enum
     mu : float
         Gravitational parameter (km^3/s^2)
     a : float
@@ -57,12 +55,12 @@ def specific_orbital_energy(orbit_type: OrbitType, mu: float, a: float) -> float
     float
         The mechanical energy per unit mass (km^2/s^2)
     """
-    if orbit_type is OrbitType.PARABOLIC:
+    if np.isclose(a, np.nan, equal_nan = True):
         return 0.0
 
     return -mu/(2*a)
 
-def characteristic_energy(orbit_type: OrbitType, mu: float, a: float) -> float:
+def characteristic_energy(mu: float, a: float) -> float:
     """
     Calculates the characteristic energy from the semi-major axis and gravitational parameter.
 
@@ -80,7 +78,7 @@ def characteristic_energy(orbit_type: OrbitType, mu: float, a: float) -> float:
     float
         The characteristic energy (km^2/s^2)
     """
-    if orbit_type is OrbitType.PARABOLIC:
+    if np.isclose(a, np.nan, equal_nan = True):
         return 0.0
 
     return -mu/a
