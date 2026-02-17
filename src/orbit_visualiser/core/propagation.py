@@ -5,6 +5,7 @@ import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core.orbit import Orbit
 from orbit_visualiser.core.satellite import Satellite, CentralBody
+from orbit_visualiser.core.neworbit import NewOrbit
 
 # TODO: Implement CLI input.
 
@@ -37,38 +38,42 @@ def two_body_pf_ode(mu: float, t: float, state: NDArray[np.float64], ) -> NDArra
 
     return np.array([v_x, v_y, a_x, a_y])
 
-def get_init_conditions(satellite: Satellite, at: str = "periapsis") -> NDArray[np.float64]:
-    """
-    Takes a Satellite object and returns the initial conditions (position and velocity) for orbit propagation.
+""" def get_init_conditions_from_elements(
+        e: float = 0.0,
+        rp: float = 50_000.0,
+        mu: float = 398_600.0,
+        nu: float = 0.0
+) -> NDArray[np.float64]:
+
+    Takes orbital elements and returns the initial conditions (position and velocity) for orbit propagation.
 
     Parameters
     ----------
-    satellite : Satellite
-        The satellite object, which contains information about its analytical orbit.
-    at : str, optional
-        An optional parameter to choose where in the analytical orbit the initial conditions are
-        taken from, by default "periapsis".
+    e : float, optional
+        Eccentricity, by default 0.0
+    rp : float, optional
+        Radius of periapsis (km), by default 50_000.0
+    mu : float, optional
+        Gravitational parameter (km^3/s^2), by default 398_600.0
+    nu : float, optional
+        True anomaly (rads), by default 0.0
 
     Returns
     -------
     NDArray[np.float64]
-        The initial conditions in the form of a concatenated numpy array.
-    """
-    if at == "periapsis":
-        sat_copy = Satellite(satellite._orbit, satellite._central_body)
+        The initial conditions [r, v] in the form of a concatenated numpy array.
 
-        return np.concatenate((sat_copy.pos_pf, sat_copy.vel_pf))
+    orbit = NewOrbit.from_orbital_elements(e, rp, mu, nu)
+    return np.concatenate((orbit.position, orbit.velocity)) """
 
-    return np.concatenate((satellite.pos_pf, satellite.vel_pf))
-
-def run_orbit_prop(satellite: Satellite, init_conditions: NDArray[np.float64], t_end: float, period_frac_per_step: int = 500):
+def run_orbit_prop(orbit: NewOrbit, init_conditions: NDArray[np.float64], t_end: float, period_frac_per_step: int = 500):
     """
     Run the orbit propagation for the satellite. Uses the RK45 algorithm.
 
     Parameters
     ----------
-    satellite : Satellite
-        The satellite object to be propagated.
+    orbit: NewOrbit
+        The orbit on which the satellite is being propagated.
     init_conditions : NDArray[np.float64]
         The initial conditions for the propagation.
     t_end : float
@@ -85,10 +90,10 @@ def run_orbit_prop(satellite: Satellite, init_conditions: NDArray[np.float64], t
         The object containing the results of the numerical integration. The array containing the
         [x, dx] values can be accessed by calling result.y
     """
-    t = np.linspace(0, t_end, ceil((t_end/satellite.period)*period_frac_per_step))
+    t = np.linspace(0, t_end, ceil((t_end/orbit.orbital_period)*period_frac_per_step))
 
     result = solve_ivp(
-        partial(two_body_pf_ode, satellite._central_body.mu),
+        partial(two_body_pf_ode, orbit.mu),
         [0, t_end],
         init_conditions,
         t_eval = t,
@@ -99,10 +104,10 @@ def run_orbit_prop(satellite: Satellite, init_conditions: NDArray[np.float64], t
 
 if __name__ == "__main__":
 
-    satellite = Satellite(Orbit(), CentralBody())
-    init_conditions = get_init_conditions(satellite)
+    orbit = NewOrbit.from_orbital_elements(e = 0.0, rp = 50_000.0, mu = 398_600.0, nu = 0.0)
+    init_conditions = np.concatenate((orbit.position, orbit.velocity))
 
-    sol = run_orbit_prop(satellite, init_conditions, satellite.period)
+    sol = run_orbit_prop(orbit, init_conditions, orbit.orbital_period)
     print(init_conditions)
     print(sol.y[:, -1])
 

@@ -1,7 +1,7 @@
 from .orbit import Orbit, CentralBody
 from .satellite import Satellite, NewSatellite
 from .neworbit import NewOrbit
-from .propagation import get_init_conditions, run_orbit_prop
+from .propagation import run_orbit_prop
 
 from .astrodynamics.types import OrbitType
 from .astrodynamics.keplerian.classification import orbit_type
