@@ -180,7 +180,7 @@ def radius_from_orbit_eq(nu: float, asymp_anomaly: float, p: float, e: float) ->
         The length of the radius vector (km)
     """
     if np.isclose(abs(nu), asymp_anomaly):
-        return np.inf
+        return np.nan
 
     return p/(1 + e*np.cos(nu))
 
