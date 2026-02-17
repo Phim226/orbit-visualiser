@@ -58,7 +58,7 @@ def satellite_factory_from_state(
 def satellite_factory_from_elements(
     orbit_factory_from_elements: Callable[[float, float, float, float], NewOrbit],
     central_body_factory: Callable[[float], CentralBody]
-) -> Callable[[float, float, float], NewSatellite]:
+) -> Callable[[float, float, float, float], NewSatellite]:
     def _create(e: float = 0.0, rp: float = 50_000.0, mu: float = 398_600.0, nu: float = 0.0) -> NewSatellite:
         orbit: NewOrbit = orbit_factory_from_elements(e, rp, mu, nu)
         r = orbit.position
