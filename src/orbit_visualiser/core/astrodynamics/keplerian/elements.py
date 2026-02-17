@@ -204,6 +204,8 @@ def asymptote_anomaly(e: float) -> float:
     if orbit_type(e) in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return np.nan
 
+    e = 1 if np.isclose(e, 1) else e
+
     return np.arccos(-1/e)
 
 def turning_angle(e: float) -> float:
@@ -222,6 +224,8 @@ def turning_angle(e: float) -> float:
     """
     if orbit_type(e) in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return np.nan
+
+    e = 1 if np.isclose(e, 1) else e
 
     return 2*np.arcsin(1/e)
 
