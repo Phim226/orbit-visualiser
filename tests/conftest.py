@@ -14,7 +14,7 @@ def closed_anomaly_grid() -> NDArray[np.float64]:
 def open_anomaly_grid() -> Callable[[Orbit, int], NDArray[np.float64]]:
     def _create_grid(e: float, num: int = 20) -> NDArray[np.float64]:
         t_asymp = asymptote_anomaly(e)
-        offset = 0.0001
+        offset = 0.01
         return np.linspace(-t_asymp + offset, t_asymp - offset, num)
     return _create_grid
 
