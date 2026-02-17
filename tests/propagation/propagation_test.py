@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from typing import Callable
-from orbit_visualiser.core import Orbit, run_orbit_prop, get_init_conditions_from_elements
+from orbit_visualiser.core import Orbit, run_orbit_prop, get_init_conditions_from_orbit
 from tests.test_cases import typical_closed_test_cases
 
 # TODO: Improve testing tolerances across difference orbit sizes and eccentricities.
@@ -18,9 +18,9 @@ def test_1p_propagation_vel(
     typical closed orbits is within an acceptable tolerance to the analytical solution.
     """
     orbit: Orbit = orbit_factory_from_elements(e, rp, mu, 0.0)
-    init_conditions = get_init_conditions_from_elements(orbit)
+    init_conditions = get_init_conditions_from_orbit(orbit)
 
-    prop = run_orbit_prop(orbit, init_conditions, orbit.orbital_period)
+    prop = run_orbit_prop(orbit, orbit.orbital_period)
 
     vel_at_rp = init_conditions[2:]
     prop_vel_at_rp = prop.y[2:, -1]
@@ -40,9 +40,9 @@ def test_1p_propagation_pos(
     typical closed orbits is within an acceptable tolerance to the analytical solution.
     """
     orbit: Orbit = orbit_factory_from_elements(e, rp, mu, 0.0)
-    init_conditions = get_init_conditions_from_elements(orbit)
+    init_conditions = get_init_conditions_from_orbit(orbit)
 
-    prop = run_orbit_prop(orbit, init_conditions, orbit.orbital_period)
+    prop = run_orbit_prop(orbit, orbit.orbital_period)
 
     pos_at_rp = init_conditions[:2]
     prop_pos_at_rp = prop.y[:2, -1]
@@ -62,9 +62,9 @@ def test_1p_phase_shift(
     typical closed orbits is within an acceptable tolerance to the analytical solution.
     """
     orbit: Orbit = orbit_factory_from_elements(e, rp, mu, 0.0)
-    init_conditions = get_init_conditions_from_elements(orbit)
+    init_conditions = get_init_conditions_from_orbit(orbit)
 
-    prop = run_orbit_prop(orbit, init_conditions, orbit.orbital_period)
+    prop = run_orbit_prop(orbit, orbit.orbital_period)
 
     prop_pos_at_rp = prop.y[:2, -1]
     phase_shift = np.arctan2(prop_pos_at_rp[1], prop_pos_at_rp[0])
