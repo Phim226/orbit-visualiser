@@ -16,13 +16,18 @@ def _create_test_cases(values_dict: dict[str, list[float]], tag_orbits: bool = T
         for values in test_cases:
             e = values[0]
 
-            if np.isclose(e, 0):
+            ECC_TOL = 1e-8
+
+            if e <= ECC_TOL:
                 orbit_type = OrbitType.CIRCULAR
-            elif 0 < e < 1:
-                orbit_type = OrbitType.ELLIPTICAL
-            elif np.isclose(e, 1):
+
+            elif abs(e - 1.0) <= ECC_TOL :
                 orbit_type = OrbitType.PARABOLIC
-            elif e > 1:
+
+            elif e < 1.0:
+                orbit_type = OrbitType.ELLIPTICAL
+
+            else:
                 orbit_type = OrbitType.HYPERBOLIC
 
             values.append(orbit_type)

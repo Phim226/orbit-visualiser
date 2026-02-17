@@ -1,6 +1,8 @@
 import numpy as np
 from orbit_visualiser.core.astrodynamics.types import OrbitType
 
+ECC_TOL = 1e-8
+
 def orbit_type(e: float) -> OrbitType:
     """
     Returns the orbit type bases on the eccentricity.
@@ -15,14 +17,13 @@ def orbit_type(e: float) -> OrbitType:
     OrbitType
         The OrbitType enum
     """
-    if np.isclose(e, 0):
+    if e <= ECC_TOL:
         return OrbitType.CIRCULAR
 
-    elif 0 < e < 1:
-        return OrbitType.ELLIPTICAL
-
-    elif np.isclose(e, 1, atol = 1e-10, rtol = 1e-8):
+    elif abs(e - 1.0) <= ECC_TOL :
         return OrbitType.PARABOLIC
 
-    elif e > 1:
-        return OrbitType.HYPERBOLIC
+    elif e < 1.0:
+        return OrbitType.ELLIPTICAL
+
+    return OrbitType.HYPERBOLIC
