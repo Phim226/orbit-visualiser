@@ -1,8 +1,6 @@
 import sys
 from tkinter import Tk
-from orbit_visualiser.core import Orbit, Satellite
-from orbit_visualiser.core.neworbit import NewOrbit, CentralBody
-from orbit_visualiser.core.satellite import NewSatellite
+from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, OrbitConfigController
 from orbit_visualiser.ui.common.presets import initial_config
 
@@ -19,7 +17,7 @@ class OrbitVisualiser():
         else:
             root.state("normal")
 
-        orbit: NewOrbit = NewOrbit.from_orbital_elements(
+        orbit: Orbit = Orbit.from_orbital_elements(
             initial_config.eccentricity,
             initial_config.radius_of_periapsis,
             initial_config.gravitational_parameter,
@@ -30,7 +28,7 @@ class OrbitVisualiser():
             initial_config.gravitational_parameter,
             initial_config.radius
         )
-        satellite: NewSatellite = NewSatellite(orbit.position, orbit.velocity, central_body)
+        satellite: Satellite = Satellite(orbit.position, orbit.velocity, central_body)
 
         orbit_figure: OrbitFigure = OrbitFigure(
             root, OrbitVisualiser.FIGURE_GEOMETRY, satellite

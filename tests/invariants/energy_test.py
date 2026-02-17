@@ -2,13 +2,13 @@ import pytest
 import numpy as np
 from typing import Callable
 from numpy.typing import NDArray
-from orbit_visualiser.core import OrbitType, NewSatellite
+from orbit_visualiser.core import OrbitType, Satellite
 from tests.test_cases import full_test_cases
 
 
 @pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_specific_energy_conservation(
-    satellite_factory_from_elements: Callable[[float, float, float, float], NewSatellite],
+    satellite_factory_from_elements: Callable[[float, float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
     open_anomaly_grid: Callable[[float, int], NDArray[np.float64]],
     e: float,
@@ -26,7 +26,7 @@ def test_specific_energy_conservation(
         anomaly_grid = open_anomaly_grid(e)
 
     for nu in anomaly_grid:
-        satellite: NewSatellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
+        satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
 
         specific_energy = satellite.orbit.specific_energy
 
@@ -38,7 +38,7 @@ def test_specific_energy_conservation(
 
 @pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_specific_and_characteristic_energy_relation(
-    satellite_factory_from_elements: Callable[[float, float, float, float], NewSatellite],
+    satellite_factory_from_elements: Callable[[float, float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
     open_anomaly_grid: Callable[[float, int], NDArray[np.float64]],
     e: float,
@@ -56,7 +56,7 @@ def test_specific_and_characteristic_energy_relation(
         anomaly_grid = open_anomaly_grid(e)
 
     for nu in anomaly_grid:
-        satellite: NewSatellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu)
+        satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu)
 
         specific_energy = satellite.orbit.specific_energy
         characteristic_energy = satellite.orbit.characteristic_energy

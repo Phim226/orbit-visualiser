@@ -1,7 +1,6 @@
 from .orbit import Orbit, CentralBody
-from .satellite import Satellite, NewSatellite
-from .neworbit import NewOrbit
-from .propagation import run_orbit_prop
+from .satellite import Satellite
+from .propagation import get_init_conditions_from_elements, run_orbit_prop
 
 from .astrodynamics.types import OrbitType
 from .astrodynamics.keplerian.classification import orbit_type
@@ -15,3 +14,4 @@ from .astrodynamics.keplerian.elements import (eccentricity_vector_from_state, e
 from .astrodynamics.keplerian.dynamics import (specific_ang_momentum_from_state, specific_ang_momentum,
                                                specific_orbital_energy, characteristic_energy,
                                                excess_velocity, vis_viva_speed)
+from .astrodynamics.keplerian.state import perifocal_position_eq

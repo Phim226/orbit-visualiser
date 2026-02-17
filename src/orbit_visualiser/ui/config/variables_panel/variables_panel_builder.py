@@ -2,11 +2,10 @@ from tkinter import Frame, Scale, LabelFrame, Button, Entry, DoubleVar
 from typing import Callable
 from functools import partial
 import numpy as np
-from orbit_visualiser.core import Orbit, Satellite, CentralBody
+from orbit_visualiser.core import Satellite
 from orbit_visualiser.ui.common.builder import Builder
 from orbit_visualiser.ui.common.specs import VariableSpec
 from orbit_visualiser.ui.common.presets import initial_config
-from orbit_visualiser.core.satellite import NewSatellite
 
 
 class VariablesBuilder(Builder):
@@ -15,7 +14,7 @@ class VariablesBuilder(Builder):
     def __init__(
             self,
             options_frame: Frame,
-            satellite: NewSatellite
+            satellite: Satellite
     ):
         self._options_frame = options_frame
 

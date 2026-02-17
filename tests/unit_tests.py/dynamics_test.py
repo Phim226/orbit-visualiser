@@ -1,11 +1,9 @@
 import pytest
 import numpy as np
-from typing import Callable
 from numpy.typing import NDArray
 from orbit_visualiser.core import (OrbitType, specific_ang_momentum_from_state, specific_ang_momentum,
                                    specific_orbital_energy, characteristic_energy, excess_velocity,
                                    vis_viva_speed)
-from tests.test_cases import full_test_cases, standard_open_test_cases
 
 @pytest.mark.parametrize("r, v, expected", [
     (np.array([1.0, 0]), np.array([0, 1.0]), np.array(1.0)),

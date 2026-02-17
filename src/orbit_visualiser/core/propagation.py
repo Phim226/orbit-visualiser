@@ -4,8 +4,6 @@ from math import ceil
 import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core.orbit import Orbit
-from orbit_visualiser.core.satellite import Satellite, CentralBody
-from orbit_visualiser.core.neworbit import NewOrbit
 
 # TODO: Implement CLI input.
 
@@ -38,35 +36,24 @@ def two_body_pf_ode(mu: float, t: float, state: NDArray[np.float64], ) -> NDArra
 
     return np.array([v_x, v_y, a_x, a_y])
 
-""" def get_init_conditions_from_elements(
-        e: float = 0.0,
-        rp: float = 50_000.0,
-        mu: float = 398_600.0,
-        nu: float = 0.0
-) -> NDArray[np.float64]:
-
+def get_init_conditions_from_elements(orbit: Orbit) -> NDArray[np.float64]:
+    """
     Takes orbital elements and returns the initial conditions (position and velocity) for orbit propagation.
 
     Parameters
     ----------
-    e : float, optional
-        Eccentricity, by default 0.0
-    rp : float, optional
-        Radius of periapsis (km), by default 50_000.0
-    mu : float, optional
-        Gravitational parameter (km^3/s^2), by default 398_600.0
-    nu : float, optional
-        True anomaly (rads), by default 0.0
+    orbit: NewOrbit
+        Orbit object to get the initial conditions from
+
 
     Returns
     -------
     NDArray[np.float64]
         The initial conditions [r, v] in the form of a concatenated numpy array.
+    """
+    return np.concatenate((orbit.position, orbit.velocity))
 
-    orbit = NewOrbit.from_orbital_elements(e, rp, mu, nu)
-    return np.concatenate((orbit.position, orbit.velocity)) """
-
-def run_orbit_prop(orbit: NewOrbit, init_conditions: NDArray[np.float64], t_end: float, period_frac_per_step: int = 500):
+def run_orbit_prop(orbit: Orbit, init_conditions: NDArray[np.float64], t_end: float, period_frac_per_step: int = 500):
     """
     Run the orbit propagation for the satellite. Uses the RK45 algorithm.
 
@@ -104,7 +91,7 @@ def run_orbit_prop(orbit: NewOrbit, init_conditions: NDArray[np.float64], t_end:
 
 if __name__ == "__main__":
 
-    orbit = NewOrbit.from_orbital_elements(e = 0.0, rp = 50_000.0, mu = 398_600.0, nu = 0.0)
+    orbit = Orbit.from_orbital_elements(e = 0.0, rp = 50_000.0, mu = 398_600.0, nu = 0.0)
     init_conditions = np.concatenate((orbit.position, orbit.velocity))
 
     sol = run_orbit_prop(orbit, init_conditions, orbit.orbital_period)

@@ -1,4 +1,3 @@
-import numpy as np
 from orbit_visualiser.core.astrodynamics.types import OrbitType
 
 ECC_TOL = 1e-8

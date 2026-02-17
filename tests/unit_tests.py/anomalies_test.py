@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from math import pi
 from numpy.typing import NDArray
-from orbit_visualiser.core import eccentric_anomaly, mean_anomaly, OrbitType
+from orbit_visualiser.core import eccentric_anomaly, mean_anomaly
 from tests.test_cases import e_elliptical_test_cases, e_hyperbolic_test_cases, e_closed_test_cases
 
 

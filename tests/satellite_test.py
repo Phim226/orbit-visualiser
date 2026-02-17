@@ -2,14 +2,14 @@ import pytest
 import numpy as np
 from typing import Callable
 from numpy.typing import NDArray
-from orbit_visualiser.core import OrbitType, NewSatellite
+from orbit_visualiser.core import OrbitType, Satellite
 from tests.test_cases import full_test_cases, standard_open_test_cases
 
 # TODO: implement sanity tests (use different formulae for the same value and check they are equal)
 
 @pytest.mark.parametrize("e, rp, mu, orbit_type", standard_open_test_cases)
 def test_satellite_orbital_speed_sanity(
-    satellite_factory_from_elements: Callable[[float, float, float, float], NewSatellite],
+    satellite_factory_from_elements: Callable[[float, float, float, float], Satellite],
     open_anomaly_grid: Callable[[float, int], NDArray[np.float64]],
     e: float,
     rp: float,
@@ -22,7 +22,7 @@ def test_satellite_orbital_speed_sanity(
     anomaly_grid = open_anomaly_grid(e = e)
 
     for nu in anomaly_grid:
-        satellite: NewSatellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
+        satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
 
         v_vals = [
             np.hypot(satellite.orbit.hyperbolic_excess_velocity, satellite.escape_velocity),
@@ -33,7 +33,7 @@ def test_satellite_orbital_speed_sanity(
 
 @pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_satellite_azimuthal_velocity_sanity(
-    satellite_factory_from_elements: Callable[[float, float, float, float], NewSatellite],
+    satellite_factory_from_elements: Callable[[float, float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
     open_anomaly_grid: Callable[[float, int], NDArray[np.float64]],
     e: float,
@@ -50,7 +50,7 @@ def test_satellite_azimuthal_velocity_sanity(
         anomaly_grid = open_anomaly_grid(e)
 
     for nu in anomaly_grid:
-        satellite: NewSatellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
+        satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
 
         v_azim_vals = [
             satellite.specific_angular_momentum/satellite.radius,
@@ -62,7 +62,7 @@ def test_satellite_azimuthal_velocity_sanity(
 
 @pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_satellite_radial_velocity_sanity(
-    satellite_factory_from_elements: Callable[[float, float, float, float], NewSatellite],
+    satellite_factory_from_elements: Callable[[float, float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
     open_anomaly_grid: Callable[[float, int], NDArray[np.float64]],
     e: float,
@@ -79,7 +79,7 @@ def test_satellite_radial_velocity_sanity(
         anomaly_grid = open_anomaly_grid(e)
 
     for nu in anomaly_grid:
-        satellite: NewSatellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu)
+        satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu)
 
         v_radial = satellite.speed*np.sin(satellite.flight_angle)
 

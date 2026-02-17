@@ -3,10 +3,7 @@ from decimal import Decimal
 import numpy as np
 from orbit_visualiser.ui.figure.orbit_figure import OrbitFigure
 from orbit_visualiser.ui.config.variables_panel.variables_panel_builder import  VariablesBuilder
-from orbit_visualiser.core import Orbit, Satellite, CentralBody
-from orbit_visualiser.core.satellite import NewSatellite
-from orbit_visualiser.core.neworbit import NewOrbit
-from orbit_visualiser.core.astrodynamics.keplerian.elements import asymptote_anomaly
+from orbit_visualiser.core import Orbit, Satellite, asymptote_anomaly
 from orbit_visualiser.ui.common.utils import floor_to_decimals
 
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
@@ -21,7 +18,7 @@ class VariablesController():
             self,
             figure: OrbitFigure,
             builder: VariablesBuilder,
-            satellite: NewSatellite
+            satellite: Satellite
     ):
         self._orbit_fig = figure
         self._builder = builder
@@ -148,7 +145,7 @@ class VariablesController():
         self._orbit_fig.redraw_satellite()
 
     def _update_satellite_state(self, e: float, rp: float, mu: float, nu: float) -> None:
-        orbit = NewOrbit.from_orbital_elements(e, rp, mu, nu)
+        orbit = Orbit.from_orbital_elements(e, rp, mu, nu)
         self._satellite.position = orbit.position
         self._satellite.velocity = orbit.velocity
         self._satellite.central_body.mu = mu

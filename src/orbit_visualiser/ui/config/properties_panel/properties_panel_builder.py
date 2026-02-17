@@ -1,10 +1,9 @@
 from tkinter import Frame, Label, StringVar, LabelFrame
 from typing import Callable
 import numpy as np
-from orbit_visualiser.core import Orbit, Satellite
+from orbit_visualiser.core import Satellite
 from orbit_visualiser.ui.common.builder import Builder
 from orbit_visualiser.ui.common.specs import PropertySpec
-from orbit_visualiser.core.satellite import NewSatellite
 
 
 class PropertiesBuilder(Builder):
@@ -13,12 +12,12 @@ class PropertiesBuilder(Builder):
     def __init__(
             self,
             config_frame: Frame,
-            satellite: NewSatellite
+            satellite: Satellite
     ):
         self._config_frame = config_frame
         self._satellite = satellite
 
-        self._orbital_properties: dict[str, PropertySpec[NewSatellite]] = {
+        self._orbital_properties: dict[str, PropertySpec[Satellite]] = {
             "orbit_type" : PropertySpec("Orbit type", None, lambda sat: sat.orbit.orbit_type),
             "semi_major_axis" : PropertySpec("Semi-major axis", "km", lambda sat: sat.orbit.semimajor_axis),
             "semi_minor_axis" : PropertySpec("Semi-minor axis", "km", lambda sat: sat.orbit.semiminor_axis),
@@ -34,7 +33,7 @@ class PropertiesBuilder(Builder):
             "excess_velocity" : PropertySpec("Excess velocity", "km/s", lambda sat: sat.orbit.hyperbolic_excess_velocity)
         }
 
-        self._satellite_properties: dict[str, PropertySpec[NewSatellite]] = {
+        self._satellite_properties: dict[str, PropertySpec[Satellite]] = {
             "radius" : PropertySpec("Radius", "km", lambda sat: sat.radius),
             "x_pos" : PropertySpec("Perifocal x position", "km", lambda sat: sat.position[0]),
             "y_pos" : PropertySpec("Perifocal y position", "km", lambda sat: sat.position[1]),

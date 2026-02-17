@@ -6,11 +6,8 @@ from matplotlib.patches import Circle
 from math import pi
 import numpy as np
 from numpy.typing import NDArray
-from orbit_visualiser.core import Orbit, CentralBody, Satellite
-from orbit_visualiser.core.satellite import NewSatellite
-from orbit_visualiser.core.neworbit import NewOrbit
+from orbit_visualiser.core import Orbit, Satellite, OrbitType, perifocal_position_eq
 from orbit_visualiser.core.astrodynamics.types import OrbitType
-from orbit_visualiser.core.astrodynamics.keplerian.state import perifocal_position_eq
 
 # TODO: Fix bug where scroll zoom doesn't register as changing the view so the native matplotlib home button has unexpected (and often undesirable) behaviour.
 class OrbitFigure():
@@ -22,7 +19,7 @@ class OrbitFigure():
             self,
             root: Tk,
             figure_frame_placement: tuple[str],
-            satellite : NewSatellite
+            satellite : Satellite
     ):
         self._root = root
 
@@ -109,7 +106,7 @@ class OrbitFigure():
         toolbar.update()
         toolbar.pack(side = "bottom", fill = "x")
 
-    def _get_anomaly_data(self, orbit: NewOrbit) -> NDArray[np.float64]:
+    def _get_anomaly_data(self, orbit: Orbit) -> NDArray[np.float64]:
 
         if orbit.orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
             anomaly_range = (0, 2*pi)

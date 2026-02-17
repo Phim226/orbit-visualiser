@@ -1,14 +1,13 @@
 import numpy as np
 from orbit_visualiser.ui.config.properties_panel.properties_panel_builder import PropertiesBuilder
-from orbit_visualiser.core.satellite import NewSatellite
-from orbit_visualiser.core.astrodynamics.types import OrbitType
+from orbit_visualiser.core import Satellite, OrbitType
 
 # TODO: Properly display very large values in the properties panel without them being cut off.
 
 class PropertiesController():
 
 
-    def __init__(self, builder: PropertiesBuilder, satellite: NewSatellite):
+    def __init__(self, builder: PropertiesBuilder, satellite: Satellite):
         self._builder = builder
         self._satellite = satellite
 

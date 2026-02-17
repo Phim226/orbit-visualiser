@@ -1,6 +1,17 @@
 from dataclasses import dataclass
-from math import pi
+from functools import cached_property
+from typing import Sequence
 import numpy as np
+from numpy.typing import NDArray
+from orbit_visualiser.core.astrodynamics.keplerian.state import state_pf_from_e_rp
+from orbit_visualiser.core.astrodynamics.keplerian.elements import (eccentricity_from_state, semi_parameter_from_momentum,
+                                                                    periapsis, semimajor_axis, semiminor_axis,
+                                                                    apoapsis, asymptote_anomaly, turning_angle,
+                                                                    aiming_radius, orbital_period, mean_motion)
+from orbit_visualiser.core.astrodynamics.keplerian.dynamics import (specific_orbital_energy, characteristic_energy,
+                                                                    excess_velocity, specific_ang_momentum_from_state)
+from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type
+from orbit_visualiser.core.astrodynamics.types import OrbitType
 
 @dataclass
 class CentralBody():
@@ -14,160 +25,137 @@ class CentralBody():
     r : float
         The radius (km), default = 6378.0
     """
-    mu: float = 398600.0 # gravitational parameter in km³/s² = Gm
-    r: float = 6378.0 # radius in km
+    mu: float = 398600.0
+    r: float = 6378.0
 
-
-
-# TODO: Split formulae from Orbit class.
-# TODO: Update orbit properties when eccentricity of radius of periapsis is set rather than calling it explicitly outside the class
+@dataclass
 class Orbit():
+    """
+    Represents the instantaneous analytical orbit of a satellite. If there are no perturbations
+    (oblateness, drag, a third body, etc) then for given inputs the orbit will be fixed. If
+    perturbations are present then that causes orbital elements to change over time, represented
+    by the changing state of this object.
 
+    Parameters
+    ----------
+    position : Sequence | NDArray[np.float64]
+        The perifocal position vector of the satellite (km)
+    velocity : Sequence | NDArray[np.float64]
+        The perifocal velocity vector of the satellite (km/s)
+    mu : float
+        The gravitational parameter of the central body (km^3/s^2)
 
-    def __init__(self, e: float = 0.0, rp: float = 50_000):
-        self._e: float = e # Eccentricity
-        self._rp: float = rp # Radius of periapsis in km
-        self.update_orbital_properties()
+    Other Constructors
+    ----------
+    Class can be constructed from orbital elements. Use Orbit.from_orbital_elements.
 
+    Parameters
+    ----------
+    e : float
+        The eccentricity
+    rp : float
+        The radius of periapsis (km)
+    mu : float
+        The gravitational parameter of the central body (km^3/s^2)
+    nu : float
+        The true anomaly of the satellite (rads)
+    """
+    position : Sequence | NDArray[np.float64]
+    velocity : Sequence | NDArray[np.float64]
+    mu : float
 
-    @property
-    def e(self) -> float:
-        return self._e
+    def __post_init__(self):
+        if not np.all(np.isfinite(self.position)) or not np.all(np.isfinite(self.velocity)):
+            raise ValueError("State vectors must only contain finite values.")
 
-    @e.setter
-    def e(self, e: float) -> None:
-        self._e = e
+    @cached_property
+    def eccentricity(self) -> float:
+        return eccentricity_from_state(self.position, self.velocity, self.mu)
 
-    @property
-    def rp(self) -> float:
-        return self._rp
+    @cached_property
+    def orbit_type(self) -> OrbitType:
+        return orbit_type(self.eccentricity)
 
-    @rp.setter
-    def rp(self, rp: float) -> None:
-        self._rp = rp
+    @cached_property
+    def semi_parameter(self) -> float:
+        return semi_parameter_from_momentum(specific_ang_momentum_from_state(self.position, self.velocity), self.mu)
 
-    @property
-    def a(self) -> float:
-        return self._a
+    @cached_property
+    def radius_of_periapsis(self) -> float:
+        return periapsis(self.semi_parameter, self.eccentricity)
 
-    @property
-    def b(self) -> float:
-        return self._b
+    @cached_property
+    def semimajor_axis(self) -> float:
+        return semimajor_axis(self.eccentricity, self.radius_of_periapsis)
 
-    @property
-    def p(self) -> float:
-        return self._p
+    @cached_property
+    def semiminor_axis(self) -> float:
+        return semiminor_axis(self.eccentricity, self.semimajor_axis)
 
-    @property
-    def ra(self) -> float:
-        return self._ra
+    @cached_property
+    def radius_of_apoapsis(self) -> float:
+        return apoapsis(self.eccentricity, self.semimajor_axis)
 
-    @property
-    def t_asymp(self) -> float:
-        return self._t_asymp
+    @cached_property
+    def asymptote_anomaly(self) -> float:
+        return asymptote_anomaly(self.eccentricity)
 
-    @property
-    def turn_angle(self) -> float:
-        return self._turn_angle
+    @cached_property
+    def turning_angle(self) -> float:
+        return turning_angle(self.eccentricity)
 
-    @property
-    def aim_rad(self) -> float:
-        return self._aim_rad
+    @cached_property
+    def aiming_radius(self) -> float:
+        return aiming_radius(self.semiminor_axis)
 
-    @property
-    def orbit_type(self) -> str:
-        return self._orbit_type
+    @cached_property
+    def orbital_period(self) -> float:
+        return orbital_period(self.orbit_type, self.mu, self.semimajor_axis)
 
-    @property
-    def is_closed(self) -> bool:
-        return self._is_closed
+    @cached_property
+    def mean_motion(self) -> float:
+        return mean_motion(self.orbit_type, self.mu, self.semi_parameter, self.semimajor_axis)
 
-    def orbital_angles(self) -> tuple[float]:
-        if self._e < 1:
-            return 0, 2*pi
+    @cached_property
+    def specific_energy(self) -> float:
+        return specific_orbital_energy(self.mu, self.semimajor_axis)
 
-        return -self._t_asymp, self._t_asymp
+    @cached_property
+    def characteristic_energy(self) -> float:
+        return characteristic_energy(self.mu, self.semimajor_axis)
 
-    def update_orbital_properties(self):
-        e, rp = self._e, self._rp
+    @cached_property
+    def hyperbolic_excess_velocity(self) -> float:
+        return excess_velocity(self.orbit_type, self.mu, self.semimajor_axis)
 
-        self._update_orbit_type(e)
+    @classmethod
+    def from_orbital_elements(cls, e: float, rp: float, mu: float, nu: float):
+        """
+        Alternative constructor for the Orbit class. Takes the orbital elements eccentricity,
+        radius of perapsis, the gravitational parameter and the true anomaly as arguments.
 
-        self._p: float = self._orbital_param_erp(e, rp)
-        a = self._semimajor_axis_erp(e, rp)
-        self._a: float = a
-        b = self._semiminor_axis_erp(e, a)
-        self._b: float = b
-        self._ra: float = self._apoapsis_erp(e, a)
-        self._t_asymp: float = self._asymptote_anomaly_e(e)
-        self._turn_angle: float = self._turning_angle_e(e)
-        self._aim_rad: float = self._aiming_radius_erp(b)
+        Parameters
+        ----------
+        e : float
+            Eccentricity
+        rp : float
+            Radius of periapsis (km)
+        mu : float
+            The gravitational parameter of the central body (km^3/s^2)
+        nu : float
+            The true anomaly of the satellite (rads)
 
-    def _update_orbit_type(self, e: float) -> None:
-        """Determine orbit type and if it's closed using the eccentricity"""
-        if e == 0:
-            self._orbit_type = "circular"
-            self._is_closed = True
+        Returns
+        -------
+        Orbit
+            A new instance of Orbit
+        """
+        asymp_anomaly = asymptote_anomaly(e)
+        nu_check = abs(nu)
+        if np.isclose(nu_check, asymp_anomaly) or nu_check > asymp_anomaly:
+            raise ValueError("State isn't defined at infinity")
 
-        elif 0 < e < 1:
-            self._orbit_type = "elliptical"
-            self._is_closed = True
-
-        elif e == 1:
-            self._orbit_type = "parabolic"
-            self._is_closed = False
-
-        else:
-            self._orbit_type = "hyperbolic"
-            self._is_closed = False
-
-    def _orbital_param_erp(self, e: float, rp: float) -> float:
-        """Calculate the orbital parameter p using the eccentricity and radius of periapsis"""
-        return rp*(1 + e)
-
-    def _semimajor_axis_erp(self, e: float, rp: float) -> float:
-        """Calculate the semimajor axis a using the eccentricity and radius of periapsis"""
-        if self._orbit_type != "parabolic":
-            return rp/(1 - e)
-
-        return np.inf
-
-    def _semiminor_axis_erp(self, e: float, a: float) -> float:
-        """Calculate the semiminor axis b using the eccentricity and semi-major axis"""
-        if self._orbit_type == "hyperbolic":
-            return a*np.sqrt(e**2 - 1)
-
-        elif self._is_closed:
-            return a*np.sqrt(1 - e**2)
-
-        return np.inf
-
-    def _apoapsis_erp(self, e: float, a: float) -> float:
-        """Calculate the radius of apoapsis ra using the eccentricity and semi-major axis"""
-        if self._orbit_type != "parabolic":
-            return a*(1 + e)
-
-        return np.inf
-
-    def _asymptote_anomaly_e(self, e: float) -> float:
-        """Calculate the true anomaly of the asymptote for open orbits using the eccentricity"""
-        if not self._is_closed:
-            return np.arccos(-1/e)
-
-        return np.nan
-
-    def _turning_angle_e(self, e: float) -> float:
-        """Calculate the turning angle for open orbits using the eccentricity"""
-        if not self._is_closed:
-            return 2*np.arcsin(1/e)
-
-        return np.nan
-
-    def _aiming_radius_erp(self, b: float) -> float:
-        """Calculate the aiming radius for hyperbolic orbits using the semi-minor axis"""
-        if self._orbit_type == "hyperbolic":
-            return -b
-
-        return np.nan
+        r, v = state_pf_from_e_rp(e, rp, mu, nu)
+        return cls(r, v, mu)
 
 
