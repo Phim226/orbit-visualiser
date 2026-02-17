@@ -155,11 +155,12 @@ The current print statements are just quick sanity checks to show that after a w
 As an example if you wanted to propagate the ISS then you might edit the above code snippet to:
 ```python
 if __name__ == "__main__":
-    # Approximate eccentricity and radius of periapsis (in km) for the ISS, with mu representing the gravitational parameter of earth in km^3/s^2
+    # Approximate eccentricity and radius of periapsis (in km) for the ISS, with mu representing
+    # the gravitational parameter of earth in km^3/s^2
     iss_orbit = Orbit.from_orbital_elements(e = 0.0002267, rp = 6778, mu = 398_600.0, nu = 0.0)
 
     # Runs the propagation for 1 period, returning the ISS back to periapsis
-    sol = run_orbit_prop(iss, iss.period)
+    sol = run_orbit_prop(iss, iss.orbital_period)
 
     init_conditions = get_init_conditions_from_orbit(iss_orbit)
     print(init_conditions)
