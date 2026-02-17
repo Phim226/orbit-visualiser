@@ -27,7 +27,7 @@ def test_circular_orbit_distance_parameters(
 
 @pytest.mark.parametrize("rp, mu", rp_mu_test_cases)
 def test_circular_orbit_flight_angle(
-    satellite_factory_from_elements:  Callable[[float, float, float], NewSatellite],
+    satellite_factory_from_elements:  Callable[[float, float, float, float], NewSatellite],
     closed_anomaly_grid: NDArray[np.float64],
     rp: float,
     mu: float):
@@ -44,7 +44,7 @@ def test_circular_orbit_flight_angle(
 
 @pytest.mark.parametrize("rp, mu", rp_mu_test_cases)
 def test_circular_orbit_radial_velocity(
-    satellite_factory_from_elements:  Callable[[float, float, float], NewSatellite],
+    satellite_factory_from_elements:  Callable[[float, float, float, float], NewSatellite],
     closed_anomaly_grid: NDArray[np.float64],
     rp: float,
     mu: float):
@@ -61,7 +61,7 @@ def test_circular_orbit_radial_velocity(
 
 @pytest.mark.parametrize("rp, mu", rp_mu_test_cases)
 def test_circular_orbit_anomalies(
-    satellite_factory_from_elements:  Callable[[float, float, float], NewSatellite],
+    satellite_factory_from_elements:  Callable[[float, float, float, float], NewSatellite],
     closed_anomaly_grid: NDArray[np.float64],
     rp: float,
     mu: float):
