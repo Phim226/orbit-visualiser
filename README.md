@@ -180,6 +180,6 @@ orbit = Orbit(position = np.array([50_000.0, 0.0]), velocity = np.array([0.0, 2.
 ```
 Since we are in the perifocal frame then all orbits are oriented with the periapsis and apoapsis on the x-axis, so the true anomaly is calculated from
 ```python
-np.arctan2(0.0, 50_000.0) = 0.0
+np.atan2(0.0, 50_000.0) = 0.0
 ```
-You can pass this into run_orbit_prop (as well as your desired run time) just as before.
+You can pass this Orbit object into run_orbit_prop (as well as your desired run time) just as before.
