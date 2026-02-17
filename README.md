@@ -173,3 +173,13 @@ if __name__ == "__main__":
     print(f"Difference in radius after propagating: {rf - r0}")
 ```
 The running the script will run the propagation and print out the results.
+
+Alternatively, you can pass the initial position, velocity and gravitational parameter directly to Orbit. By using
+```python
+orbit = Orbit(position = np.array([50_000.0, 0.0]), velocity = np.array([0.0, 2.82]), mu = 398600.0)
+```
+Since we are in the perifocal frame then all orbits are oriented with the periapsis and apoapsis on the x-axis, so the true anomaly is calculated from
+```python
+np.arctan2(0.0, 50_000.0) = 0.0
+```
+You can pass this into run_orbit_prop (as well as your desired run time) just as before.
