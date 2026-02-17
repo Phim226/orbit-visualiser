@@ -131,10 +131,11 @@ As of the current version (v0.4.4) there is no CLI or GUI functionality for the 
 ```python
 if __name__ == "__main__":
 
-    satellite = Satellite(Orbit(), CentralBody())
-    init_conditions = get_init_conditions(satellite)
+    orbit = Orbit.from_orbital_elements(e = 0.0, rp = 50_000.0, mu = 398_600.0, nu = 0.0)
 
-    sol = run_orbit_prop(satellite, init_conditions, satellite.period)
+    sol = run_orbit_prop(orbit, orbit.orbital_period)
+
+    init_conditions = get_init_conditions_from_orbit(orbit)
     print(init_conditions)
     print(sol.y[:, -1])
 
@@ -143,33 +144,24 @@ if __name__ == "__main__":
 
     print(f"Difference in radius after propagating: {rf - r0}")
 ```
-You can alter the construction of the satellite object by altering the construction of Orbit and CentralBody. The current model is completely analytical so the orbit is passed to the satellite, which then informs its state based on the satellite's true anomaly. The Orbit class takes eccentricity and the radius of periapsis as arguments, and the CentralBody class takes radius and gravitational parameter.
+The orbit propagation function takes the Orbit object and propagation end time (the start time is always 0, and begins the propagation at the true anomaly (nu) set in the constructor Orbit.from_orbital_elements). The values set in the code snippet above result in the propagation of a circular orbit or radius 50,000km, starting at the perifocal position (50000, 0) lasting for one orbital period. For non-circular orbits nu = 0.0 is periapsis. The true anomaly is in radians, so nu = pi is apoapsis.
 
-In its current form the only initial conditions you can get are the state of the satellite at periapsis, but future functionality will allow for the initial conditions at any true anomaly (which can be set in the Satellite construction, or by calling satellite.nu = nu_new).
+In order to get accurate results you should keep the end time on the order of 10 or at most 100 periods. The integrators used by scipy aren't symplectic, so there is significant energy drift over longer propagations.
 
-The third argument of run_orbit_prop is the end time of the propagation. So running it with an end time of satellite.period will propagate the orbit by 1 full orbit. In order to get accurate results you should keep the end time on the order of 10 or at most 100 periods. The integrators used by scipy aren't symplectic, so there is significant energy drift over longer propagations.
+There is a third optional argument of run_orbit_prop called period_frac_per_step: int = 500, which determines the time step as a function of the fraction of a single period. So the default value results in a time step equal to 1/500 of the orbital period (rounded up to the nearest integer).
 
 The current print statements are just quick sanity checks to show that after a whole number of orbits the satellite is returning to roughly the same spot and with roughly the same velocity.
 
 As an example if you wanted to propagate the ISS then you might edit the above code snippet to:
 ```python
 if __name__ == "__main__":
-    # Approximate eccentricity and radius of periapsis (in km) for the ISS
-    orbit = Orbit(e = 0.0002267, rp = 6778)
-
-    # The default values for CentralBody are the radius (at the equator, in km) and gravitational parameter of earth
-    earth = CentralBody()
-
-    # Creates the ISS satellite object, with the default true anomaly of 0 rads
-    iss = Satellite(orbit, earth)
-
-    # Gets the array [x, y, v_x, v_y] of the perifocal positions (km) and velocity (km/s) of the ISS at periapsis
-    init_conditions = get_init_conditions(satellite)
+    # Approximate eccentricity and radius of periapsis (in km) for the ISS, with mu representing the gravitational parameter of earth in km^3/s^2
+    iss_orbit = Orbit.from_orbital_elements(e = 0.0002267, rp = 6778, mu = 398_600.0, nu = 0.0)
 
     # Runs the propagation for 1 period, returning the ISS back to periapsis
-    sol = run_orbit_prop(iss, init_conditions, iss.period)
+    sol = run_orbit_prop(iss, iss.period)
 
-
+    init_conditions = get_init_conditions_from_orbit(iss_orbit)
     print(init_conditions)
 
     # Grabs the array of solutions (sol.y) and prints the last entry
@@ -180,3 +172,4 @@ if __name__ == "__main__":
 
     print(f"Difference in radius after propagating: {rf - r0}")
 ```
+The running the script will run the propagation and print out the results.
