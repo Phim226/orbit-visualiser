@@ -151,8 +151,8 @@ class NewOrbit():
             A new instance of Orbit
         """
         asymp_anomaly = asymptote_anomaly(e)
-        nu = abs(nu)
-        if np.isclose(nu, asymp_anomaly) or nu > asymp_anomaly:
+        nu_check = abs(nu)
+        if np.isclose(nu_check, asymp_anomaly) or nu_check > asymp_anomaly:
             raise ValueError("State isn't defined at infinity")
 
         r, v = state_pf_from_e_rp(e, rp, mu, nu)
