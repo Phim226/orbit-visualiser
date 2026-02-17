@@ -14,4 +14,6 @@ from .astrodynamics.keplerian.elements import (eccentricity_vector_from_state, e
 from .astrodynamics.keplerian.dynamics import (specific_ang_momentum_from_state, specific_ang_momentum,
                                                specific_orbital_energy, characteristic_energy,
                                                excess_velocity, vis_viva_speed)
-from .astrodynamics.keplerian.state import perifocal_position
+from .astrodynamics.keplerian.state import (perifocal_position, perifocal_velocity, radial_azimuthal_velocity,
+                                            speed, radius_from_state, radius_from_orbit_eq, escape_velocity,
+                                            flight_angle, time_since_periapsis)
