@@ -36,6 +36,7 @@ The orbiting satellite is assumed to have negligible mass. All higher-order pert
 - Include perturbations into the model
 - Expand modelling to R3BP or N-body system
 - Visualise gravitational field
+- Allow for different parametrisations of the orbit
 
 ## Requirements
 
