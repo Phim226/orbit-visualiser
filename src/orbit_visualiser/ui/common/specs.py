@@ -1,8 +1,6 @@
 from __future__ import annotations
-from typing import Callable, TypeVar, Generic, TYPE_CHECKING
+from typing import Callable, TypeVar, Generic
 from dataclasses import dataclass
-if TYPE_CHECKING:
-    from orbit_visualiser.core import Orbit, Satellite, CentralBody
 
 T = TypeVar("T")
 
