@@ -7,7 +7,6 @@ from math import pi
 import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core import Orbit, Satellite, OrbitType, perifocal_position
-from orbit_visualiser.core.astrodynamics.types import OrbitType
 
 # TODO: Fix bug where scroll zoom doesn't register as changing the view so the native matplotlib home button has unexpected (and often undesirable) behaviour.
 class OrbitFigure():
