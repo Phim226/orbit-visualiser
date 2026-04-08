@@ -166,7 +166,7 @@ def periapsis(p: float, e: float) -> float:
     """
     return p/(1 + e)
 
-def apoapsis(e: float, a: float) -> float:
+def radius_of_apoapsis(e: float, a: float) -> float:
     """
     Calculates the radius of apoapsis using the eccentricity and semi-major axis.
 
