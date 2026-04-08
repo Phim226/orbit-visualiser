@@ -5,7 +5,7 @@ import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core.astrodynamics.keplerian.state import state_pf_from_e_rp
 from orbit_visualiser.core.astrodynamics.keplerian.elements import (eccentricity_from_state, semi_parameter_from_momentum,
-                                                                    periapsis, semimajor_axis, semiminor_axis,
+                                                                    radius_of_periapsis, semimajor_axis, semiminor_axis,
                                                                     radius_of_apoapsis, asymptote_anomaly, turning_angle,
                                                                     aiming_radius, orbital_period, mean_motion)
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import (specific_orbital_energy, characteristic_energy,
@@ -82,7 +82,7 @@ class Orbit():
 
     @cached_property
     def radius_of_periapsis(self) -> float:
-        return periapsis(self.semi_parameter, self.eccentricity)
+        return radius_of_periapsis(self.semi_parameter, self.eccentricity)
 
     @cached_property
     def semimajor_axis(self) -> float:

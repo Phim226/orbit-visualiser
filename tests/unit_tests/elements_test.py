@@ -5,7 +5,7 @@ from numpy.typing import NDArray
 from orbit_visualiser.core import (OrbitType, eccentricity_vector_from_state, eccentricity_from_state,
                                    true_anomaly_from_state, semi_parameter_from_momentum,
                                    semi_parameter_from_eccentricity, semimajor_axis,
-                                   semiminor_axis, periapsis, radius_of_apoapsis,
+                                   semiminor_axis, radius_of_periapsis, radius_of_apoapsis,
                                    asymptote_anomaly, turning_angle, aiming_radius,
                                    orbital_period, mean_motion)
 
@@ -111,7 +111,7 @@ def test_periapsis(p: float, e: float, expected: float):
     Test that the formula for the periapsis using the eccentricity and semi-parameter gives the
     expected value.
     """
-    result = periapsis(p, e)
+    result = radius_of_periapsis(p, e)
     assert np.isclose(result, expected)
 
 @pytest.mark.parametrize("e, a, expected", [
