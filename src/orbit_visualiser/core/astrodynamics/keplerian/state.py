@@ -1,7 +1,7 @@
 from math import pi
 import numpy as np
 from numpy.typing import NDArray
-from typing import Callable, Literal
+from typing import Literal
 from orbit_visualiser.core.astrodynamics.types import OrbitType
 from orbit_visualiser.core.astrodynamics.keplerian.elements import semi_parameter_from_eccentricity
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum
