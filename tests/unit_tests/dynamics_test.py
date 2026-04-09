@@ -6,9 +6,9 @@ from orbit_visualiser.core import (OrbitType, specific_ang_momentum_from_state, 
                                    vis_viva_speed)
 
 @pytest.mark.parametrize("r, v, expected", [
-    (np.array([1.0, 0]), np.array([0, 1.0]), np.array(1.0)),
-    (np.array([1.0, 2.0]), np.array([2.0, 4.0]), np.array(0.0)),
-    (np.array([50_000, 0]), np.array([0, 4.0]), np.array(4*50_000))
+    (np.array([1.0, 0, 0]), np.array([0, 1.0, 0]), np.array([0.0, 0.0, 1.0])),
+    (np.array([1.0, 2.0, 0]), np.array([2.0, 4.0, 0]), np.array([0.0, 0.0, 0.0])),
+    (np.array([50_000, 0, 0]), np.array([0, 4.0, 0]), np.array([0.0, 0.0, 4*50_000.0]))
 ])
 def test_specific_angular_momentum_from_state(
     r: NDArray[np.float64],
