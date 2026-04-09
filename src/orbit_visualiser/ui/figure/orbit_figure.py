@@ -77,7 +77,7 @@ class OrbitFigure():
         # Plot the initial orbit
         orbit = self._satellite.orbit
         nu = self._get_anomaly_data(orbit)
-        x, y = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
+        x, y, _ = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
         self._line, = self._ax.plot(x, y, color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)
 
         # Plot the central body
@@ -122,13 +122,13 @@ class OrbitFigure():
     def redraw_orbit(self) -> None:
         orbit = self._satellite.orbit
         nu = self._get_anomaly_data(orbit)
-        x, y = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
+        x, y, _ = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
         self._line.set_data(x, y)
 
         self._canvas.draw_idle()
 
     def redraw_satellite(self) -> None:
-        x, y = self._satellite.position
+        x, y, _ = self._satellite.position
         self._sat_point.set_data((x,), (y,))
 
         self._canvas.draw_idle()
