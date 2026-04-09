@@ -78,7 +78,7 @@ class Orbit():
 
     @cached_property
     def semi_parameter(self) -> float:
-        return semi_parameter_from_momentum(specific_ang_momentum_from_state(self.position, self.velocity), self.mu)
+        return semi_parameter_from_momentum(np.linalg.norm(specific_ang_momentum_from_state(self.position, self.velocity)), self.mu)
 
     @cached_property
     def radius_of_periapsis(self) -> float:
