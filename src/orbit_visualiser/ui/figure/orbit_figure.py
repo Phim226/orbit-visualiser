@@ -93,7 +93,7 @@ class OrbitFigure():
 
         #self.plot_periapsis_point()
 
-        f = self._zoom_factory(self._ax, 1.1)
+        self._zoom_factory(self._ax, 1.1)
 
     def _build_canvas(self) -> None:
         self._canvas = FigureCanvasTkAgg(self._fig, master = self._figure_frame)
