@@ -7,7 +7,7 @@ from orbit_visualiser.core import (perifocal_position, perifocal_velocity, radia
                                    flight_angle, time_since_periapsis)
 
 @pytest.mark.parametrize("e, p, nu, expected", [
-    (0.5, 75_000.0, pi/2, np.array([0.0, 75_000.0]))
+    (0.5, 75_000.0, pi/2, np.array([0.0, 75_000.0, 0]))
 ])
 def test_perifocal_position(e: float, p: float, nu: float, expected: NDArray[np.float64]):
     """
@@ -17,7 +17,7 @@ def test_perifocal_position(e: float, p: float, nu: float, expected: NDArray[np.
     assert np.allclose(result, expected)
 
 @pytest.mark.parametrize("e, mu, h, nu, expected", [
-    (0.5, 398_600.0, 199_300, pi/6, np.array([-1.0, 1 + np.sqrt(3)]))
+    (0.5, 398_600.0, 199_300, pi/6, np.array([-1.0, 1 + np.sqrt(3), 0]))
 ])
 def test_perifocal_velocity(e: float, mu: float, h:float, nu: float, expected: NDArray[np.float64]):
     """
