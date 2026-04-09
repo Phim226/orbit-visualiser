@@ -49,7 +49,7 @@ def state_pf_from_e_rp(
     elif state == "both":
         return [r, v]
 
-def perifocal_position(e: float, p: float, nu: float) -> NDArray[np.float64]:
+def perifocal_position(e: float, p: float, nu: float | NDArray[np.float64]) -> NDArray[np.float64]:
     """
     Perifocal orbit equation.
 
@@ -67,9 +67,10 @@ def perifocal_position(e: float, p: float, nu: float) -> NDArray[np.float64]:
     NDArray[np.float64]
         The numpy array of the perifocal orbital position
     """
-    return p*(1/(1 + e*np.cos(nu)))*np.array([np.cos(nu), np.sin(nu)])
+    z = 0 if isinstance(nu, float) else np.zeros(nu.shape)
+    return p*(1/(1 + e*np.cos(nu)))*np.array([np.cos(nu), np.sin(nu), z])
 
-def perifocal_velocity(e: float, mu: float, h: float, nu: float) -> NDArray[np.float64]:
+def perifocal_velocity(e: float, mu: float, h: float, nu: float | NDArray[np.float64]) -> NDArray[np.float64]:
     """
     The perifocal velocity equation.
 
@@ -89,7 +90,8 @@ def perifocal_velocity(e: float, mu: float, h: float, nu: float) -> NDArray[np.f
     NDArray[np.float64]
         The numpy array of the perifocal velocity
     """
-    return (mu/h)*np.array([-np.sin(nu), e + np.cos(nu)])
+    z = 0 if isinstance(nu, float) else np.zeros(nu.shape)
+    return (mu/h)*np.array([-np.sin(nu), e + np.cos(nu), z])
 
 
 def radial_azimuthal_velocity(
