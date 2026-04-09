@@ -166,6 +166,25 @@ def radius_of_periapsis(p: float, e: float) -> float:
     """
     return p/(1 + e)
 
+def periapsis(p: float, e: NDArray[np.float64]) -> NDArray[np.float64]:
+    """
+    Calculate the periapsis vector from the eccentricity vector and the semi-parameter.
+
+    Parameters
+    ----------
+    p : float
+        The semi-parameter (km)
+    e : NDArray[np.float64]
+        The eccentricity vector
+
+    Returns
+    -------
+    NDArray[np.float64]
+        Periapsis vector (km)
+    """
+    e_norm = np.linalg.norm(e)
+    return p/((e_norm(1 + e_norm)))*e
+
 def radius_of_apoapsis(e: float, a: float) -> float:
     """
     Calculates the radius of apoapsis using the eccentricity and semi-major axis.
@@ -187,7 +206,7 @@ def radius_of_apoapsis(e: float, a: float) -> float:
 
     return a*(1 + e)
 
-def apoapsis_vector(e: NDArray[np.float64], a: float) -> NDArray[np.float64]:
+def apoapsis(e: NDArray[np.float64], a: float) -> NDArray[np.float64]:
     """
     Calculate the apoapsis vector from the eccentricity vector and the semi-major axis.
 
