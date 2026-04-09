@@ -12,12 +12,12 @@ def eccentric_anomaly(e: float, nu: float) -> float:
     e : float
         Eccentricity
     nu : float
-        True anomaly (rads)
+        True anomaly (rad)
 
     Returns
     -------
     float
-        The eccentric anomaly (rads)
+        The eccentric anomaly (rad)
     """
     type = orbit_type(e)
     if type is OrbitType.CIRCULAR:
@@ -45,15 +45,15 @@ def mean_anomaly(e: float, nu: float, e_anomaly: float) -> float:
     e : float
         Eccentricity
     nu : float
-        True anomaly (rads)
+        True anomaly (rad)
     e_anomaly : float
-        The eccentric anomaly (rads)
+        The eccentric anomaly (rad)
 
 
     Returns
     -------
     float
-        The mean anomaly (rads)
+        The mean anomaly (rad)
     """
     type = orbit_type(e)
     if type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):

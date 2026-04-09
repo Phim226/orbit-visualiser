@@ -59,8 +59,8 @@ def perifocal_position(e: float, p: float, nu: float) -> NDArray[np.float64]:
         Eccentricity
     p : float
         Semi-parameter (km)
-    nu : float
-        True anomaly (rads)
+    nu : float | NDArray[np.float64]
+        True anomaly (rad)
 
     Returns
     -------
@@ -81,8 +81,8 @@ def perifocal_velocity(e: float, mu: float, h: float, nu: float) -> NDArray[np.f
         Gravitational parameter (km^3/s^2)
     h : float
         Specific angular momentum (km^2/s)
-    nu : float
-        True anomaly (rads)
+    nu : float | NDArray[np.float64]
+        True anomaly (rad)
 
     Returns
     -------
@@ -106,7 +106,7 @@ def radial_azimuthal_velocity(
     Parameters
     ----------
     nu : float
-        True anomaly (rads)
+        True anomaly (rad)
     mu : float
         Gravitational parameter (km^3/s^2)
     h : float
@@ -114,7 +114,7 @@ def radial_azimuthal_velocity(
     e : float
         Eccentricity
     asymp_anomaly : float
-        The asymptote of the free anomaly (rads)
+        The asymptote of the free anomaly (rad)
 
     Returns
     -------
@@ -166,9 +166,9 @@ def radius_from_orbit_eq(nu: float, asymp_anomaly: float, p: float, e: float) ->
     Parameters
     ----------
     nu : float
-        True anomaly (rads)
+        True anomaly (rad)
     asymp_anomaly : float
-        The asymptote of the free anomaly (rads)
+        The asymptote of the free anomaly (rad)
     p : float
         Semi-parameter (km)
     e : float
@@ -191,9 +191,9 @@ def escape_velocity(nu: float, asymp_anomaly: float, mu: float, r: float) -> flo
     Parameters
     ----------
     nu : float
-        The true anomaly (rads)
+        The true anomaly (rad)
     asymp_anomaly : float
-        The true anomaly of the asymptot (rads)
+        The true anomaly of the asymptote (rad)
     mu : float
         Gravitational parameter (km^3/s^2)
     r : float
@@ -216,16 +216,16 @@ def flight_angle(nu: float, asymp_anomaly: float, e: float) -> float:
     Parameters
     ----------
     nu : float
-        True anomaly (rads)
+        True anomaly (rad)
     asymp_anomaly : float
-        The true anomaly of the asymptot (rads)
+        The true anomaly of the asymptot (rad)
     e : float
         Eccentricity
 
     Returns
     -------
     float
-        The satellite flight angle (rads)
+        The satellite flight angle (rad)
     """
     if np.isclose(abs(nu), asymp_anomaly):
         return np.sign(nu)*pi/2
@@ -239,7 +239,7 @@ def time_since_periapsis(m_anomaly: float, period: float, p: float, h: float, e:
     Parameters
     ----------
     m_anomaly : float
-        The mean anomaly (rads)
+        The mean anomaly (rad)
     period : float
         The orbital period (s)
     p : float

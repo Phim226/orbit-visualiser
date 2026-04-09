@@ -58,7 +58,7 @@ class Orbit():
     mu : float
         The gravitational parameter of the central body (km^3/s^2)
     nu : float
-        The true anomaly of the satellite (rads)
+        The true anomaly of the satellite (rad)
     """
     position : Sequence | NDArray[np.float64]
     velocity : Sequence | NDArray[np.float64]
