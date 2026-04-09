@@ -4,7 +4,7 @@ from .propagation import get_init_conditions_from_orbit, run_orbit_prop
 
 from .astrodynamics.types import OrbitType
 from .astrodynamics.keplerian.classification import orbit_type
-from .astrodynamics.keplerian.anomlies import mean_anomaly, eccentric_anomaly
+from .astrodynamics.keplerian.anomalies import mean_anomaly, eccentric_anomaly
 from .astrodynamics.keplerian.elements import (eccentricity_vector_from_state, eccentricity_from_state,
                                                true_anomaly_from_state, semi_parameter_from_momentum,
                                                semi_parameter_from_eccentricity, semimajor_axis,
