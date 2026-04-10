@@ -12,7 +12,7 @@ on:
 
 jobs:
  unit-test:
-    name: Unit Tests
+    name: Unit tests
     runs-on: ubuntu-latest
 
     steps:
@@ -33,7 +33,7 @@ jobs:
         run: pytest tests/unit_tests
 
  invariants-test:
-    name: Invariants Tests
+    name: Invariants tests
     runs-on: ubuntu-latest
 
     steps:
@@ -54,7 +54,7 @@ jobs:
         run: pytest tests/invariants
 
  propagation-test:
-    name: Propagation Tests
+    name: Propagation tests
     runs-on: ubuntu-latest
 
     steps:
@@ -75,7 +75,7 @@ jobs:
         run: pytest tests/propagation
 
  object-test:
-    name: Objects Tests
+    name: Objects tests
     runs-on: ubuntu-latest
 
     steps:
