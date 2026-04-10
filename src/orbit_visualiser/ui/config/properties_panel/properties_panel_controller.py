@@ -17,30 +17,42 @@ class PropertiesController():
             unit = spec.units
             getattr(self._builder, f"{property}_str").set(self.format_display_value(new_value, unit))
 
-    def format_display_value(self, value: float | OrbitType, units: str | None) -> str:
-        if units is None:
-            return value.name.lower().capitalize()
+    @staticmethod
+    def format_display_value(value: float | OrbitType, unit: str | None) -> str:
+        formatted_value: str = "Value not formatted"
+
+        if unit is None:
+            formatted_value = value.name.lower().capitalize()
+            return formatted_value
+
+        elif np.isneginf(value):
+            formatted_value = f"-∞ {unit}"
+            return formatted_value
+
+        elif np.isinf(value):
+            formatted_value = f"∞ {unit}"
+            return formatted_value
+
+        elif np.isnan(value):
+            formatted_value = "n/a"
+            return formatted_value
+
 
         if np.isclose(value, 0):
             value = 0.00
 
-        if np.isneginf(value):
-            return f"-∞ {units}"
+        format_mapping: dict[str, list[str]] = {
+            f"{value:6.0f} {unit}": ["km", "km²/s", "s"],
+            f"{value:6.2f} {unit}": ["°", "km/s", "km²/s²"],
+            f"{value:6.6f} {unit}": ["°/s"]
+        }
 
-        elif np.isinf(value):
-            return f"∞ {units}"
+        for formatting, units in format_mapping.items():
+            if unit in units:
+                formatted_value = formatting
+                break
 
-        elif np.isnan(value):
-            return "n/a"
-
-        elif units in ["km", "km²/s", "s"]:
-            return f"{value:6.0f} {units}"
-
-        elif units in ["°", "km/s", "km²/s²"]:
-            return f"{value:6.2f} {units}"
-
-        elif units in ["°/s"]:
-            return f"{value:6.6f} {units}"
+        return formatted_value
 
     def draw_periapsis() -> None:
         pass
