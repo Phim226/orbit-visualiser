@@ -11,7 +11,8 @@ on:
         branches: [main, refactor, feature]
 
 jobs:
- test:
+ unit-test:
+    name: Unit Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -29,4 +30,67 @@ jobs:
             pip install -r requirements.txt
 
       - name: Run tests
-        run: pytest
+        run: pytest tests/unit_tests
+
+ invariants-test:
+    name: Invariants Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest tests/invariants
+
+ propagation-test:
+    name: Propagation Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest tests/propagation
+
+ object-test:
+    name: Objects Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest tests/satellite_test.py tests/orbit_test.py
