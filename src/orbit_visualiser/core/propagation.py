@@ -27,24 +27,22 @@ def two_body_pf_ode(mu: float, t: float, state: NDArray[np.float64], ) -> NDArra
     NDArray[np.float64]
         The values to be numerically integrated [dx, d^2x]
     """
-    x, y, v_x, v_y = state
+    pos = state[:3]
+    r = np.linalg.norm(pos)
 
-    r = np.hypot(x, y)
+    vel = state[3:]
+    acc: NDArray[np.float64] = -(mu/r**3)*pos
 
-    a_x = -(mu/r**3)*x
-    a_y = -(mu/r**3)*y
-
-    return np.array([v_x, v_y, a_x, a_y])
+    return np.concatenate((vel, acc))
 
 def get_init_conditions_from_orbit(orbit: Orbit) -> NDArray[np.float64]:
     """
-    Takes orbital elements and returns the initial conditions (position and velocity) for orbit propagation.
+    Takes orbit object and returns the initial conditions (position and velocity) for orbit propagation.
 
     Parameters
     ----------
     orbit: NewOrbit
         Orbit object to get the initial conditions from
-
 
     Returns
     -------

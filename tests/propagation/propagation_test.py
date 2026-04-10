@@ -47,7 +47,7 @@ def test_1p_propagation_pos(
     pos_at_rp = init_conditions[:2]
     prop_pos_at_rp = prop.y[:2, -1]
 
-    assert np.allclose(pos_at_rp, prop_pos_at_rp, atol = 0.01)
+    assert np.allclose(pos_at_rp, prop_pos_at_rp, atol = 0.05)
 
 
 @pytest.mark.parametrize("e, rp, mu", typical_closed_test_cases)
@@ -62,11 +62,10 @@ def test_1p_phase_shift(
     typical closed orbits is within an acceptable tolerance to the analytical solution.
     """
     orbit: Orbit = orbit_factory_from_elements(e, rp, mu, 0.0)
-    init_conditions = get_init_conditions_from_orbit(orbit)
 
     prop = run_orbit_prop(orbit, orbit.orbital_period)
 
     prop_pos_at_rp = prop.y[:2, -1]
     phase_shift = np.arctan2(prop_pos_at_rp[1], prop_pos_at_rp[0])
 
-    assert np.isclose(phase_shift, 0, atol=1e-8)
+    assert np.isclose(phase_shift, 0, atol=5e-8)

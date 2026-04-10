@@ -7,7 +7,6 @@ from math import pi
 import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core import Orbit, Satellite, OrbitType, perifocal_position
-from orbit_visualiser.core.astrodynamics.types import OrbitType
 
 # TODO: Fix bug where scroll zoom doesn't register as changing the view so the native matplotlib home button has unexpected (and often undesirable) behaviour.
 class OrbitFigure():
@@ -78,7 +77,7 @@ class OrbitFigure():
         # Plot the initial orbit
         orbit = self._satellite.orbit
         nu = self._get_anomaly_data(orbit)
-        x, y = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
+        x, y, _ = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
         self._line, = self._ax.plot(x, y, color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)
 
         # Plot the central body
@@ -94,7 +93,7 @@ class OrbitFigure():
 
         #self.plot_periapsis_point()
 
-        f = self._zoom_factory(self._ax, 1.1)
+        self._zoom_factory(self._ax, 1.1)
 
     def _build_canvas(self) -> None:
         self._canvas = FigureCanvasTkAgg(self._fig, master = self._figure_frame)
@@ -123,13 +122,13 @@ class OrbitFigure():
     def redraw_orbit(self) -> None:
         orbit = self._satellite.orbit
         nu = self._get_anomaly_data(orbit)
-        x, y = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
+        x, y, _ = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
         self._line.set_data(x, y)
 
         self._canvas.draw_idle()
 
     def redraw_satellite(self) -> None:
-        x, y = self._satellite.position
+        x, y, _ = self._satellite.position
         self._sat_point.set_data((x,), (y,))
 
         self._canvas.draw_idle()

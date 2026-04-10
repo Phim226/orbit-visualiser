@@ -53,7 +53,7 @@ def test_satellite_azimuthal_velocity_sanity(
         satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
 
         v_azim_vals = [
-            satellite.specific_angular_momentum/satellite.radius,
+            np.linalg.norm(satellite.specific_angular_momentum)/satellite.radius,
             satellite.speed*np.cos(satellite.flight_angle)
         ]
 

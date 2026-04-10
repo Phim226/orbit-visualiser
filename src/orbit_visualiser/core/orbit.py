@@ -5,8 +5,8 @@ import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core.astrodynamics.keplerian.state import state_pf_from_e_rp
 from orbit_visualiser.core.astrodynamics.keplerian.elements import (eccentricity_from_state, semi_parameter_from_momentum,
-                                                                    periapsis, semimajor_axis, semiminor_axis,
-                                                                    apoapsis, asymptote_anomaly, turning_angle,
+                                                                    radius_of_periapsis, semimajor_axis, semiminor_axis,
+                                                                    radius_of_apoapsis, asymptote_anomaly, turning_angle,
                                                                     aiming_radius, orbital_period, mean_motion)
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import (specific_orbital_energy, characteristic_energy,
                                                                     excess_velocity, specific_ang_momentum_from_state)
@@ -58,7 +58,7 @@ class Orbit():
     mu : float
         The gravitational parameter of the central body (km^3/s^2)
     nu : float
-        The true anomaly of the satellite (rads)
+        The true anomaly of the satellite (rad)
     """
     position : Sequence | NDArray[np.float64]
     velocity : Sequence | NDArray[np.float64]
@@ -78,11 +78,11 @@ class Orbit():
 
     @cached_property
     def semi_parameter(self) -> float:
-        return semi_parameter_from_momentum(specific_ang_momentum_from_state(self.position, self.velocity), self.mu)
+        return semi_parameter_from_momentum(np.linalg.norm(specific_ang_momentum_from_state(self.position, self.velocity)), self.mu)
 
     @cached_property
     def radius_of_periapsis(self) -> float:
-        return periapsis(self.semi_parameter, self.eccentricity)
+        return radius_of_periapsis(self.semi_parameter, self.eccentricity)
 
     @cached_property
     def semimajor_axis(self) -> float:
@@ -94,7 +94,7 @@ class Orbit():
 
     @cached_property
     def radius_of_apoapsis(self) -> float:
-        return apoapsis(self.eccentricity, self.semimajor_axis)
+        return radius_of_apoapsis(self.eccentricity, self.semimajor_axis)
 
     @cached_property
     def asymptote_anomaly(self) -> float:
