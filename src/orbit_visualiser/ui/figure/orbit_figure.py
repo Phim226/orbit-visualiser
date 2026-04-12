@@ -1,4 +1,5 @@
 from tkinter import Tk, Frame
+from customtkinter import CTkFrame
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
@@ -24,7 +25,7 @@ class OrbitFigure():
 
         self._satellite = satellite
 
-        self._figure_frame: Frame = Frame(root)
+        self._figure_frame: Frame = CTkFrame(root)
         self._figure_frame.pack(
             side = figure_frame_placement[0], anchor = figure_frame_placement[1],
             padx = 8, pady = 6, fill = "both", expand = True
@@ -42,6 +43,7 @@ class OrbitFigure():
         self._fig = Figure(figsize = (5, 4), dpi = 100)
         self._fig.subplots_adjust(left = 0, right = 1.0, bottom = 0, top = 1.0)
         self._ax = self._fig.add_subplot()
+        self._ax.set_aspect("equal", adjustable = "datalim")
 
     def _configure_axes(self) -> None:
         axis_colour = "#4D4D4DFF"
@@ -58,8 +60,8 @@ class OrbitFigure():
         self._ax.yaxis.set_ticks_position('left')
         self._ax.tick_params(colors = axis_colour)
 
-        self._ax.set_xlim(-100_000, 100_000)
-        self._ax.set_ylim(-100_000, 100_000)
+        """ self._ax.set_xlim(-100_000, 100_000)
+        self._ax.set_ylim(-100_000, 100_000) """
 
         self._ax.text(
             0.98, 0.02,
