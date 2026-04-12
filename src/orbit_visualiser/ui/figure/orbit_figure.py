@@ -1,5 +1,4 @@
 from tkinter import Tk, Frame
-from customtkinter import CTkFrame
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
@@ -25,7 +24,7 @@ class OrbitFigure():
 
         self._satellite = satellite
 
-        self._figure_frame: Frame = CTkFrame(root)
+        self._figure_frame: Frame = Frame(root)
         self._figure_frame.pack(
             side = figure_frame_placement[0], anchor = figure_frame_placement[1],
             padx = 8, pady = 6, fill = "both", expand = True
