@@ -4,7 +4,7 @@ import numpy as np
 from orbit_visualiser.ui.figure.orbit_figure import OrbitFigure
 from orbit_visualiser.ui.config.variables_panel.variables_panel_builder import  VariablesBuilder
 from orbit_visualiser.core import Orbit, Satellite, asymptote_anomaly
-from orbit_visualiser.ui.common.utils import floor_to_decimals
+from orbit_visualiser.ui.common.utils import floor_float
 
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
 # TODO: Allow for fractional manual inputs.
@@ -123,7 +123,7 @@ class VariablesController():
             if new_val >= 1:
                 # Slider should never allow for users to input the true anomaly of the asymptote
                 t_asymp_offset = np.degrees(asymptote_anomaly(new_val)) - 0.01
-                t_asymp_slider_lim = floor_to_decimals(t_asymp_offset, 2)
+                t_asymp_slider_lim = floor_float(t_asymp_offset, 2)
                 self._builder.nu_slider.configure(from_ = -t_asymp_slider_lim, to = t_asymp_slider_lim)
 
                 nu = new_values["nu"]

@@ -1,7 +1,7 @@
 from math import floor
 import numpy as np
 
-def floor_to_decimals(num: float, decimals: int) -> float:
+def floor_float(num: float, decimals: int) -> float:
     """
     Floors a float to the given number of decimal points. For example floor_to_decimals(1.236, 2)
     returns 1.23.
