@@ -1,15 +1,17 @@
 # Orbit Visualiser
 
-The Orbit Visualiser is a 2D Keplerian orbit visualisation tool for modelling the motion of a satellite around a central body, written in Python. The focus of this tool is on orbital geometry and satellite kinematics. Has basic orbital propagation.
+The Orbit Visualiser is a 2D Keplerian orbit visualisation tool for modelling the motion of a satellite around a central body, written in Python. The focus of this tool is on orbital geometry and satellite kinematics. Has basic orbital propagation (currently no GUI functionality).
+
+<img width="800" height="420" alt="Demo1-ezgif com-crop" src="https://github.com/user-attachments/assets/d75366a7-2294-46dc-bc30-6b1840a3a49b" />
 
 ## Features
 
-Orbits are modelled and visualised in the perifocal frame (the central body remains fixed at the origin of the coordinate frame), with the orbital geometry parametrised using:
+Orbits are modelled and visualised in the perifocal frame (the central body remains fixed at the origin of the coordinate frame, and the x axis represents the apse line), with the orbital geometry parametrised using:
   - Eccentricity
   - Radius of periapsis
 
 The central body has a radius of 6738km and an adjustable gravitational parameter. The radius of periapsis has therefore been given a lower limit of 6739km (meaning that we are assuming this Earth sized body has no atmosphere, or at least that any atmosphere has no effect on orbital motion). The true anomaly of the orbiting satellite is also adjustable to evaluate the kinematic state at different orbital positions. Various orbital and kinematic quantities are
-calculated and displayed, including:
+calculated and displayed, including (but not limited to):
   - Semi-major/minor axis
   - Radius of apoapsis
   - True anomaly of the asymptote (for parabolic and hyperbolic trajectories)
@@ -20,9 +22,11 @@ calculated and displayed, including:
   - Hyperbolic excess velocity
   - Time since periapsis
 
+See the gif above for the full list of displayed orbital and kinematic properties.
+
 ## Planned Features
 
-Some GUI elements such as additional display options are currently commented out because they are under development. These will be implemented in future updates.
+Some GUI elements such as additional display options are currently commented out in the source code because they are under development. These will be implemented in future updates.
 
 ## Notes on the physical model
 
@@ -145,7 +149,7 @@ if __name__ == "__main__":
 
     print(f"Difference in radius after propagating: {rf - r0}")
 ```
-The orbit propagation function takes the Orbit object and propagation end time (the start time is always 0, and begins the propagation at the true anomaly (nu) set in the constructor Orbit.from_orbital_elements). The values set in the code snippet above result in the propagation of a circular orbit or radius 50,000km, starting at the perifocal position (50000, 0) lasting for one orbital period. For non-circular orbits nu = 0.0 is periapsis. The true anomaly is in radians, so nu = pi is apoapsis.
+The orbit propagation function takes the Orbit object and propagation end time (the start time is always 0, and begins the propagation at the true anomaly (nu) set in the constructor Orbit.from_orbital_elements). The values set in the code snippet above result in the propagation of a circular orbit of radius 50,000km, starting at the perifocal position (50000, 0) lasting for one orbital period. For non-circular orbits nu = 0.0 is periapsis. The true anomaly is in radians, so nu = pi is apoapsis.
 
 In order to get accurate results you should keep the end time on the order of 10 or at most 100 periods. The integrators used by scipy aren't symplectic, so there is significant energy drift over longer propagations.
 
@@ -161,7 +165,7 @@ if __name__ == "__main__":
     iss_orbit = Orbit.from_orbital_elements(e = 0.0002267, rp = 6778, mu = 398_600.0, nu = 0.0)
 
     # Runs the propagation for 1 period, returning the ISS back to periapsis
-    sol = run_orbit_prop(iss, iss.orbital_period)
+    sol = run_orbit_prop(iss_orbit, iss_orbit.orbital_period)
 
     init_conditions = get_init_conditions_from_orbit(iss_orbit)
     print(init_conditions)
