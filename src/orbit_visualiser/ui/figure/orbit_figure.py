@@ -1,8 +1,7 @@
 from tkinter import Tk, Frame
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
-from matplotlib.axes import Axes
-from matplotlib.patches import Circle
+from mpl_toolkits.mplot3d import Axes3D
 from math import pi
 import numpy as np
 from numpy.typing import NDArray
@@ -168,15 +167,18 @@ class OrbitFigure():
         )
 
     @staticmethod
-    def _zoom_factory(ax: Axes, base_scale = 2.):
+    def _zoom_factory(ax: Axes3D, base_scale = 2.):
         def zoom_fun(event):
             cur_xlim = ax.get_xlim()
             cur_ylim = ax.get_ylim()
+            cur_zlim = ax.get_zlim()
 
             cur_xrange = (cur_xlim[1] - cur_xlim[0])*.5
             cur_yrange = (cur_ylim[1] - cur_ylim[0])*.5
+            cur_zrange = (cur_zlim[1] - cur_zlim[0])*.5
             plot_centre_x = (cur_xlim[1] + cur_xlim[0])/2
             plot_centre_y = (cur_ylim[1] + cur_ylim[0])/2
+            plot_centre_z = (cur_zlim[1] + cur_zlim[0])/2
 
             if event.button == 'up':
                 # deal with zoom in
@@ -193,6 +195,8 @@ class OrbitFigure():
                         plot_centre_x + cur_xrange*scale_factor])
             ax.set_ylim([plot_centre_y - cur_yrange*scale_factor,
                         plot_centre_y + cur_yrange*scale_factor])
+            ax.set_zlim([plot_centre_z - cur_zrange*scale_factor,
+                        plot_centre_z + cur_zrange*scale_factor])
             ax.figure.canvas.draw_idle()
 
         fig = ax.get_figure()
