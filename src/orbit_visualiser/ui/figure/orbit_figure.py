@@ -1,7 +1,9 @@
 from tkinter import Tk, Frame
+import matplotlib as mpl
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d.art3d import Line3D
 from math import pi
 import numpy as np
 from numpy.typing import NDArray
@@ -39,7 +41,7 @@ class OrbitFigure():
 
     def _create_figure(self) -> None:
         self._fig = Figure(figsize = (7, 6), dpi = 100)
-        self._fig.subplots_adjust(left = 0, right = 1.0, bottom = 0, top = 1.0)
+        self._fig.subplots_adjust(left = 0, right = 1.1, bottom = -0.1, top = 1.1)
         self._ax = self._fig.add_subplot(projection = "3d")
         self._ax.set_aspect("equal", adjustable = "datalim")
 
@@ -150,7 +152,6 @@ class OrbitFigure():
         self._canvas.draw_idle()
 
     def plot_periapsis_point(self) -> None:
-
         self._rp_point, = self._ax.plot(
             self._satellite.orbit.radius_of_periapsis,
             0,
