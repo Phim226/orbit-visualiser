@@ -39,7 +39,7 @@ class OrbitFigure():
         self._build_toolbar()
 
     def _create_figure(self) -> None:
-        self._fig = Figure(figsize = (5, 4), dpi = 100)
+        self._fig = Figure(figsize = (7, 6), dpi = 100)
         self._fig.subplots_adjust(left = 0, right = 1.0, bottom = 0, top = 1.0)
         self._ax = self._fig.add_subplot()
         self._ax.set_aspect("equal", adjustable = "datalim")
