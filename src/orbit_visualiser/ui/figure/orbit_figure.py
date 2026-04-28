@@ -63,7 +63,7 @@ class OrbitFigure():
         self._ax.set_ylim(-100_000, 100_000)
         self._ax.set_zlim(-100_000, 100_000)
 
-        self._ax.disable_mouse_rotation()
+        mpl.rcParams['axes3d.mouserotationstyle'] = 'azel'
 
         self._ax.text(
             0.98, 0.02, 0.02,
