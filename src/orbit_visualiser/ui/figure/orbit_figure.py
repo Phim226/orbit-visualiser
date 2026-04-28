@@ -41,7 +41,7 @@ class OrbitFigure():
     def _create_figure(self) -> None:
         self._fig = Figure(figsize = (7, 6), dpi = 100)
         self._fig.subplots_adjust(left = 0, right = 1.0, bottom = 0, top = 1.0)
-        self._ax = self._fig.add_subplot()
+        self._ax = self._fig.add_subplot(projection = "3d")
         self._ax.set_aspect("equal", adjustable = "datalim")
 
     def _configure_axes(self) -> None:
@@ -55,15 +55,19 @@ class OrbitFigure():
         self._ax.spines['right'].set_color('none')
         self._ax.spines['top'].set_color('none')
 
-        self._ax.xaxis.set_ticks_position('bottom')
-        self._ax.yaxis.set_ticks_position('left')
+        self._ax.xaxis.set_ticks_position('lower')
+        self._ax.yaxis.set_ticks_position('lower')
+        self._ax.zaxis.set_ticks_position('lower')
         self._ax.tick_params(colors = axis_colour)
 
-        """ self._ax.set_xlim(-100_000, 100_000)
-        self._ax.set_ylim(-100_000, 100_000) """
+        self._ax.set_xlim(-100_000, 100_000)
+        self._ax.set_ylim(-100_000, 100_000)
+        self._ax.set_zlim(-100_000, 100_000)
+
+        self._ax.disable_mouse_rotation()
 
         self._ax.text(
-            0.98, 0.02,
+            0.98, 0.02, 0.02,
             r"$\mathrm{km}$",
             transform = self._ax.transAxes,
             ha = "right",
@@ -72,7 +76,13 @@ class OrbitFigure():
             color = "gray"
         )
 
-        self._ax.tick_params(labelsize = 8)
+    def _plot_central_body(self) -> None:
+        u, v = np.meshgrid(np.linspace(0, 2*np.pi, 100), np.linspace(0, np.pi, 100))
+        r = self._satellite.central_body.r
+        x = r*np.cos(u)*np.sin(v)
+        y = r*np.sin(u)*np.sin(v)
+        z = r*np.cos(v)
+        self._ax.plot_surface(x, y, z, zorder = 10, facecolor = "#4C6A92", edgecolor = "#3C5474")
 
     def _initialise_plot(self) -> None:
         # Plot the initial orbit
@@ -82,10 +92,7 @@ class OrbitFigure():
         self._line, = self._ax.plot(x, y, color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)
 
         # Plot the central body
-        self._ax.add_patch(
-            Circle((0, 0), radius = self._satellite.central_body.r, fill = True, zorder = 10,
-                   facecolor = "#4C6A92", edgecolor = "#3C5474")
-        )
+        self._plot_central_body()
 
         # Plot the satellite
         self._sat_point, = self._ax.plot(
@@ -135,10 +142,9 @@ class OrbitFigure():
         self._canvas.draw_idle()
 
     def reset_axes(self) -> None:
-        self._ax.spines['left'].set_position(('data', 0))
-        self._ax.spines['bottom'].set_position(('data', 0))
         self._ax.set_xlim(-100_000, 100_000)
         self._ax.set_ylim(-100_000, 100_000)
+        self._ax.set_zlim(-100_000, 100_000)
 
         self._canvas.draw_idle()
 
