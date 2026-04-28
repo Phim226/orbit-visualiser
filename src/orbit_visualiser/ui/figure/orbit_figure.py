@@ -87,16 +87,16 @@ class OrbitFigure():
         # Plot the initial orbit
         orbit = self._satellite.orbit
         nu = self._get_anomaly_data(orbit)
-        x, y, _ = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
-        self._line, = self._ax.plot(x, y, color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)
+        x, y, z = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
+        self._line: Line3D = self._ax.plot(x, y, z, color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)[0]
 
         # Plot the central body
         self._plot_central_body()
 
         # Plot the satellite
-        self._sat_point, = self._ax.plot(
-            self._satellite.orbit.radius_of_periapsis, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B"
-        )
+        self._sat_point: Line3D = self._ax.plot(
+            self._satellite.orbit.radius_of_periapsis, 0, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B"
+        )[0]
 
         #self.plot_periapsis_point()
 
@@ -129,14 +129,16 @@ class OrbitFigure():
     def redraw_orbit(self) -> None:
         orbit = self._satellite.orbit
         nu = self._get_anomaly_data(orbit)
-        x, y, _ = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
-        self._line.set_data(x, y)
+        x, y, z = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
+        self._line.set_data_3d(x, y, z)
 
         self._canvas.draw_idle()
 
     def redraw_satellite(self) -> None:
-        x, y, _ = self._satellite.position
-        self._sat_point.set_data((x,), (y,))
+        x, y, z = self._satellite.position
+        self._sat_point.set_xdata((x,))
+        self._sat_point.set_ydata((y,))
+        self._sat_point.set_3d_properties(zs = (z,))
 
         self._canvas.draw_idle()
 
