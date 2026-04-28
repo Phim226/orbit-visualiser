@@ -76,7 +76,7 @@ class OrbitFigure():
         )
 
     def _plot_central_body(self) -> None:
-        u, v = np.meshgrid(np.linspace(0, 2*np.pi, 29), np.linspace(0, np.pi, 29))
+        u, v = np.meshgrid(np.linspace(0, 2*np.pi, 35), np.linspace(0, np.pi, 35))
         r = self._satellite.central_body.r
         x = r*np.cos(u)*np.sin(v)
         y = r*np.sin(u)*np.sin(v)
