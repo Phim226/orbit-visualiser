@@ -337,3 +337,19 @@ def mean_motion(orbit_type: OrbitType, mu: float, p: float, a: float) -> float:
         return 2*np.sqrt(mu/(p**3))
 
     return np.sqrt(mu/abs(a**3))
+
+def inclination(h: NDArray[np.float64]) -> float:
+    """
+    Calculates the orbital inclination from the specific angular momentum vector.
+
+    Parameters
+    ----------
+    h : NDArray[np.float64]
+        Specific angular momentum (km^2/s)
+
+    Returns
+    -------
+    float
+        The orbital inclination (rad)
+    """
+    return np.arccos(h[2]/np.linalg.norm(h))
