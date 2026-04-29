@@ -390,3 +390,26 @@ def right_ascen_of_ascending_node(node_line: NDArray[np.float64]) -> float:
         raan = 2*pi - raan
 
     return raan
+
+def argument_of_periapsis(node_line: NDArray[np.float64], e: NDArray[np.float64]) -> float:
+    """
+    Calculate the argument of periapsis from the node line vector and eccentricity vector.
+
+    Parameters
+    ----------
+    node_line : NDArray[np.float64]
+        The node line vector
+    e : NDArray[np.float64]
+        The eccentricity vector
+
+    Returns
+    -------
+    float
+        The argument of periapsis (rad)
+    """
+    arg_periapsis = np.arccos(np.dot(node_line, e)/(np.linalg.norm(node_line)*np.linalg.norm(e)))
+
+    if e[2] < 0:
+        arg_periapsis = 2*pi - arg_periapsis
+
+    return arg_periapsis
