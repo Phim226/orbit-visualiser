@@ -10,7 +10,7 @@ from .astrodynamics.keplerian.elements import (eccentricity_vector_from_state, e
                                                semi_parameter_from_eccentricity, semimajor_axis,
                                                semiminor_axis, radius_of_periapsis, radius_of_apoapsis,
                                                asymptote_anomaly, turning_angle, aiming_radius,
-                                               orbital_period, mean_motion)
+                                               orbital_period, mean_motion, inclination)
 from .astrodynamics.keplerian.dynamics import (specific_ang_momentum_from_state, specific_ang_momentum,
                                                specific_orbital_energy, characteristic_energy,
                                                excess_velocity, vis_viva_speed)
