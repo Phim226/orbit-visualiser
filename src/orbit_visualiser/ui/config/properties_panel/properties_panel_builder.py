@@ -40,7 +40,7 @@ class PropertiesBuilder(Builder):
             "e_anomaly" : PropertySpec("Eccentric anomaly", "°", lambda sat: np.degrees(sat.eccentric_anomaly)),
             "m_anomaly" : PropertySpec("Mean anomaly", "°", lambda sat: np.degrees(sat.mean_anomaly)),
             "time_periapsis" : PropertySpec("Time since periapsis", "s", lambda sat: sat.time_since_periapsis),
-            "ang_momentum" : PropertySpec("Angular momentum", "km²/s", lambda sat: np.linalg.norm(sat.specific_angular_momentum)),
+            "ang_momentum" : PropertySpec("Angular momentum", "km²/s", lambda sat: np.linalg.norm(sat.orbit.specific_angular_momentum)),
             "speed" : PropertySpec("Orbital speed", "km/s", lambda sat: sat.speed),
             "azim_velocity" : PropertySpec("Azimuthal velocity", "km/s", lambda sat: sat.radial_azimuthal_velocity[1]),
             "radial_velocity" : PropertySpec("Radial velocity", "km/s", lambda sat: sat.radial_azimuthal_velocity[0]),

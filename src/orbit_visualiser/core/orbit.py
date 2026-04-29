@@ -69,6 +69,10 @@ class Orbit():
             raise ValueError("State vectors must only contain finite values.")
 
     @cached_property
+    def specific_angular_momentum(self) -> float:
+        return specific_ang_momentum_from_state(self.position, self.velocity)
+
+    @cached_property
     def eccentricity(self) -> float:
         return eccentricity_from_state(self.position, self.velocity, self.mu)
 
@@ -78,7 +82,7 @@ class Orbit():
 
     @cached_property
     def semi_parameter(self) -> float:
-        return semi_parameter_from_momentum(np.linalg.norm(specific_ang_momentum_from_state(self.position, self.velocity)), self.mu)
+        return semi_parameter_from_momentum(np.linalg.norm(self.specific_angular_momentum), self.mu)
 
     @cached_property
     def radius_of_periapsis(self) -> float:
