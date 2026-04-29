@@ -46,23 +46,28 @@ def eccentricity_from_state(r: NDArray[np.float64], v: NDArray[np.float64], mu: 
     """
     return np.linalg.norm(eccentricity_vector_from_state(r, v, mu))
 
-def true_anomaly_from_state(r: NDArray[np.float64]) -> float:
+def true_anomaly(r: NDArray[np.float64], e: NDArray[np.float64], v_r: float) -> float:
     """
-    Calculates the true anomaly from the current position vector.
+    Calculates the true anomaly from the current position vector, the eccentricity vector and the
+    radial speed.
 
     Parameters
     ----------
     r : NDArray[np.float64]
         Position vector of the satellite (km)
-
+    e : NDArray[np.float64]
+        The eccentricity vector
+    v_r : float
+        The radial speed (km/s)
     Returns
     -------
     float
         True anomaly (rads)
     """
-    true_anomaly = np.atan2(r[1], r[0])
-    if true_anomaly < 0:
-        return true_anomaly + 2*pi
+    true_anomaly = np.arccos(np.dot(e, r)/(np.linalg.norm(e)*np.linalg.norm(r)))
+
+    if v_r < 0:
+        true_anomaly = 2*pi - true_anomaly
 
     return true_anomaly
 

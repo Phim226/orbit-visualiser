@@ -4,7 +4,7 @@ from typing import Sequence
 from orbit_visualiser.core.astrodynamics.keplerian.state import (speed, radial_azimuthal_velocity, escape_velocity,
                                                                  radius_from_state, flight_angle, time_since_periapsis)
 from orbit_visualiser.core.astrodynamics.keplerian.anomalies import mean_anomaly, eccentric_anomaly
-from orbit_visualiser.core.astrodynamics.keplerian.elements import true_anomaly_from_state
+from orbit_visualiser.core.astrodynamics.keplerian.elements import true_anomaly
 from orbit_visualiser.core.orbit import CentralBody, Orbit
 
 class Satellite():
@@ -80,7 +80,8 @@ class Satellite():
 
     @property
     def true_anomaly(self) -> float:
-        return true_anomaly_from_state(self.position)
+        return true_anomaly(self.position, np.linalg.norm(self.orbit.eccentricity),
+                            self.radial_azimuthal_velocity[0])
 
     @property
     def speed(self) -> float:

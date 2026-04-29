@@ -3,7 +3,7 @@ from math import pi
 import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core import (OrbitType, eccentricity_vector_from_state, eccentricity_from_state,
-                                   true_anomaly_from_state, semi_parameter_from_momentum,
+                                   true_anomaly, semi_parameter_from_momentum,
                                    semi_parameter_from_eccentricity, semimajor_axis,
                                    semiminor_axis, radius_of_periapsis, radius_of_apoapsis,
                                    asymptote_anomaly, turning_angle, aiming_radius,
@@ -41,18 +41,18 @@ def test_eccentricity_from_state(
     result = eccentricity_from_state(r, v, mu)
     assert result > expected_mag
 
-@pytest.mark.parametrize("r, expected", [
-    (np.array([50_000.0, 0]), 0),
-    (np.array([0, 50_000.0]), pi/2),
-    (np.array([-50_000.0, 0]), pi),
-    (np.array([0, -50_000.0]), 3*pi/2)
+@pytest.mark.parametrize("r, e, v_r, expected", [
+    (np.array([50_000.0, 0.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0, 0.0),
+    (np.array([0.0, 50_000.0, 0.0]), np.array([1.0, 0.0, 0.0]), 1.0, pi/2),
+    (np.array([-50_000.0, 0.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0, pi),
+    (np.array([0.0, -50_000.0, 0.0]), np.array([1.0, 0.0, 0.0]), -1.0, 3*pi/2)
 ])
-def test_true_anomaly_from_state(r: NDArray[np.float64], expected: float):
+def test_true_anomaly_from_state(r: NDArray[np.float64], e: NDArray[np.float64], v_r: float, expected: float):
     """
-    Test that the formula for calculating the true anomaly from the current position gives the
-    expected value.
+    Test that the formula for calculating the true anomaly from the current position, eccentricity
+    and radial speed gives the expected value.
     """
-    result = true_anomaly_from_state(r)
+    result = true_anomaly(r, e, v_r)
     assert np.isclose(result, expected)
 
 @pytest.mark.parametrize("h, mu, expected", [
