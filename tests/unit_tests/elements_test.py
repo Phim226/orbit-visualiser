@@ -7,7 +7,8 @@ from orbit_visualiser.core import (OrbitType, eccentricity_vector_from_state, ec
                                    semi_parameter_from_eccentricity, semimajor_axis,
                                    semiminor_axis, radius_of_periapsis, radius_of_apoapsis,
                                    asymptote_anomaly, turning_angle, aiming_radius,
-                                   orbital_period, mean_motion, inclination, node_line)
+                                   orbital_period, mean_motion, inclination, node_line,
+                                   right_ascen_of_ascending_node, argument_of_periapsis)
 
 @pytest.mark.parametrize("r, v, mu, expected", [
     (np.array([99_650.0, 0]), np.array([0, 2.0]), 398_600.0, np.array([0.0, 0.0])),
@@ -133,8 +134,8 @@ def test_apoapsis(e: float, a: float, expected: float):
 ])
 def test_asymptote_anomaly(e: float, expected: float):
     """
-    Test that the formula for the true anomaly of the asymptote using the eccentricity gives the expected
-    value.
+    Test that the formula for the true anomaly of the asymptote using the eccentricity gives the
+    expected value.
     """
     result = asymptote_anomaly(e)
     assert np.isclose(result, expected, equal_nan = True)
@@ -196,8 +197,8 @@ def test_mean_motion(orbit_type: OrbitType, mu: float, p: float, a: float, expec
 ])
 def test_inclination(h: NDArray[np.float64], expected: float):
     """
-    Test that the formula for the inclination using the specific angular
-    momentum gives the expected value.
+    Test that the formula for the inclination using the specific angular momentum gives the expected
+    value.
     """
     result = inclination(h)
     assert np.isclose(result, expected)
@@ -208,8 +209,38 @@ def test_inclination(h: NDArray[np.float64], expected: float):
 ])
 def test_node_line(h: NDArray[np.float64], expected: NDArray[np.float64]):
     """
-    Test that the formula for the node line using the specific angular
-    momentum gives the expected value.
+    Test that the formula for the node line using the specific angular momentum gives the expected
+    value.
     """
     result = node_line(h)
     assert np.allclose(result, expected)
+
+@pytest.mark.parametrize("node_line, expected", [
+    (np.array([1.0, 0.0, 0.0]), 0.0),
+    (np.array([0.0, 1.0, 0.0]), pi/2),
+    (np.array([-1.0, 0.0, 0.0]), pi),
+    (np.array([0.0, -1.0, 0.0]), 3*pi/2),
+    (np.array([0.0, 0.0, 0.0]), np.nan)
+])
+def test_right_ascension_of_ascending_node(node_line: NDArray[np.float64], expected: float):
+    """
+    Test that the formula for the right ascension of the ascending node using the node line gives
+    the expected value.
+    """
+    result = right_ascen_of_ascending_node(node_line)
+    assert np.isclose(result, expected, equal_nan = True)
+
+@pytest.mark.parametrize("node_line, e, expected", [
+    (np.array([1.0, 0.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0),
+    (np.array([1.0, 0.0, 0.0]), np.array([0.0, 1.0, 0.0]), pi/2),
+    (np.array([1.0, 0.0, 0.0]), np.array([-1.0, 0.0, 0.0]), pi),
+    (np.array([1.0, 0.0, 0.0]), np.array([0.0, -1.0, -1.0]), 3*pi/2),
+    (np.array([0.0, 0.0, 0.0]), np.array([1.0, 2.0, 2.0]), np.nan)
+])
+def test_argument_of_periapsis(node_line: NDArray[np.float64], e: NDArray[np.float64], expected: float):
+    """
+    Test that the formula for the argument of periapsis using the node line and the eccentricity
+    gives the expected value.
+    """
+    result = argument_of_periapsis(node_line, e)
+    assert np.isclose(result, expected, equal_nan = True)
