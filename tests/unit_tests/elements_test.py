@@ -7,7 +7,7 @@ from orbit_visualiser.core import (OrbitType, eccentricity_vector_from_state, ec
                                    semi_parameter_from_eccentricity, semimajor_axis,
                                    semiminor_axis, radius_of_periapsis, radius_of_apoapsis,
                                    asymptote_anomaly, turning_angle, aiming_radius,
-                                   orbital_period, mean_motion, inclination)
+                                   orbital_period, mean_motion, inclination, node_line)
 
 @pytest.mark.parametrize("r, v, mu, expected", [
     (np.array([99_650.0, 0]), np.array([0, 2.0]), 398_600.0, np.array([0.0, 0.0])),
@@ -41,10 +41,10 @@ def test_eccentricity_from_state(
     assert result > expected_mag
 
 @pytest.mark.parametrize("r, expected", [
-    ([50_000.0, 0], 0),
-    ([0, 50_000.0], pi/2),
-    ([-50_000.0, 0], pi),
-    ([0, -50_000.0], 3*pi/2)
+    (np.array([50_000.0, 0]), 0),
+    (np.array([0, 50_000.0]), pi/2),
+    (np.array([-50_000.0, 0]), pi),
+    (np.array([0, -50_000.0]), 3*pi/2)
 ])
 def test_true_anomaly_from_state(r: NDArray[np.float64], expected: float):
     """
@@ -190,9 +190,9 @@ def test_mean_motion(orbit_type: OrbitType, mu: float, p: float, a: float, expec
     assert np.isclose(result, expected)
 
 @pytest.mark.parametrize("h, expected", [
-    ([0, 0, 1], 0.0),
-    ([1, 0, 0], pi/2),
-    ([0, 0, -1], pi)
+    (np.array([0.0, 0.0, 1.0]), 0.0),
+    (np.array([1.0, 0.0, 0.0]), pi/2),
+    (np.array([0.0, 0.0, -1.0]), pi)
 ])
 def test_inclination(h: NDArray[np.float64], expected: float):
     """
@@ -201,3 +201,15 @@ def test_inclination(h: NDArray[np.float64], expected: float):
     """
     result = inclination(h)
     assert np.isclose(result, expected)
+
+@pytest.mark.parametrize("h, expected", [
+    (np.array([0.0, 0.0, 1.0]), np.array([0.0, 0.0, 0.0])),
+    (np.array([1.0, 2.0, 0.0]), np.array([-2.0, 1.0, 0.0]))
+])
+def test_node_line(h: NDArray[np.float64], expected: NDArray[np.float64]):
+    """
+    Test that the formula for the node line using the specific angular
+    momentum gives the expected value.
+    """
+    result = node_line(h)
+    assert np.allclose(result, expected)
