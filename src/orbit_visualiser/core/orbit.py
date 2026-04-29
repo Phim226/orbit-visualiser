@@ -7,7 +7,8 @@ from orbit_visualiser.core.astrodynamics.keplerian.state import state_pf_from_e_
 from orbit_visualiser.core.astrodynamics.keplerian.elements import (eccentricity_from_state, semi_parameter_from_momentum,
                                                                     radius_of_periapsis, semimajor_axis, semiminor_axis,
                                                                     radius_of_apoapsis, asymptote_anomaly, turning_angle,
-                                                                    aiming_radius, orbital_period, mean_motion)
+                                                                    aiming_radius, orbital_period, mean_motion, inclination,
+                                                                    node_line, right_ascen_of_ascending_node, argument_of_periapsis)
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import (specific_orbital_energy, characteristic_energy,
                                                                     excess_velocity, specific_ang_momentum_from_state)
 from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type
@@ -68,6 +69,7 @@ class Orbit():
         if not np.all(np.isfinite(self.position)) or not np.all(np.isfinite(self.velocity)):
             raise ValueError("State vectors must only contain finite values.")
 
+    # ------ Core orbital elements -------
     @cached_property
     def specific_angular_momentum(self) -> float:
         return specific_ang_momentum_from_state(self.position, self.velocity)
@@ -75,6 +77,20 @@ class Orbit():
     @cached_property
     def eccentricity(self) -> float:
         return eccentricity_from_state(self.position, self.velocity, self.mu)
+
+    @cached_property
+    def inclination(self) -> float:
+        return inclination(self.specific_angular_momentum)
+
+    @cached_property
+    def right_ascen_of_ascend_node(self) -> float:
+        return right_ascen_of_ascending_node(node_line(self.specific_angular_momentum))
+
+    @cached_property
+    def argument_of_periapsis(self) -> float:
+        return argument_of_periapsis(node_line(self.specific_angular_momentum), self.eccentricity)
+
+    # ------------------------------------
 
     @cached_property
     def orbit_type(self) -> OrbitType:
