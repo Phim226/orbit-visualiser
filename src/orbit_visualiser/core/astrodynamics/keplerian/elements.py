@@ -353,3 +353,40 @@ def inclination(h: NDArray[np.float64]) -> float:
         The orbital inclination (rad)
     """
     return np.arccos(h[2]/np.linalg.norm(h))
+
+def node_line(h: NDArray[np.float64]) -> NDArray[np.float64]:
+    """
+    Calculates the vector defining the node line from the specific angular momentum.
+
+    Parameters
+    ----------
+    h : NDArray[np.float64]
+        Specific angular momentum (km^2/s)
+
+    Returns
+    -------
+    NDArray[np.float64]
+        The node line vector
+    """
+    return np.cross([0, 0, 1], h)
+
+def right_ascen_of_ascending_node(node_line: NDArray[np.float64]) -> float:
+    """
+    Calculates the right ascension of the ascending node from the node line vector.
+
+    Parameters
+    ----------
+    node_line : NDArray[np.float64]
+        Node line vector
+
+    Returns
+    -------
+    float
+        Right ascension of the ascending node (rad)
+    """
+    raan = np.arccos(node_line[2]/np.linalg.norm(node_line))
+
+    if node_line[1] < 0:
+        raan = 2*pi - raan
+
+    return raan
