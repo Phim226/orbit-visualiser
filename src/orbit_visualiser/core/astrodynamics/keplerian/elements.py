@@ -373,6 +373,7 @@ def node_line(h: NDArray[np.float64]) -> NDArray[np.float64]:
 def right_ascen_of_ascending_node(node_line: NDArray[np.float64]) -> float:
     """
     Calculates the right ascension of the ascending node from the node line vector.
+    Returns nan if node_line is 0.
 
     Parameters
     ----------
@@ -384,7 +385,10 @@ def right_ascen_of_ascending_node(node_line: NDArray[np.float64]) -> float:
     float
         Right ascension of the ascending node (rad)
     """
-    raan = np.arccos(node_line[2]/np.linalg.norm(node_line))
+    if np.allclose(node_line, np.zeros(node_line.shape)):
+        return np.nan
+
+    raan = np.arccos(node_line[0]/np.linalg.norm(node_line))
 
     if node_line[1] < 0:
         raan = 2*pi - raan
@@ -394,6 +398,7 @@ def right_ascen_of_ascending_node(node_line: NDArray[np.float64]) -> float:
 def argument_of_periapsis(node_line: NDArray[np.float64], e: NDArray[np.float64]) -> float:
     """
     Calculate the argument of periapsis from the node line vector and eccentricity vector.
+    Returns nan if node_line is 0.
 
     Parameters
     ----------
@@ -407,6 +412,9 @@ def argument_of_periapsis(node_line: NDArray[np.float64], e: NDArray[np.float64]
     float
         The argument of periapsis (rad)
     """
+    if np.allclose(node_line, np.zeros(node_line.shape)):
+        return np.nan
+
     arg_periapsis = np.arccos(np.dot(node_line, e)/(np.linalg.norm(node_line)*np.linalg.norm(e)))
 
     if e[2] < 0:
