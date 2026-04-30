@@ -8,7 +8,8 @@ from orbit_visualiser.core.astrodynamics.keplerian.elements import (eccentricity
                                                                     radius_of_periapsis, semimajor_axis, semiminor_axis,
                                                                     radius_of_apoapsis, asymptote_anomaly, turning_angle,
                                                                     aiming_radius, orbital_period, mean_motion, inclination,
-                                                                    node_line, right_ascen_of_ascending_node, argument_of_periapsis)
+                                                                    node_line, right_ascen_of_ascending_node, argument_of_periapsis,
+                                                                    eccentricity_vector_from_state)
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import (specific_orbital_energy, characteristic_energy,
                                                                     excess_velocity, specific_ang_momentum_from_state)
 from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type
@@ -91,6 +92,10 @@ class Orbit():
         return argument_of_periapsis(node_line(self.specific_angular_momentum), self.eccentricity)
 
     # ------------------------------------
+
+    @cached_property
+    def eccentricity_vector(self) -> NDArray[np.float64]:
+        return eccentricity_vector_from_state(self.position, self.velocity, self.mu)
 
     @cached_property
     def orbit_type(self) -> OrbitType:
