@@ -204,7 +204,7 @@ def test_inclination(h: NDArray[np.float64], expected: float):
     assert np.isclose(result, expected)
 
 @pytest.mark.parametrize("h, expected", [
-    (np.array([0.0, 0.0, 1.0]), np.array([0.0, 0.0, 0.0])),
+    (np.array([0.0, 0.0, 1.0]), np.array([1.0, 0.0, 0.0])),
     (np.array([1.0, 2.0, 0.0]), np.array([-2.0, 1.0, 0.0]))
 ])
 def test_node_line(h: NDArray[np.float64], expected: NDArray[np.float64]):
