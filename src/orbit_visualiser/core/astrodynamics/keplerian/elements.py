@@ -382,7 +382,11 @@ def node_line(h: NDArray[np.float64]) -> NDArray[np.float64]:
     NDArray[np.float64]
         The node line vector
     """
-    return np.cross([0, 0, 1], h)
+    node_line = np.cross([0, 0, 1], h)
+    if np.allclose(node_line, np.zeros(node_line.shape)):
+        node_line = np.array([1.0, 0.0, 0.0])
+
+    return node_line
 
 def right_ascen_of_ascending_node(node_line: NDArray[np.float64]) -> float:
     """
