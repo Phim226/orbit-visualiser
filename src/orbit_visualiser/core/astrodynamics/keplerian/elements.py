@@ -403,9 +403,6 @@ def right_ascen_of_ascending_node(node_line: NDArray[np.float64]) -> float:
     float
         Right ascension of the ascending node (rad)
     """
-    if np.allclose(node_line, np.zeros(node_line.shape)):
-        return np.nan
-
     raan = np.arccos(node_line[0]/np.linalg.norm(node_line))
 
     if node_line[1] < 0:
