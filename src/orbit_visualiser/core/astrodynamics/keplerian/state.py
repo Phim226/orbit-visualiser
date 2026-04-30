@@ -93,6 +93,23 @@ def perifocal_velocity(e: float, mu: float, h: float, nu: float | NDArray[np.flo
     z = 0 if isinstance(nu, float) else np.zeros(nu.shape)
     return (mu/h)*np.array([-np.sin(nu), e + np.cos(nu), z])
 
+def radial_speed_from_state(r: NDArray[np.float64], v: NDArray[np.float64]) -> float:
+    """
+    Calculates the radial speed from the position and velocity vectors.
+
+    Parameters
+    ----------
+    r : NDArray[np.float64]
+        Position vector (km)
+    v : NDArray[np.float64]
+        Velocity vector (km/s)
+
+    Returns
+    -------
+    float
+        Radial speed (km/s)
+    """
+    return np.dot(r, v)/np.linalg.norm(r)
 
 def radial_azimuthal_velocity(
         nu: float,
