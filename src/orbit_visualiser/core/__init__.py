@@ -18,3 +18,4 @@ from .astrodynamics.keplerian.dynamics import (specific_ang_momentum_from_state,
 from .astrodynamics.keplerian.state import (perifocal_position, perifocal_velocity, radial_azimuthal_velocity,
                                             speed, radius_from_state, radius_from_orbit_eq, escape_velocity,
                                             flight_angle, time_since_periapsis)
+from .astrodynamics.transformations import eci_to_perifocal_trans_mat, perifocal_to_eci_trans_mat
