@@ -64,9 +64,18 @@ def true_anomaly(r: NDArray[np.float64], e: NDArray[np.float64], v_r: float) -> 
     float
         True anomaly (rads)
     """
-    true_anomaly = np.arccos(np.dot(e, r)/(np.linalg.norm(e)*np.linalg.norm(r)))
+    per_vect = e
+    per_vect_norm = np.linalg.norm(e)
 
-    if v_r < 0:
+    # per_vect stands for periapsis vector. In the case where e = 0 then we set the periapsis vector
+    # to be the x axis, so that the argument of periapsis is 0. (Will break once inclination is considered properly)
+    if np.isclose(per_vect_norm, 0):
+        per_vect = np.array([1.0, 0.0, 0.0])
+        per_vect_norm = np.linalg.norm(per_vect)
+
+    true_anomaly = np.arccos(np.dot(per_vect, r)/(per_vect_norm*np.linalg.norm(r)))
+
+    if (v_r < 0 and not np.isclose(v_r, 0)) or (np.isclose(np.linalg.norm(e), 0) and r[1] < 0):
         true_anomaly = 2*pi - true_anomaly
 
     return true_anomaly
