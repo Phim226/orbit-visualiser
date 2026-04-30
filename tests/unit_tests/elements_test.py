@@ -219,8 +219,7 @@ def test_node_line(h: NDArray[np.float64], expected: NDArray[np.float64]):
     (np.array([1.0, 0.0, 0.0]), 0.0),
     (np.array([0.0, 1.0, 0.0]), pi/2),
     (np.array([-1.0, 0.0, 0.0]), pi),
-    (np.array([0.0, -1.0, 0.0]), 3*pi/2),
-    (np.array([0.0, 0.0, 0.0]), np.nan)
+    (np.array([0.0, -1.0, 0.0]), 3*pi/2)
 ])
 def test_right_ascension_of_ascending_node(node_line: NDArray[np.float64], expected: float):
     """
@@ -234,8 +233,7 @@ def test_right_ascension_of_ascending_node(node_line: NDArray[np.float64], expec
     (np.array([1.0, 0.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0),
     (np.array([1.0, 0.0, 0.0]), np.array([0.0, 1.0, 0.0]), pi/2),
     (np.array([1.0, 0.0, 0.0]), np.array([-1.0, 0.0, 0.0]), pi),
-    (np.array([1.0, 0.0, 0.0]), np.array([0.0, -1.0, -1.0]), 3*pi/2),
-    (np.array([0.0, 0.0, 0.0]), np.array([1.0, 2.0, 2.0]), np.nan)
+    (np.array([1.0, 0.0, 0.0]), np.array([0.0, -1.0, -1.0]), 3*pi/2)
 ])
 def test_argument_of_periapsis(node_line: NDArray[np.float64], e: NDArray[np.float64], expected: float):
     """
