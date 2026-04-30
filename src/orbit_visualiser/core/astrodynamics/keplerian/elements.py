@@ -427,8 +427,8 @@ def argument_of_periapsis(node_line: NDArray[np.float64], e: NDArray[np.float64]
     float
         The argument of periapsis (rad)
     """
-    if np.allclose(node_line, np.zeros(node_line.shape)):
-        return np.nan
+    if np.allclose(e, np.zeros(e.shape)):
+        e = np.array([1.0, 0.0, 0.0])
 
     arg_periapsis = np.arccos(np.dot(node_line, e)/(np.linalg.norm(node_line)*np.linalg.norm(e)))
 
