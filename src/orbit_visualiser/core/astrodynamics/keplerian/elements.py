@@ -3,6 +3,7 @@ import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core.astrodynamics.types import OrbitType
 from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type
+from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum_from_state
 
 def eccentricity_vector_from_state(r: NDArray[np.float64], v: NDArray[np.float64], mu: float) -> NDArray[np.float64]:
     """
@@ -61,7 +62,7 @@ def eccentricity_from_state(r: NDArray[np.float64], v: NDArray[np.float64], mu: 
     v_norm = np.linalg.norm(v)
     return np.sqrt((v_norm**2*r_norm - mu)**2 + (2*mu - v_norm**2*r_norm)*np.dot(r, v)**2/r_norm)/mu
 
-def true_anomaly(r: NDArray[np.float64], e: NDArray[np.float64], v_r: float) -> float:
+def true_anomaly(r: NDArray[np.float64], e_vect: NDArray[np.float64], e: float, v_r: float) -> float:
     """
     Calculates the true anomaly from the current position vector, the eccentricity vector and the
     radial speed.
@@ -70,8 +71,10 @@ def true_anomaly(r: NDArray[np.float64], e: NDArray[np.float64], v_r: float) -> 
     ----------
     r : NDArray[np.float64]
         Position vector of the satellite (km)
-    e : NDArray[np.float64]
+    e_vect : NDArray[np.float64]
         The eccentricity vector
+    e : float
+        The orbital eccentricity
     v_r : float
         The radial speed (km/s)
     Returns
@@ -79,18 +82,9 @@ def true_anomaly(r: NDArray[np.float64], e: NDArray[np.float64], v_r: float) -> 
     float
         True anomaly (rads)
     """
-    per_vect = e
-    per_vect_norm = np.linalg.norm(e)
+    true_anomaly = np.arccos(np.dot(e_vect, r)/(np.linalg.norm(e_vect)*np.linalg.norm(r)))
 
-    # per_vect stands for periapsis vector. In the case where e = 0 then we set the periapsis vector
-    # to be the x axis, so that the argument of periapsis is 0. (Will break once inclination is considered properly)
-    if np.isclose(per_vect_norm, 0):
-        per_vect = np.array([1.0, 0.0, 0.0])
-        per_vect_norm = np.linalg.norm(per_vect)
-
-    true_anomaly = np.arccos(np.dot(per_vect, r)/(per_vect_norm*np.linalg.norm(r)))
-
-    if (v_r < 0 and not np.isclose(v_r, 0)) or (np.isclose(np.linalg.norm(e), 0) and r[1] < 0):
+    if (v_r < 0 and not np.isclose(v_r, 0)) or (orbit_type(e) is OrbitType.CIRCULAR and r[1] < 0):
         true_anomaly = 2*pi - true_anomaly
 
     return true_anomaly
