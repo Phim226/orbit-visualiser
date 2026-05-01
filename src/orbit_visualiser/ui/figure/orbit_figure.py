@@ -78,12 +78,12 @@ class OrbitFigure():
         )
 
     def _plot_central_body(self) -> None:
-        u, v = np.meshgrid(np.linspace(0, 2*np.pi, 35), np.linspace(0, np.pi, 35))
+        u, v = np.meshgrid(np.linspace(0, 2*np.pi, 25), np.linspace(0, np.pi, 25))
         r = self._satellite.central_body.r
         x = r*np.cos(u)*np.sin(v)
         y = r*np.sin(u)*np.sin(v)
         z = r*np.cos(v)
-        self._ax.plot_surface(x, y, z, zorder = 10, facecolor = "#4C6A92", edgecolor = "#3C5474", rstride = 2, cstride = 2)
+        self._ax.plot_wireframe(x, y, z, zorder = 10, edgecolor = "#3C5474")
 
     def _initialise_plot(self) -> None:
         # Plot the initial orbit
