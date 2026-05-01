@@ -82,7 +82,15 @@ def true_anomaly(r: NDArray[np.float64], e_vect: NDArray[np.float64], e: float, 
     float
         True anomaly (rads)
     """
-    true_anomaly = np.arccos(np.dot(e_vect, r)/(np.linalg.norm(e_vect)*np.linalg.norm(r)))
+    e_norm = e_vect/np.linalg.norm(e_vect)
+    r_norm = r/np.linalg.norm(r)
+    dot = np.dot(e_norm, r_norm)
+    if dot > 1:
+        dot = 1
+    elif dot < -1:
+        dot = -1
+
+    true_anomaly = np.arccos(dot)
 
     if (v_r < 0 and not np.isclose(v_r, 0)) or (orbit_type(e) is OrbitType.CIRCULAR and r[1] < 0):
         true_anomaly = 2*pi - true_anomaly
