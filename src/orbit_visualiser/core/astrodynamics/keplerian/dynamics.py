@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core.astrodynamics.types import OrbitType
+from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type
 
 def specific_ang_momentum_from_state(r: NDArray[np.float64], v: NDArray[np.float64]) -> NDArray[np.float64]:
     """
@@ -83,15 +84,15 @@ def characteristic_energy(mu: float, a: float) -> float:
 
     return -mu/a
 
-def excess_velocity(orbit_type: OrbitType, mu: float, a: float) -> float:
+def excess_velocity(e: float, mu: float, a: float) -> float:
     """
     Calculates the hyperbolic excess velocity (the velocity magnitude at infinity) for open orbits
     from the semimajor axis and gravitational parameter.
 
     Parameters
     ----------
-    orbit_type : OrbitType
-        The orbit type enum
+    e : float
+        The eccentricity
     mu : float
         Gravitational parameter (km^3/s^2)
     a : float
@@ -102,10 +103,11 @@ def excess_velocity(orbit_type: OrbitType, mu: float, a: float) -> float:
     float
         The hyperbolic excess velocity (km/s)
     """
-    if orbit_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
+    orb_type = orbit_type(e)
+    if orb_type in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return np.nan
 
-    elif orbit_type is OrbitType.PARABOLIC:
+    elif orb_type is OrbitType.PARABOLIC:
         return 0.0
 
     return np.sqrt(mu/abs(a))
