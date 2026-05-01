@@ -165,8 +165,8 @@ class Orbit():
         return excess_speed(self.eccentricity, self.mu, self.semimajor_axis)
 
     @classmethod
-    def from_orbital_elements(cls, e: float, rp: float, nu: float, mu: float,
-                              raan: float = 0.0, i: float = 0.0, omega: float = 0.0):
+    def from_orbital_elements(cls, e: float, rp: float, nu: float, raan: float,
+                              i: float, omega: float, mu: float,):
         """
         Alternative constructor for the Orbit class. Takes the orbital elements and the
         gravitational parameter as arguments.
@@ -179,14 +179,14 @@ class Orbit():
             Radius of periapsis (km)
         nu : float
             The true anomaly of the satellite (rad)
-        mu : float
-            The gravitational parameter of the central body (km^3/s^2)
         raan : float
             The right ascension of the ascending node (rad), default = 0.0
         i : float
             The orbital inclination (rad), default = 0.0
         omega : float
             The argument of periapsis (rad), default = 0.0
+        mu : float
+            The gravitational parameter of the central body (km^3/s^2)
 
         Returns
         -------
