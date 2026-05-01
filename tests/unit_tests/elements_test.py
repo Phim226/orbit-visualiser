@@ -164,30 +164,30 @@ def test_aiming_radius(b: float, expected: float):
     result = aiming_radius(b)
     assert np.isclose(result, expected, equal_nan = True)
 
-@pytest.mark.parametrize("orbit_type, mu, a, expected", [
-    (OrbitType.PARABOLIC, 398_600.0, 20_000, np.nan),
-    (OrbitType.HYPERBOLIC, 398_600.0, 20_000, np.nan),
-    (OrbitType.ELLIPTICAL, 398_600.0, 20_000, (2*pi/np.sqrt(398_600.0))*np.sqrt(20_000)**3)
+@pytest.mark.parametrize("e, mu, a, expected", [
+    (1.0, 398_600.0, 20_000, np.nan),
+    (1.5, 398_600.0, 20_000, np.nan),
+    (0.5, 398_600.0, 20_000, (2*pi/np.sqrt(398_600.0))*np.sqrt(20_000)**3)
 ])
-def test_orbital_period(orbit_type: OrbitType, mu: float, a: float, expected: float):
+def test_orbital_period(e: float, mu: float, a: float, expected: float):
     """
     Test that the formula for the orbital period using the gravitational parameter and semi-major
     axis gives the expected value.
     """
-    result = orbital_period(orbit_type, mu, a)
+    result = orbital_period(e, mu, a)
     assert np.isclose(result, expected, equal_nan = True)
 
-@pytest.mark.parametrize("orbit_type, mu, p, a, expected", [
-    (OrbitType.PARABOLIC, 398_600.0, 10_000, 20_000, 2*np.sqrt(398_600.0/(10_000**3))),
-    (OrbitType.HYPERBOLIC, 398_600.0, 10_000, -20_000, np.sqrt(398_600.0/abs(-20_000**3))),
-    (OrbitType.ELLIPTICAL, 398_600.0, 10_000, 20_000, np.sqrt(398_600.0/abs(20_000**3))),
+@pytest.mark.parametrize("e, mu, p, a, expected", [
+    (1.0, 398_600.0, 10_000, 20_000, 2*np.sqrt(398_600.0/(10_000**3))),
+    (1.5, 398_600.0, 10_000, -20_000, np.sqrt(398_600.0/abs(-20_000**3))),
+    (0.5, 398_600.0, 10_000, 20_000, np.sqrt(398_600.0/abs(20_000**3))),
 ])
-def test_mean_motion(orbit_type: OrbitType, mu: float, p: float, a: float, expected: float):
+def test_mean_motion(e: float, mu: float, p: float, a: float, expected: float):
     """
     Test that the formula for the mean motion using the gravitational parameter and semi-major
     axis gives the expected value.
     """
-    result = mean_motion(orbit_type, mu, p, a)
+    result = mean_motion(e, mu, p, a)
     assert np.isclose(result, expected)
 
 @pytest.mark.parametrize("h, expected", [

@@ -135,11 +135,11 @@ class Orbit():
 
     @cached_property
     def orbital_period(self) -> float:
-        return orbital_period(self.orbit_type, self.mu, self.semimajor_axis)
+        return orbital_period(self.eccentricity, self.mu, self.semimajor_axis)
 
     @cached_property
     def mean_motion(self) -> float:
-        return mean_motion(self.orbit_type, self.mu, self.semi_parameter, self.semimajor_axis)
+        return mean_motion(self.eccentricity, self.mu, self.semi_parameter, self.semimajor_axis)
 
     @cached_property
     def specific_energy(self) -> float:
@@ -151,7 +151,7 @@ class Orbit():
 
     @cached_property
     def hyperbolic_excess_velocity(self) -> float:
-        return excess_velocity(self.orbit_type, self.mu, self.semimajor_axis)
+        return excess_velocity(self.eccentricity, self.mu, self.semimajor_axis)
 
     @classmethod
     def from_orbital_elements(cls, e: float, rp: float, mu: float, nu: float):

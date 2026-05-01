@@ -304,14 +304,14 @@ def aiming_radius(b: float) -> float:
 
     return -b
 
-def orbital_period(orbit_type: OrbitType, mu: float, a: float) -> float:
+def orbital_period(e: float, mu: float, a: float) -> float:
     """
     Calculates the orbital period of closed orbits.
 
     Parameters
     ----------
-    orbit_type : OrbitType
-        The orbit type enum
+    e : float
+        The eccentricity
     mu : float
         Gravitational parameter (km^3/s^2)
     a : float
@@ -322,19 +322,19 @@ def orbital_period(orbit_type: OrbitType, mu: float, a: float) -> float:
     float
         The orbital period (s)
     """
-    if orbit_type not in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
+    if orbit_type(e) not in (OrbitType.CIRCULAR, OrbitType.ELLIPTICAL):
         return np.nan
 
     return (2*pi/np.sqrt(mu))*np.sqrt(a)**3
 
-def mean_motion(orbit_type: OrbitType, mu: float, p: float, a: float) -> float:
+def mean_motion(e: float, mu: float, p: float, a: float) -> float:
     """
     Calculates the mean motion, using different formulae based on orbit type.
 
     Parameters
     ----------
-    orbit_type : OrbitType
-        The orbit type enum
+    e : float
+        The eccentricity
     mu : float
         Gravitational parameter (km^3/s^2)
     p : float
@@ -347,7 +347,7 @@ def mean_motion(orbit_type: OrbitType, mu: float, p: float, a: float) -> float:
     float
         The mean motion (rads/s)
     """
-    if orbit_type is OrbitType.PARABOLIC:
+    if orbit_type(e) is OrbitType.PARABOLIC:
         return 2*np.sqrt(mu/(p**3))
 
     return np.sqrt(mu/abs(a**3))
