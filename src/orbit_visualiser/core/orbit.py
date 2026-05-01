@@ -102,6 +102,10 @@ class Orbit():
         return orbit_type(self.eccentricity)
 
     @cached_property
+    def orbit_motion_type(self) -> OrbitMotion:
+        return orbit_motion_type(self.inclination)
+
+    @cached_property
     def semi_parameter(self) -> float:
         return semi_parameter_from_momentum(np.linalg.norm(self.specific_angular_momentum), self.mu)
 
