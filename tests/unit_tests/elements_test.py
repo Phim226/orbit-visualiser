@@ -2,7 +2,7 @@ import pytest
 from math import pi
 import numpy as np
 from numpy.typing import NDArray
-from orbit_visualiser.core import (OrbitType, eccentricity_vector_from_state, eccentricity_from_state,
+from orbit_visualiser.core import (eccentricity_vector_from_state, eccentricity_from_state,
                                    true_anomaly, semi_parameter_from_momentum,
                                    semi_parameter_from_eccentricity, semimajor_axis,
                                    semiminor_axis, radius_of_periapsis, radius_of_apoapsis,
