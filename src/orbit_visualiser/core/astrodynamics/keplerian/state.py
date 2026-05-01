@@ -10,8 +10,8 @@ from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_t
 def state_pf_from_e_rp(
         e: float,
         rp: float,
-        mu: float,
         nu: float,
+        mu: float,
         state: Literal["pos", "vel", "both"] = "both"
     ) -> list[NDArray[np.float64]]:
     """
@@ -25,10 +25,10 @@ def state_pf_from_e_rp(
         Eccentricity
     rp : float
         Radius of periapsis (km)
-    mu : float
-        Gravitational parameter (km^3/s^2)
     nu : float
         True anomaly (rads)
+    mu : float
+        Gravitational parameter (km^3/s^2)
     state : Literal["pos", "vel", "both"]
         String literal indicating the state vector(s) being returned, default = both
     Returns
