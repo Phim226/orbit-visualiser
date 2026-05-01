@@ -11,4 +11,4 @@ class Preset():
     gravitational_parameter: float
     radius: float
 
-initial_config: Preset = Preset(0.0, 50_000.0, 0.0, 0.0, 0.0, 398600.0, 6378.0)
+initial_config: Preset = Preset(0.0, 50_000.0, 0.0, 0.0, 0.0, 0.0, 398600.0, 6378.0)
