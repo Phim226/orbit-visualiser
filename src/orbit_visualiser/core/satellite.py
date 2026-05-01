@@ -15,9 +15,9 @@ class Satellite():
     Parameters
     ----------
     position : Sequence | NDArray[np.float64]
-        The initial position vector of the satellite (km)
+        The initial ECI position vector of the satellite (km)
     velocity : float
-        The initial velocity vector of the satellite (km/s)
+        The initial ECI velocity vector of the satellite (km/s)
     central_body: CentralBody
         The CentralBody object representing the body that the satellite is orbiting
     """
@@ -38,12 +38,12 @@ class Satellite():
     @property
     def position(self) -> Sequence | NDArray[np.float64]:
         """
-        Perifocal position of the satellite.
+        ECI position of the satellite.
 
         Returns
         -------
         Sequence | NDArray[np.float64]
-            Perifocal position vector (km)
+            ECI position vector (km)
         """
         return self._pos
 
@@ -54,12 +54,12 @@ class Satellite():
     @property
     def velocity(self) -> Sequence | NDArray[np.float64]:
         """
-        Perifocal velocity of the satellite.
+        ECI velocity of the satellite.
 
         Returns
         -------
         Sequence | NDArray[np.float64]
-            Perifocal velocity vector (km/s)
+            ECI velocity vector (km/s)
         """
         return self._vel
 
