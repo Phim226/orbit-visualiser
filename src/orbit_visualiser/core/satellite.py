@@ -82,7 +82,7 @@ class Satellite():
     @property
     def true_anomaly(self) -> float:
         return true_anomaly(self.position, self.orbit.eccentricity_vector,
-                            radial_speed_from_state(self.position, self.velocity))
+                            self.orbit.eccentricity, radial_speed_from_state(self.position, self.velocity))
 
     @property
     def speed(self) -> float:
