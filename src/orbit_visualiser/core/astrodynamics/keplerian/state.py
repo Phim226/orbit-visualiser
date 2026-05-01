@@ -203,7 +203,7 @@ def radius_from_orbit_eq(nu: float, asymp_anomaly: float, p: float, e: float) ->
 
     return p/(1 + e*np.cos(nu))
 
-def escape_velocity(nu: float, asymp_anomaly: float, mu: float, r: float) -> float:
+def escape_speed(nu: float, asymp_anomaly: float, mu: float, r: float) -> float:
     """
     Calculates escape velocity at the given orbital radius and gravitational parameter.
 

@@ -84,7 +84,7 @@ def characteristic_energy(mu: float, a: float) -> float:
 
     return -mu/a
 
-def excess_velocity(e: float, mu: float, a: float) -> float:
+def excess_speed(e: float, mu: float, a: float) -> float:
     """
     Calculates the hyperbolic excess velocity (the velocity magnitude at infinity) for open orbits
     from the semimajor axis and gravitational parameter.

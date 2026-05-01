@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 from typing import Sequence
-from orbit_visualiser.core.astrodynamics.keplerian.state import (speed, radial_azimuthal_velocity, escape_velocity,
+from orbit_visualiser.core.astrodynamics.keplerian.state import (speed, radial_azimuthal_velocity, escape_speed,
                                                                  radius_from_state, flight_angle, time_since_periapsis,
                                                                  radial_speed_from_state)
 from orbit_visualiser.core.astrodynamics.keplerian.anomalies import mean_anomaly, eccentric_anomaly
@@ -105,9 +105,9 @@ class Satellite():
         return flight_angle(self.true_anomaly, orbit.asymptote_anomaly, orbit.eccentricity)
 
     @property
-    def escape_velocity(self) -> float:
+    def escape_speed(self) -> float:
         orbit = self.orbit
-        return escape_velocity(
+        return escape_speed(
             self.true_anomaly,
             orbit.asymptote_anomaly,
             self.central_body.mu,

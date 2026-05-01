@@ -30,7 +30,7 @@ class PropertiesBuilder(Builder):
             "aim_radius" : PropertySpec("Aiming radius", "km", lambda sat: sat.orbit.aiming_radius),
             "spec_energy" : PropertySpec("Specific orbital energy", "km²/s²", lambda sat: sat.orbit.specific_energy),
             "char_energy" : PropertySpec("Characteristic energy", "km²/s²", lambda sat: sat.orbit.characteristic_energy),
-            "excess_velocity" : PropertySpec("Excess velocity", "km/s", lambda sat: sat.orbit.hyperbolic_excess_velocity)
+            "excess_speed" : PropertySpec("Excess speed", "km/s", lambda sat: sat.orbit.hyperbolic_excess_speed)
         }
 
         self._satellite_properties: dict[str, PropertySpec[Satellite]] = {
@@ -42,10 +42,10 @@ class PropertiesBuilder(Builder):
             "time_periapsis" : PropertySpec("Time since periapsis", "s", lambda sat: sat.time_since_periapsis),
             "ang_momentum" : PropertySpec("Angular momentum", "km²/s", lambda sat: np.linalg.norm(sat.orbit.specific_angular_momentum)),
             "speed" : PropertySpec("Orbital speed", "km/s", lambda sat: sat.speed),
-            "azim_velocity" : PropertySpec("Azimuthal velocity", "km/s", lambda sat: sat.radial_azimuthal_velocity[1]),
-            "radial_velocity" : PropertySpec("Radial velocity", "km/s", lambda sat: sat.radial_azimuthal_velocity[0]),
+            "azim_speed" : PropertySpec("Azimuthal speed", "km/s", lambda sat: sat.radial_azimuthal_velocity[1]),
+            "radial_speed" : PropertySpec("Radial speed", "km/s", lambda sat: sat.radial_azimuthal_velocity[0]),
             "flight_angle" : PropertySpec("Flight angle", "°", lambda sat: np.degrees(sat.flight_angle)),
-            "esc_velocity" : PropertySpec("Escape velocity", "km/s", lambda sat: sat.escape_velocity)
+            "esc_speed" : PropertySpec("Escape speed", "km/s", lambda sat: sat.escape_speed)
         }
 
         self._property_specs: dict[str, PropertySpec] = self._orbital_properties | self._satellite_properties

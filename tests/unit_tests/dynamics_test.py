@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core import (OrbitType, specific_ang_momentum_from_state, specific_ang_momentum,
-                                   specific_orbital_energy, characteristic_energy, excess_velocity,
+                                   specific_orbital_energy, characteristic_energy, excess_speed,
                                    vis_viva_speed)
 
 @pytest.mark.parametrize("r, v, expected", [
@@ -62,11 +62,11 @@ def test_characteristic_energy(mu: float, a: float, expected: float):
     (1.5, 398_600.0, -50_000.0, np.sqrt(398_600.0/abs(-50_000.0))),
     (1.0, 398_600.0, np.nan, 0.0),
 ])
-def test_excess_velocity(orbit_type: OrbitType, mu: float, a: float, expected: float):
+def test_excess_speed(orbit_type: OrbitType, mu: float, a: float, expected: float):
     """
-    Test that the formula calculating the excess velocity gives the expected value.
+    Test that the formula calculating the excess speed gives the expected value.
     """
-    result = excess_velocity(orbit_type, mu, a)
+    result = excess_speed(orbit_type, mu, a)
     assert np.isclose(result, expected, equal_nan = True)
 
 @pytest.mark.parametrize("r, a, mu, expected", [

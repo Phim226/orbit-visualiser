@@ -3,7 +3,7 @@ from math import pi
 import numpy as np
 from numpy.typing import NDArray
 from orbit_visualiser.core import (perifocal_position, perifocal_velocity, radial_azimuthal_velocity,
-                                   speed, radius_from_state, radius_from_orbit_eq, escape_velocity,
+                                   speed, radius_from_state, radius_from_orbit_eq, escape_speed,
                                    flight_angle, time_since_periapsis)
 
 @pytest.mark.parametrize("e, p, nu, expected", [
@@ -80,11 +80,11 @@ def test_radius_from_orbit_eq(nu: float, asymp_anomaly: float, p: float, e: floa
     (0.0, np.nan, 398_600.0, 50_000.0, np.sqrt(2*398_600.0/50_000.0)),
     (pi, pi, 398_600.0, np.nan, 0.0)
 ])
-def test_escape_velocity(nu: float, asymp_anomaly: float, mu: float, r: float, expected: float):
+def test_escape_speed(nu: float, asymp_anomaly: float, mu: float, r: float, expected: float):
     """
-    Test that the escape velocity calculation gives the expected value.
+    Test that the escape speed calculation gives the expected value.
     """
-    result = escape_velocity(nu, asymp_anomaly, mu, r)
+    result = escape_speed(nu, asymp_anomaly, mu, r)
     assert np.isclose(result, expected, equal_nan = True)
 
 @pytest.mark.parametrize("nu, asymp_anomaly, e, expected", [

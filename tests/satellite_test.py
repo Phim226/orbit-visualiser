@@ -25,7 +25,7 @@ def test_satellite_orbital_speed_sanity(
         satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
 
         v_vals = [
-            np.hypot(satellite.orbit.hyperbolic_excess_velocity, satellite.escape_velocity),
+            np.hypot(satellite.orbit.hyperbolic_excess_speed, satellite.escape_speed),
             np.linalg.norm(satellite.radial_azimuthal_velocity)
         ]
 

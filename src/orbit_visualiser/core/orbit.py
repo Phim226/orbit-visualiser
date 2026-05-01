@@ -11,9 +11,9 @@ from orbit_visualiser.core.astrodynamics.keplerian.elements import (eccentricity
                                                                     node_line, right_ascen_of_ascending_node, argument_of_periapsis,
                                                                     eccentricity_vector_from_state)
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import (specific_orbital_energy, characteristic_energy,
-                                                                    excess_velocity, specific_ang_momentum_from_state)
-from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type
-from orbit_visualiser.core.astrodynamics.types import OrbitType
+                                                                    excess_speed, specific_ang_momentum_from_state)
+from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type, orbit_motion_type
+from orbit_visualiser.core.astrodynamics.types import OrbitType, OrbitMotion
 
 @dataclass
 class CentralBody():
@@ -150,8 +150,8 @@ class Orbit():
         return characteristic_energy(self.mu, self.semimajor_axis)
 
     @cached_property
-    def hyperbolic_excess_velocity(self) -> float:
-        return excess_velocity(self.eccentricity, self.mu, self.semimajor_axis)
+    def hyperbolic_excess_speed(self) -> float:
+        return excess_speed(self.eccentricity, self.mu, self.semimajor_axis)
 
     @classmethod
     def from_orbital_elements(cls, e: float, rp: float, mu: float, nu: float):
