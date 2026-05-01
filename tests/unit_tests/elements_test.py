@@ -41,18 +41,19 @@ def test_eccentricity_from_state(
     result = eccentricity_from_state(r, v, mu)
     assert result > expected_mag
 
-@pytest.mark.parametrize("r, e, v_r, expected", [
-    (np.array([50_000.0, 0.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0, 0.0),
-    (np.array([0.0, 50_000.0, 0.0]), np.array([1.0, 0.0, 0.0]), 1.0, pi/2),
-    (np.array([-50_000.0, 0.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0, pi),
-    (np.array([0.0, -50_000.0, 0.0]), np.array([1.0, 0.0, 0.0]), -1.0, 3*pi/2)
+@pytest.mark.parametrize("r, e_vect, e, v_r, expected", [
+    (np.array([50_000.0, 0.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0, 0.0, 0.0),
+    (np.array([0.0, 50_000.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0, 1.0, pi/2),
+    (np.array([-50_000.0, 0.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0, 0.0, pi),
+    (np.array([0.0, -50_000.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0, -1.0, 3*pi/2)
 ])
-def test_true_anomaly_from_state(r: NDArray[np.float64], e: NDArray[np.float64], v_r: float, expected: float):
+def test_true_anomaly_from_state(r: NDArray[np.float64], e_vect: NDArray[np.float64], e: float,
+                                 v_r: float, expected: float):
     """
     Test that the formula for calculating the true anomaly from the current position, eccentricity
     and radial speed gives the expected value.
     """
-    result = true_anomaly(r, e, v_r)
+    result = true_anomaly(r, e_vect, e, v_r)
     assert np.isclose(result, expected)
 
 @pytest.mark.parametrize("h, mu, expected", [
