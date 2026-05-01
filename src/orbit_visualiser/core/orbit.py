@@ -72,7 +72,7 @@ class Orbit():
 
     # ------ Core orbital elements -------
     @cached_property
-    def specific_angular_momentum(self) -> float:
+    def specific_angular_momentum(self) -> NDArray[np.float64]:
         return specific_ang_momentum_from_state(self.position, self.velocity)
 
     @cached_property
