@@ -19,6 +19,7 @@ class PropertiesBuilder(Builder):
 
         self._orbital_properties: dict[str, PropertySpec[Satellite]] = {
             "orbit_type" : PropertySpec("Orbit type", None, lambda sat: sat.orbit.orbit_type),
+            "orbit_motion": PropertySpec("Orbit motion", None, lambda sat: sat.orbit.orbit_motion_type),
             "semi_major_axis" : PropertySpec("Semi-major axis", "km", lambda sat: sat.orbit.semimajor_axis),
             "semi_minor_axis" : PropertySpec("Semi-minor axis", "km", lambda sat: sat.orbit.semiminor_axis),
             "radius_apoapsis": PropertySpec("Radius of apoapsis", "km", lambda sat: sat.orbit.radius_of_apoapsis),
