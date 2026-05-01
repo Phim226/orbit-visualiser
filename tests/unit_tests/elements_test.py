@@ -11,8 +11,8 @@ from orbit_visualiser.core import (eccentricity_vector_from_state, eccentricity_
                                    right_ascen_of_ascending_node, argument_of_periapsis)
 
 @pytest.mark.parametrize("r, v, mu, expected", [
-    (np.array([99_650.0, 0]), np.array([0, 2.0]), 398_600.0, np.array([0.0, 0.0])),
-    (np.array([49_825.0, 0]), np.array([1.0, 2.0]), 398_600.0, np.array([-0.5, -0.25]))
+    (np.array([99_650.0, 0.0, 0.0]), np.array([0.0, 2.0, 0.0]), 398_600.0, np.array([1.0, 0.0, 0.0])),
+    (np.array([49_825.0, 0.0, 0.0]), np.array([1.0, 2.0, 0.0]), 398_600.0, np.array([-0.5, -0.25, 0.0]))
 ])
 def test_eccentricity_vector_from_state(
         r: NDArray[np.float64],
@@ -27,7 +27,8 @@ def test_eccentricity_vector_from_state(
     assert np.allclose(result, expected)
 
 @pytest.mark.parametrize("r, v, mu, expected_mag", [
-    (np.array([49_825.0, 0]), np.array([4.0, 2.0]), 398_600.0, 1.0)
+    (np.array([49_825.0, 0.0, 0.0]), np.array([4.0, 2.0, 0.0]), 398_600.0, 1.0),
+    (np.array([49_825.0, 0.0, 0.0]), np.array([2*np.sqrt(2), 0.0, 0.0]), 398_600.0, 0.0)
 ])
 def test_eccentricity_from_state(
         r: NDArray[np.float64],
