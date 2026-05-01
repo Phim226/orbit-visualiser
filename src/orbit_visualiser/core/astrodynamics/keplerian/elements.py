@@ -44,7 +44,9 @@ def eccentricity_from_state(r: NDArray[np.float64], v: NDArray[np.float64], mu: 
     float
         Eccentricity
     """
-    return np.linalg.norm(eccentricity_vector_from_state(r, v, mu))
+    r_norm = np.linalg.norm(r)
+    v_norm = np.linalg.norm(v)
+    return np.sqrt((v_norm**2*r_norm - mu)**2 + (2*mu - v_norm**2*r_norm)*np.dot(r, v)**2/r_norm)/mu
 
 def true_anomaly(r: NDArray[np.float64], e: NDArray[np.float64], v_r: float) -> float:
     """
