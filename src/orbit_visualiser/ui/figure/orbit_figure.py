@@ -42,7 +42,7 @@ class OrbitFigure():
     def _create_figure(self) -> None:
         self._fig = Figure(figsize = (7, 6), dpi = 100)
         self._fig.subplots_adjust(left = 0, right = 1.1, bottom = -0.1, top = 1.1)
-        self._ax = self._fig.add_subplot(projection = "3d")
+        self._ax: Axes3D = self._fig.add_subplot(projection = "3d")
         self._ax.set_aspect("equal", adjustable = "datalim")
 
     def _configure_axes(self) -> None:
