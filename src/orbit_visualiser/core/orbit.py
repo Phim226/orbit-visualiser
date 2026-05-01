@@ -13,6 +13,7 @@ from orbit_visualiser.core.astrodynamics.keplerian.elements import (eccentricity
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import (specific_orbital_energy, characteristic_energy,
                                                                     excess_speed, specific_ang_momentum_from_state)
 from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type, orbit_motion_type
+from orbit_visualiser.core.astrodynamics.transformations import perifocal_to_eci_trans_mat
 from orbit_visualiser.core.astrodynamics.types import OrbitType, OrbitMotion
 
 @dataclass
@@ -41,9 +42,9 @@ class Orbit():
     Parameters
     ----------
     position : Sequence | NDArray[np.float64]
-        The perifocal position vector of the satellite (km)
+        The ECI position vector of the satellite (km)
     velocity : Sequence | NDArray[np.float64]
-        The perifocal velocity vector of the satellite (km/s)
+        The ECI velocity vector of the satellite (km/s)
     mu : float
         The gravitational parameter of the central body (km^3/s^2)
 
@@ -61,6 +62,12 @@ class Orbit():
         The gravitational parameter of the central body (km^3/s^2)
     nu : float
         The true anomaly of the satellite (rad)
+    raan : float
+        The right ascension of the ascending node (rad), default = 0.0
+    i : float
+        The orbital inclination (rad), default = 0.0
+    omega : float
+        The argument of periapsis (rad), default = 0.0
     """
     position : Sequence | NDArray[np.float64]
     velocity : Sequence | NDArray[np.float64]
@@ -158,10 +165,11 @@ class Orbit():
         return excess_speed(self.eccentricity, self.mu, self.semimajor_axis)
 
     @classmethod
-    def from_orbital_elements(cls, e: float, rp: float, mu: float, nu: float):
+    def from_orbital_elements(cls, e: float, rp: float, nu: float, mu: float,
+                              raan: float = 0.0, i: float = 0.0, omega: float = 0.0):
         """
-        Alternative constructor for the Orbit class. Takes the orbital elements eccentricity,
-        radius of perapsis, the gravitational parameter and the true anomaly as arguments.
+        Alternative constructor for the Orbit class. Takes the orbital elements and the
+        gravitational parameter as arguments.
 
         Parameters
         ----------
@@ -169,10 +177,16 @@ class Orbit():
             Eccentricity
         rp : float
             Radius of periapsis (km)
+        nu : float
+            The true anomaly of the satellite (rad)
         mu : float
             The gravitational parameter of the central body (km^3/s^2)
-        nu : float
-            The true anomaly of the satellite (rads)
+        raan : float
+            The right ascension of the ascending node (rad), default = 0.0
+        i : float
+            The orbital inclination (rad), default = 0.0
+        omega : float
+            The argument of periapsis (rad), default = 0.0
 
         Returns
         -------
@@ -184,7 +198,11 @@ class Orbit():
         if np.isclose(nu_check, asymp_anomaly) or nu_check > asymp_anomaly:
             raise ValueError("State isn't defined at infinity")
 
-        r, v = state_pf_from_e_rp(e, rp, mu, nu)
+        r, v = state_pf_from_e_rp(e, rp, nu, mu)
+
+        eci_trans = perifocal_to_eci_trans_mat(raan, i, omega)
+        r, v = np.matmul(eci_trans, r), np.matmul(eci_trans, v)
+
         return cls(r, v, mu)
 
 
