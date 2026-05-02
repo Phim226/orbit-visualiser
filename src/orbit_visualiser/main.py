@@ -3,6 +3,7 @@ from tkinter import Tk
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, OrbitConfigController
 from orbit_visualiser.ui.common.presets import initial_config
+from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 class OrbitVisualiser():
 
@@ -33,8 +34,10 @@ class OrbitVisualiser():
         )
         satellite: Satellite = Satellite(orbit.position, orbit.velocity, central_body)
 
+        da: OrbitDataAccess = OrbitDataAccess(satellite)
+
         orbit_figure: OrbitFigure = OrbitFigure(
-            root, OrbitVisualiser.FIGURE_GEOMETRY, satellite
+            root, OrbitVisualiser.FIGURE_GEOMETRY, da
         )
         orbit_figure.build()
 

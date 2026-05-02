@@ -7,7 +7,8 @@ from mpl_toolkits.mplot3d.art3d import Line3D
 from math import pi
 import numpy as np
 from numpy.typing import NDArray
-from orbit_visualiser.core import Orbit, Satellite, OrbitType, perifocal_position
+from orbit_visualiser.core import Orbit, OrbitType
+from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 # TODO: Fix bug where scroll zoom doesn't register as changing the view so the native matplotlib home button has unexpected (and often undesirable) behaviour.
 class OrbitFigure():
@@ -19,11 +20,11 @@ class OrbitFigure():
             self,
             root: Tk,
             figure_frame_placement: tuple[str],
-            satellite : Satellite
+            da : OrbitDataAccess
     ):
         self._root = root
 
-        self._satellite = satellite
+        self._da = da
 
         self._figure_frame: Frame = Frame(root)
         self._figure_frame.pack(
@@ -79,7 +80,7 @@ class OrbitFigure():
 
     def _plot_central_body(self) -> None:
         u, v = np.meshgrid(np.linspace(0, 2*np.pi, 25), np.linspace(0, np.pi, 25))
-        r = self._satellite.central_body.r
+        r = self._da.satellite.central_body.r
         x = r*np.cos(u)*np.sin(v)
         y = r*np.sin(u)*np.sin(v)
         z = r*np.cos(v)
@@ -87,9 +88,7 @@ class OrbitFigure():
 
     def _initialise_plot(self) -> None:
         # Plot the initial orbit
-        orbit = self._satellite.orbit
-        nu = self._get_anomaly_data(orbit)
-        x, y, z = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
+        x, y, z = self._da.get_orbit_data(OrbitFigure.NUM_POINTS)
         self._line: Line3D = self._ax.plot(x, y, z, color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)[0]
 
         # Plot the central body
@@ -97,7 +96,7 @@ class OrbitFigure():
 
         # Plot the satellite
         self._sat_point: Line3D = self._ax.plot(
-            self._satellite.orbit.radius_of_periapsis, 0, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B"
+            self._da.satellite.orbit.radius_of_periapsis, 0, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B"
         )[0]
 
         #self.plot_periapsis_point()
@@ -129,15 +128,13 @@ class OrbitFigure():
         return np.linspace(anomaly_range[0], anomaly_range[1], OrbitFigure.NUM_POINTS)
 
     def redraw_orbit(self) -> None:
-        orbit = self._satellite.orbit
-        nu = self._get_anomaly_data(orbit)
-        x, y, z = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
+        x, y, z = self._da.get_orbit_data(OrbitFigure.NUM_POINTS)
         self._line.set_data_3d(x, y, z)
 
         self._canvas.draw_idle()
 
     def redraw_satellite(self) -> None:
-        x, y, z = self._satellite.position
+        x, y, z = self._da.satellite.position
         self._sat_point.set_xdata((x,))
         self._sat_point.set_ydata((y,))
         self._sat_point.set_3d_properties(zs = (z,))
@@ -153,7 +150,7 @@ class OrbitFigure():
 
     def plot_periapsis_point(self) -> None:
         self._rp_point, = self._ax.plot(
-            self._satellite.orbit.radius_of_periapsis,
+            self._da.satellite.orbit.radius_of_periapsis,
             0,
             ms = 3,
             marker = "o",
@@ -163,7 +160,7 @@ class OrbitFigure():
         )
         self._rp_annotation = self._ax.annotate(
             "$r_p$",
-            xy = (self._satellite.orbit.radius_of_periapsis, 0),
+            xy = (self._da.satellite.orbit.radius_of_periapsis, 0),
             xycoords = "data",
             xytext = OrbitFigure.DISPLAY_TEXT_OFFSET,
             textcoords = "offset points"
