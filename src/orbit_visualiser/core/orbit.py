@@ -96,7 +96,7 @@ class Orbit():
 
     @cached_property
     def argument_of_periapsis(self) -> float:
-        return argument_of_periapsis(node_line(self.specific_angular_momentum), self.eccentricity)
+        return argument_of_periapsis(node_line(self.specific_angular_momentum), self.eccentricity_vector, self.inclination)
 
     # ------------------------------------
 
