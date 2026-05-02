@@ -113,9 +113,34 @@ class VariablesController():
             "e": self._builder.e_var.get(),
             "rp": self._builder.rp_var.get(),
             "nu": np.deg2rad(self._builder.nu_var.get()),
+            "raan": np.deg2rad(self._builder.raan_var.get()),
+            "i": np.deg2rad(self._builder.i_var.get()),
+            "omega": np.deg2rad(self._builder.omega_var.get()),
             "mu": self._builder.mu_var.get(),
         }
         new_values[variable] = new_val
+
+        self._configure_input_widgets(new_values, variable)
+
+        try:
+            self._update_satellite_state(*new_values.values())
+
+        except ValueError:
+            messagebox.showwarning("Warning", "State cannot be evaluated at infinity")
+            return
+
+        self._orbit_fig.redraw_orbit()
+        self._orbit_fig.redraw_satellite()
+
+    def _update_satellite_state(self, e: float, rp: float, nu: float, raan: float,
+                                i: float, omega: float, mu: float) -> None:
+        orbit = Orbit.from_orbital_elements(e, rp, nu, raan, i, omega, mu)
+        self._satellite.position = orbit.position
+        self._satellite.velocity = orbit.velocity
+        self._satellite.central_body.mu = mu
+
+    def _configure_input_widgets(self, new_values: dict[str, float], variable: str) -> None:
+        new_val = new_values[variable]
 
         # The value of the eccentricity determines the range of possible true anomaly values, which
         # this if block checks for.
@@ -134,18 +159,38 @@ class VariablesController():
             else:
                 self._builder.nu_slider.configure(from_ = 0, to = 360)
 
-        try:
-            self._update_satellite_state(*new_values.values())
+        if np.isclose(new_values["e"], 0):
+            new_values["omega"] = 0.0
+            omega_var: DoubleVar = self._builder.omega_var
+            omega_var.set(0.0)
 
-        except ValueError:
-            messagebox.showwarning("Warning", "State cannot be evaluated at infinity")
-            return
+            entry = self._builder.omega_entry
+            entry.delete(0, 1000)
+            entry.insert(
+                0,
+                "0.00"
+            )
 
-        self._orbit_fig.redraw_orbit()
-        self._orbit_fig.redraw_satellite()
+            self._builder.omega_entry.configure(state = "disabled")
+            self._builder.omega_slider.configure(state = "disabled")
+        else:
+            self._builder.omega_entry.configure(state = "normal")
+            self._builder.omega_slider.configure(state = "normal")
 
-    def _update_satellite_state(self, e: float, rp: float, nu: float, mu: float) -> None:
-        orbit = Orbit.from_orbital_elements(e, rp, nu, mu)
-        self._satellite.position = orbit.position
-        self._satellite.velocity = orbit.velocity
-        self._satellite.central_body.mu = mu
+        if np.isclose(new_values["i"], 0):
+            new_values["raan"] = 0.0
+            raan_var: DoubleVar = self._builder.raan_var
+            raan_var.set(0.0)
+
+            entry = self._builder.raan_entry
+            entry.delete(0, 1000)
+            entry.insert(
+                0,
+                "0.00"
+            )
+
+            self._builder.raan_entry.configure(state = "disabled")
+            self._builder.raan_slider.configure(state = "disabled")
+        else:
+            self._builder.raan_entry.configure(state = "normal")
+            self._builder.raan_slider.configure(state = "normal")
