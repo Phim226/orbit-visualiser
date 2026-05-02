@@ -5,6 +5,8 @@ from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, OrbitConfigCont
 from orbit_visualiser.ui.common.presets import initial_config
 from orbit_visualiser.ui.data_access import OrbitDataAccess
 
+# TODO: Redesign layout geometry
+
 class OrbitVisualiser():
 
     FIGURE_GEOMETRY = ("left", "nw")
