@@ -9,8 +9,8 @@ def eccentricity_vector_from_state(r: NDArray[np.float64], v: NDArray[np.float64
     """
     Calculates the eccentricity vector from the position and velocity vectors of a satellite and
     the gravitational parameter. If the eccentricity is calculated as the zero vector (circular orbit)
-    then we set the eccentricity vector to be a unit vector pointing in the direction of the point
-    where the orbit intersects with the XZ plane.
+    then we set the eccentricity vector to be equal to the node line, in effect setting the argument
+    of periapsis to be 0.
 
     Parameters
     ----------
@@ -29,13 +29,7 @@ def eccentricity_vector_from_state(r: NDArray[np.float64], v: NDArray[np.float64
     e: NDArray[np.float64] = (1/mu)*((np.linalg.norm(v)**2 - mu/np.linalg.norm(r))*r - np.dot(r, v)*v)
 
     if np.allclose(e, np.zeros(e.shape)):
-        raan = right_ascen_of_ascending_node(node_line(specific_ang_momentum_from_state(r, v)))
-        c_raan = np.cos(raan)
-        s_raan = np.sin(raan)
-        rot_mat = [[c_raan,  0.0, s_raan],
-                   [0.0,  1.0, 0.0],
-                   [-s_raan, 0.0, c_raan]]
-        return np.matmul(rot_mat, [1.0, 0.0, 0.0])
+        return node_line(specific_ang_momentum_from_state(r, v))
 
     return e
 
