@@ -70,7 +70,7 @@ class VariablesController():
                 # for python floats). The Decimal class retains that information. If the angle is
                 # negative then Decimal(new_val)%360 reduces it to (-360, 0), then + 360 to the range we want.
                 new_val_float = (Decimal(new_val)%360 + 360)%360
-                self._clear_entry(getattr(self._builder, f"{variable}_entry"),
+                self._set_entry(getattr(self._builder, f"{variable}_entry"),
                                 f"{new_val_float: 0.{self._builder.variable_specs[variable].decimal_places}f}".strip()
                             )
             else:
@@ -92,7 +92,7 @@ class VariablesController():
 
         # This if-elif block lets the sliders and manual inputs update one another.
         if input_type == "slider":
-            self._clear_entry(getattr(self._builder, f"{variable}_entry"),
+            self._set_entry(getattr(self._builder, f"{variable}_entry"),
                               f"{new_val: 0.{self._builder.variable_specs[variable].decimal_places}f}".strip()
                             )
 
@@ -158,7 +158,7 @@ class VariablesController():
             omega_var: DoubleVar = self._builder.omega_var
             omega_var.set(0.0)
 
-            self._clear_entry(self._builder.omega_entry, "0.00")
+            self._set_entry(self._builder.omega_entry, "0.00")
 
             self._builder.omega_entry.configure(state = "disabled")
             self._builder.omega_slider.configure(state = "disabled")
@@ -171,7 +171,7 @@ class VariablesController():
             raan_var: DoubleVar = self._builder.raan_var
             raan_var.set(0.0)
 
-            self._clear_entry(self._builder.raan_entry, "0.00")
+            self._set_entry(self._builder.raan_entry, "0.00")
 
             self._builder.raan_entry.configure(state = "disabled")
             self._builder.raan_slider.configure(state = "disabled")
@@ -179,7 +179,7 @@ class VariablesController():
             self._builder.raan_entry.configure(state = "normal")
             self._builder.raan_slider.configure(state = "normal")
 
-    def _clear_entry(self, entry: Entry, new_entry_str: str) -> None:
+    def _set_entry(self, entry: Entry, new_entry_str: str) -> None:
         entry.delete(0, 1000)
         entry.insert(
                 0,
