@@ -9,7 +9,7 @@ from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 class PropertiesBuilder(Builder):
 
-
+# TODO: Change perifocal x, y properties (currently they actually display the x, y ECI positions)
     def __init__(
             self,
             config_frame: Frame,
