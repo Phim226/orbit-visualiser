@@ -3,7 +3,7 @@ from tkinter import Frame, Label
 class Builder():
 
     _title_font = ("Orbitron", 16, "bold")
-    _subtitle_font = ("Orbitron", 11, "normal")
+    _subtitle_font = ("Orbitron", 13, "normal")
     _slider_font = ("Fira Mono", 9, "normal")
 
     def _build_separator(self, root: Frame, text: str) -> None:
