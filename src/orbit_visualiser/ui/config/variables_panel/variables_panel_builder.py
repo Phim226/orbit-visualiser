@@ -217,7 +217,7 @@ class VariablesBuilder(Builder):
             validate_input: Callable,
             slider_changed: Callable
     ) -> tuple[Scale, Entry]:
-        frame = Frame(root, width = 280, height = 75, relief = "groove", bd = 1)
+        frame = Frame(root, width = 290, height = 75, relief = "groove", bd = 1)
 
         units = spec.units
         label = Label(frame, text = f"{spec.label}{"" if units is None else f" ({units})"}:")
@@ -254,7 +254,7 @@ class VariablesBuilder(Builder):
         lims = spec.slider_lims
         self.__setattr__(
             slider_name,
-            Scale(root, from_ = lims[0], to = lims[1], resolution = 1/10**spec.decimal_places, length = 260,
+            Scale(root, from_ = lims[0], to = lims[1], resolution = 1/10**spec.decimal_places, length = 275,
                   orient = "horizontal", variable = slider_var,
                   command = partial(slider_changed, variable, "slider"),
                   tickinterval = 0, showvalue = 0,
