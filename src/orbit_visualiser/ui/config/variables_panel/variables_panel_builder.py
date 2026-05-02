@@ -9,7 +9,7 @@ from orbit_visualiser.ui.common.presets import initial_config
 
 
 class VariablesBuilder(Builder):
-
+# TODO: Redesign input frames to (top -> bottom): Label -> Input -> Slider
 
     def __init__(
             self,

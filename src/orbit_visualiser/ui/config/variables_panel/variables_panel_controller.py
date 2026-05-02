@@ -10,6 +10,7 @@ from orbit_visualiser.ui.common.utils import floor_float
 # TODO: Allow for fractional manual inputs.
 # TODO: Remove any leading 0s from manual inputs.
 # TODO: Refactor to a lazy/cached recalculation model. Currently everything is recalculated on every variable change.
+# TODO: Orbit disappears on some values of raan
 
 class VariablesController():
 
