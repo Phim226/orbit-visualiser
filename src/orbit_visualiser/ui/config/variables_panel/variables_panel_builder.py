@@ -27,7 +27,6 @@ class VariablesBuilder(Builder):
             initial_config.eccentricity,
             (0, 5),
             3,
-            (85, 4),
             "normal"
         )
         self._rp_specs: VariableSpec = VariableSpec(
@@ -37,7 +36,6 @@ class VariablesBuilder(Builder):
             initial_config.radius_of_periapsis,
             (initial_config.radius + 1, 200_000),
             0,
-            (160, 4),
             "normal"
         )
         self._mu_specs: VariableSpec = VariableSpec(
@@ -47,7 +45,6 @@ class VariablesBuilder(Builder):
             initial_config.gravitational_parameter,
             (1, 1_000_000),
             0,
-            (198, 4),
             "normal"
         )
         self._nu_specs: VariableSpec = VariableSpec(
@@ -57,7 +54,6 @@ class VariablesBuilder(Builder):
             np.degrees(initial_config.true_anomaly),
             (0, 360),
             2,
-            (115, 4),
             "normal"
         )
         self._raan_specs: VariableSpec = VariableSpec(
@@ -67,7 +63,6 @@ class VariablesBuilder(Builder):
             np.degrees(initial_config.right_ascension_of_the_ascending_node),
             (0, 360),
             2,
-            (115, 4),
             "disabled"
         )
         self._i_specs: VariableSpec = VariableSpec(
@@ -77,7 +72,6 @@ class VariablesBuilder(Builder):
             np.degrees(initial_config.inclination),
             (0, 180),
             2,
-            (115, 4),
             "normal"
         )
         self._omega_specs: VariableSpec = VariableSpec(
@@ -87,7 +81,6 @@ class VariablesBuilder(Builder):
             np.degrees(initial_config.argument_of_periapsis),
             (0, 360),
             2,
-            (115, 4),
             "disabled"
         )
 
@@ -238,8 +231,7 @@ class VariablesBuilder(Builder):
         entry.insert(0, f"{spec.getter(self._da.satellite): 0.{spec.decimal_places}f}".strip())
         entry.configure(state = spec.init_state)
         entry.bind("<Return>", partial(validate_input, variable))
-        x, y = spec.entry_pos
-        entry.place(x = x, y = y)
+        entry.place(x = 5, y = 20)
 
         frame.pack(side = "top", anchor = "n", pady = 2)
 

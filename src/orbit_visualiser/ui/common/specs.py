@@ -15,5 +15,4 @@ class VariableSpec(PropertySpec):
     init_value: float
     slider_lims: tuple[int]
     decimal_places: int
-    entry_pos: tuple[int]
     init_state: Literal["normal", "disabled"]
