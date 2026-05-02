@@ -6,6 +6,7 @@ from orbit_visualiser.ui.common.presets import initial_config
 from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 # TODO: Redesign layout geometry
+# TODO: Fix broken tests
 
 class OrbitVisualiser():
 
