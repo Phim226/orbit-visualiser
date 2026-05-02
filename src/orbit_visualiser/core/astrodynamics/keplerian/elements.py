@@ -443,7 +443,12 @@ def argument_of_periapsis(node_line: NDArray[np.float64], e: NDArray[np.float64]
     """
     node_norm = node_line/np.linalg.norm(node_line)
     e_norm = e/np.linalg.norm(e)
-    arg_periapsis = np.arccos(np.dot(node_norm, e_norm))
+    dot = np.dot(node_norm, e_norm)
+    if dot > 1:
+        dot = 1
+    elif dot < -1:
+        dot = -1
+    arg_periapsis = np.arccos(dot)
 
     if e[2] < 0 or (np.isclose(i, 0) and e[1] < 0):
         arg_periapsis = 2*pi - arg_periapsis
