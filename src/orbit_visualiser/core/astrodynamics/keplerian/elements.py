@@ -381,7 +381,10 @@ def inclination(h: NDArray[np.float64]) -> float:
 
 def node_line(h: NDArray[np.float64]) -> NDArray[np.float64]:
     """
-    Calculates the vector defining the node line from the specific angular momentum.
+    Calculates the vector defining the node line from the specific angular momentum. If the node
+    line is the zero vector (when inclination is 0), then we set the node line to be the unit
+    vector pointing in the positive x direction (in the earth centred frame this is towards the
+    vernal equinox).
 
     Parameters
     ----------
