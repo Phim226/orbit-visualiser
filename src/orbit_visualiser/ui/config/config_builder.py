@@ -1,11 +1,11 @@
 from tkinter import Tk, Frame
 from tkinter.ttk import Separator
 from typing import Callable
-from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui.config.display_panel.display_panel_builder import DisplayBuilder
 from orbit_visualiser.ui.config.properties_panel.properties_panel_builder import PropertiesBuilder
 from orbit_visualiser.ui.config.variables_panel.variables_panel_builder import VariablesBuilder
 from orbit_visualiser.ui.common.builder import Builder
+from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 
 class OrbitConfigBuilder(Builder):
@@ -13,15 +13,9 @@ class OrbitConfigBuilder(Builder):
     def __init__(
             self, root: Tk,
             config_frame_placement: tuple[str],
-            orbit: Orbit,
-            central_body: CentralBody,
-            satellite: Satellite
+            da: OrbitDataAccess
     ):
         self._root = root
-
-        self._orbit = orbit
-        self._central_body = central_body
-        self._sat = satellite
 
         self._config_frame = Frame(root)
         self._config_frame.pack(
@@ -33,9 +27,9 @@ class OrbitConfigBuilder(Builder):
         self._options_frame = Frame(self._config_frame, padx = 2)
         self._options_frame.pack(side = "left", anchor = "n", pady = (2, 0))
 
-        self._variables_builder = VariablesBuilder(self._options_frame, satellite)
+        self._variables_builder = VariablesBuilder(self._options_frame, da)
         self._display_builder = DisplayBuilder(self._options_frame)
-        self._properties_builder = PropertiesBuilder(self._config_frame, satellite)
+        self._properties_builder = PropertiesBuilder(self._config_frame, da)
 
     @property
     def variables_builder(self) -> VariablesBuilder:

@@ -18,6 +18,22 @@ class OrbitVisualiser():
         else:
             root.state("normal")
 
+        da: OrbitDataAccess = self._initialise_orbit_objects()
+
+        orbit_figure: OrbitFigure = OrbitFigure(root, OrbitVisualiser.FIGURE_GEOMETRY, da)
+        orbit_figure.build()
+
+        orbit_builder: OrbitConfigBuilder = OrbitConfigBuilder(root, OrbitVisualiser.CONFIG_GEOMETRY, da)
+        orbit_controller: OrbitConfigController = OrbitConfigController(orbit_figure, orbit_builder, da)
+
+        orbit_builder.build(
+            orbit_controller.reset_state,
+            orbit_controller.validate_manual_input,
+            orbit_controller.slider_changed,
+            orbit_controller.format_display_value
+        )
+
+    def _initialise_orbit_objects(self) -> OrbitDataAccess:
         orbit: Orbit = Orbit.from_orbital_elements(
             initial_config.eccentricity,
             initial_config.radius_of_periapsis,
@@ -34,25 +50,7 @@ class OrbitVisualiser():
         )
         satellite: Satellite = Satellite(orbit.position, orbit.velocity, central_body)
 
-        da: OrbitDataAccess = OrbitDataAccess(satellite)
-
-        orbit_figure: OrbitFigure = OrbitFigure(
-            root, OrbitVisualiser.FIGURE_GEOMETRY, da
-        )
-        orbit_figure.build()
-
-        orbit_builder: OrbitConfigBuilder = OrbitConfigBuilder(
-            root, OrbitVisualiser.CONFIG_GEOMETRY, orbit, central_body, satellite
-        )
-        orbit_controller: OrbitConfigController = OrbitConfigController(
-            orbit_figure, orbit_builder, orbit, satellite, central_body
-        )
-        orbit_builder.build(
-            orbit_controller.reset_state,
-            orbit_controller.validate_manual_input,
-            orbit_controller.slider_changed,
-            orbit_controller.format_display_value
-        )
+        return OrbitDataAccess(satellite)
 
 # TODO: Write tests as I go.
 # TODO: Add variable presets (Earth - ISS, Earth - Geostationary, Mars - Phobos etc).

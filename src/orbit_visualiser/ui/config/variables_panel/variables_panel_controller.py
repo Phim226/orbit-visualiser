@@ -5,6 +5,7 @@ from orbit_visualiser.ui.figure.orbit_figure import OrbitFigure
 from orbit_visualiser.ui.config.variables_panel.variables_panel_builder import  VariablesBuilder
 from orbit_visualiser.core import Orbit, Satellite, asymptote_anomaly
 from orbit_visualiser.ui.common.utils import floor_float
+from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 # TODO: Allow for temporary increase in slider scale when inputting manual values.
 # TODO: Allow for fractional manual inputs.
@@ -18,12 +19,12 @@ class VariablesController():
             self,
             figure: OrbitFigure,
             builder: VariablesBuilder,
-            satellite: Satellite
+            da: OrbitDataAccess
     ):
         self._orbit_fig = figure
         self._builder = builder
 
-        self._satellite = satellite
+        self._da = da
 
     def reset_state(self) -> None:
         init_values = []
@@ -63,7 +64,7 @@ class VariablesController():
 
         # When e < 1 then the orbit is periodic, and so the true anomaly is as well.
         if variable == "nu":
-            if self._satellite.orbit.eccentricity < 1 and (new_val_float < 0 or new_val_float > 360):
+            if self._da.satellite.orbit.eccentricity < 1 and (new_val_float < 0 or new_val_float > 360):
                 # float(new_val) will kill off any decimal points when new_val has extremely large
                 # absolute value (around 16 digits due to limitations of 64bit double precision
                 # for python floats). The Decimal class retains that information. If the angle is
@@ -73,7 +74,7 @@ class VariablesController():
                                 f"{new_val_float: 0.{self._builder.variable_specs[variable].decimal_places}f}".strip()
                             )
             else:
-                t_asymp = np.degrees(self._satellite.orbit.asymptote_anomaly)
+                t_asymp = np.degrees(self._da.satellite.orbit.asymptote_anomaly)
                 if new_val_float < -t_asymp:
                     new_val_float = -t_asymp
                 elif new_val_float > t_asymp:
@@ -128,9 +129,10 @@ class VariablesController():
     def _update_satellite_state(self, e: float, rp: float, nu: float, raan: float,
                                 i: float, omega: float, mu: float) -> None:
         orbit = Orbit.from_orbital_elements(e, rp, nu, raan, i, omega, mu)
-        self._satellite.position = orbit.position
-        self._satellite.velocity = orbit.velocity
-        self._satellite.central_body.mu = mu
+        sat: Satellite = self._da.satellite
+        sat.position = orbit.position
+        sat.velocity = orbit.velocity
+        sat.central_body.mu = mu
 
     def _configure_input_widgets(self, new_values: dict[str, float], variable: str) -> None:
         new_val = new_values[variable]

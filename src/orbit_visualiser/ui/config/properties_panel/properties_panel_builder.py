@@ -4,6 +4,7 @@ import numpy as np
 from orbit_visualiser.core import Satellite
 from orbit_visualiser.ui.common.builder import Builder
 from orbit_visualiser.ui.common.specs import PropertySpec
+from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 
 class PropertiesBuilder(Builder):
@@ -12,10 +13,10 @@ class PropertiesBuilder(Builder):
     def __init__(
             self,
             config_frame: Frame,
-            satellite: Satellite
+            da: OrbitDataAccess
     ):
         self._config_frame = config_frame
-        self._satellite = satellite
+        self._da = da
 
         self._orbital_properties: dict[str, PropertySpec[Satellite]] = {
             "orbit_type" : PropertySpec("Orbit type", None, lambda sat: sat.orbit.orbit_type),
@@ -96,7 +97,7 @@ class PropertiesBuilder(Builder):
             row: int,
             format_value: Callable
     ) -> None:
-        init_value = spec.getter(self._satellite)
+        init_value = spec.getter(self._da.satellite)
 
         var = StringVar(value = format_value(init_value, spec.units))
         self.__setattr__(f"{property}_str", var)

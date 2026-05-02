@@ -2,10 +2,10 @@ from tkinter import Frame, Scale, LabelFrame, Button, Entry, DoubleVar
 from typing import Callable
 from functools import partial
 import numpy as np
-from orbit_visualiser.core import Satellite
 from orbit_visualiser.ui.common.builder import Builder
 from orbit_visualiser.ui.common.specs import VariableSpec
 from orbit_visualiser.ui.common.presets import initial_config
+from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 
 class VariablesBuilder(Builder):
@@ -14,11 +14,11 @@ class VariablesBuilder(Builder):
     def __init__(
             self,
             options_frame: Frame,
-            satellite: Satellite
+            da: OrbitDataAccess
     ):
         self._options_frame = options_frame
 
-        self._satellite = satellite
+        self._da = da
 
         self._e_specs: VariableSpec = VariableSpec(
             "Eccentricity",
@@ -235,7 +235,7 @@ class VariablesBuilder(Builder):
         )
 
         entry = Entry(frame, width = 10)
-        entry.insert(0, f"{spec.getter(self._satellite): 0.{spec.decimal_places}f}".strip())
+        entry.insert(0, f"{spec.getter(self._da.satellite): 0.{spec.decimal_places}f}".strip())
         entry.configure(state = spec.init_state)
         entry.bind("<Return>", partial(validate_input, variable))
         x, y = spec.entry_pos
@@ -270,7 +270,7 @@ class VariablesBuilder(Builder):
                   )
         )
 
-        slider_var.set(spec.getter(self._satellite))
+        slider_var.set(spec.getter(self._da.satellite))
 
         slider: Scale = self.__getattribute__(slider_name)
         slider.place(x = 0, y = 0, anchor = "nw")

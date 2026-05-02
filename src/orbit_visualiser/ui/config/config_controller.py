@@ -1,11 +1,11 @@
 from tkinter import Event
 from typing import Callable
-from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui.config.config_builder import OrbitConfigBuilder
 from orbit_visualiser.ui.config.variables_panel.variables_panel_controller import VariablesController
 from orbit_visualiser.ui.config.properties_panel.properties_panel_controller import PropertiesController
 #from orbit_visualiser.ui.config.display_panel.display_panel_controller import DisplayController
 from orbit_visualiser.ui.figure.orbit_figure import OrbitFigure
+from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 
 class OrbitConfigController():
@@ -15,18 +15,13 @@ class OrbitConfigController():
             self,
             figure: OrbitFigure,
             builder: OrbitConfigBuilder,
-            orbit: Orbit,
-            satellite: Satellite,
-            central_body: CentralBody
+            da: OrbitDataAccess
     ):
         self._orbit_fig = figure
         self._builder = builder
 
-        self._orbit = orbit
-        self._sat = satellite
-
-        self._variables_controller = VariablesController(figure, builder.variables_builder, satellite)
-        self._properties_controller = PropertiesController(builder.properties_builder, satellite)
+        self._variables_controller = VariablesController(figure, builder.variables_builder, da)
+        self._properties_controller = PropertiesController(builder.properties_builder, da)
 
 
     def validate_manual_input(
