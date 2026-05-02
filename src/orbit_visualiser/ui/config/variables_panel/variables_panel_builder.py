@@ -1,4 +1,4 @@
-from tkinter import Frame, Scale, LabelFrame, Button, Entry, DoubleVar
+from tkinter import Frame, Scale, LabelFrame, Button, Entry, DoubleVar, Label
 from typing import Callable
 from functools import partial
 import numpy as np
@@ -9,7 +9,6 @@ from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 
 class VariablesBuilder(Builder):
-# TODO: Redesign input frames to (top -> bottom): Label -> Input -> Slider
 
     def __init__(
             self,
@@ -167,7 +166,7 @@ class VariablesBuilder(Builder):
 
         # Build orbital geometry frame
         orbital_geom_frame = LabelFrame(
-            var_frame, bd = 1, relief = "sunken", text = "Orbital geometry", font = self._subtitle_font
+            var_frame, bd = 2, relief = "sunken", text = "Orbital geometry", font = self._subtitle_font
         )
         self._e_slider, self._e_entry = self._build_input_frame(
             orbital_geom_frame, "e", self._variable_specs["e"], validate_input, slider_changed
@@ -188,7 +187,7 @@ class VariablesBuilder(Builder):
 
         # Building central body frame
         central_body_frame = LabelFrame(
-            var_frame, bd = 1, relief = "sunken", text = "Central body", font = self._subtitle_font
+            var_frame, bd = 2, relief = "sunken", text = "Central body", font = self._subtitle_font
         )
         self._mu_slider, self._mu_entry = self._build_input_frame(
             central_body_frame, "mu", self._variable_specs["mu"], validate_input, slider_changed
@@ -197,7 +196,7 @@ class VariablesBuilder(Builder):
 
         # Build satellite frame
         sat_frame = LabelFrame(
-            var_frame, bd = 1, relief = "sunken", text = "Satellite", font = self._subtitle_font
+            var_frame, bd = 2, relief = "sunken", text = "Satellite", font = self._subtitle_font
         )
         self._nu_slider, self._nu_entry = self._build_input_frame(
             sat_frame, "nu", self._variable_specs["nu"], validate_input, slider_changed
@@ -218,7 +217,11 @@ class VariablesBuilder(Builder):
             validate_input: Callable,
             slider_changed: Callable
     ) -> tuple[Scale, Entry]:
-        frame = Frame(root, width = 265, height = 60)
+        frame = Frame(root, width = 280, height = 75, relief = "groove", bd = 1)
+
+        units = spec.units
+        label = Label(frame, text = f"{spec.label}{"" if units is None else f" ({units})"}:")
+        label.place(x = 5, y = 0)
 
         slider = self._build_slider(
             frame,
@@ -249,15 +252,12 @@ class VariablesBuilder(Builder):
 
         slider_name = f"_{variable}_slider"
         lims = spec.slider_lims
-        units = spec.units
-        label = f"{spec.label}{"" if units is None else f" ({units})"} = "
         self.__setattr__(
             slider_name,
             Scale(root, from_ = lims[0], to = lims[1], resolution = 1/10**spec.decimal_places, length = 260,
                   orient = "horizontal", variable = slider_var,
                   command = partial(slider_changed, variable, "slider"),
-                  label = label, font = self._slider_font,
-                  #tickinterval = 0, showvalue = 0,
+                  tickinterval = 0, showvalue = 0,
                   state = spec.init_state
                   )
         )
@@ -265,5 +265,5 @@ class VariablesBuilder(Builder):
         slider_var.set(spec.getter(self._da.satellite))
 
         slider: Scale = self.__getattribute__(slider_name)
-        slider.place(x = 0, y = 0, anchor = "nw")
+        slider.place(x = 5, y = 45, anchor = "nw")
         return slider
