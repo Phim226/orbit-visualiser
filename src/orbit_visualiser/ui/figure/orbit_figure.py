@@ -11,6 +11,7 @@ from orbit_visualiser.core import Orbit, OrbitType
 from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 # TODO: Fix bug where scroll zoom doesn't register as changing the view so the native matplotlib home button has unexpected (and often undesirable) behaviour.
+# TODO: Split into builder and controller
 class OrbitFigure():
 
     DISPLAY_TEXT_OFFSET = (1.5, 1.5)
