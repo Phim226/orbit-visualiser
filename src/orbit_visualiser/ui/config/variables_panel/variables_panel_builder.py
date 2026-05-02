@@ -27,7 +27,8 @@ class VariablesBuilder(Builder):
             initial_config.eccentricity,
             (0, 5),
             3,
-            (85, 4)
+            (85, 4),
+            "normal"
         )
         self._rp_specs: VariableSpec = VariableSpec(
             "Radius of periapsis",
@@ -36,7 +37,8 @@ class VariablesBuilder(Builder):
             initial_config.radius_of_periapsis,
             (initial_config.radius + 1, 200_000),
             0,
-            (160, 4)
+            (160, 4),
+            "normal"
         )
         self._mu_specs: VariableSpec = VariableSpec(
             "Gravitational parameter",
@@ -45,7 +47,8 @@ class VariablesBuilder(Builder):
             initial_config.gravitational_parameter,
             (1, 1_000_000),
             0,
-            (198, 4)
+            (198, 4),
+            "normal"
         )
         self._nu_specs: VariableSpec = VariableSpec(
             "True anomaly",
@@ -166,6 +169,7 @@ class VariablesBuilder(Builder):
 
         entry = Entry(frame, width = 10)
         entry.insert(0, f"{spec.getter(self._satellite): 0.{spec.decimal_places}f}".strip())
+        entry.configure(state = spec.init_state)
         entry.bind("<Return>", partial(validate_input, variable))
         x, y = spec.entry_pos
         entry.place(x = x, y = y)
@@ -193,7 +197,10 @@ class VariablesBuilder(Builder):
             Scale(root, from_ = lims[0], to = lims[1], resolution = 1/10**spec.decimal_places, length = 260,
                   orient = "horizontal", variable = slider_var,
                   command = partial(slider_changed, variable, "slider"),
-                  label = label, font = self._slider_font)
+                  label = label, font = self._slider_font,
+                  #tickinterval = 0, showvalue = 0,
+                  state = spec.init_state
+                  )
         )
 
         slider_var.set(spec.getter(self._satellite))

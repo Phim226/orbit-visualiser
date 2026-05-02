@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, TypeVar, Generic
+from typing import Callable, TypeVar, Generic, Literal
 from dataclasses import dataclass
 
 T = TypeVar("T")
@@ -16,3 +16,4 @@ class VariableSpec(PropertySpec):
     slider_lims: tuple[int]
     decimal_places: int
     entry_pos: tuple[int]
+    init_state: Literal["normal", "disabled"]
