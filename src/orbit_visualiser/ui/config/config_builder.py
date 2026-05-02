@@ -13,7 +13,7 @@ class OrbitConfigBuilder(Builder):
     def __init__(
             self, root: Tk,
             config_frame_placement: tuple[str],
-            da: OrbitDataAccess
+            oda: OrbitDataAccess
     ):
         self._root = root
 
@@ -27,9 +27,9 @@ class OrbitConfigBuilder(Builder):
         self._options_frame = Frame(self._config_frame, padx = 2)
         self._options_frame.pack(side = "left", anchor = "n", pady = (2, 0))
 
-        self._variables_builder = VariablesBuilder(self._options_frame, da)
+        self._variables_builder = VariablesBuilder(self._options_frame, oda)
         self._display_builder = DisplayBuilder(self._options_frame)
-        self._properties_builder = PropertiesBuilder(self._config_frame, da)
+        self._properties_builder = PropertiesBuilder(self._config_frame, oda)
 
     @property
     def variables_builder(self) -> VariablesBuilder:

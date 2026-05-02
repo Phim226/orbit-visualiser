@@ -13,11 +13,11 @@ class VariablesBuilder(Builder):
     def __init__(
             self,
             options_frame: Frame,
-            da: OrbitDataAccess
+            oda: OrbitDataAccess
     ):
         self._options_frame = options_frame
 
-        self._da = da
+        self._oda = oda
 
         self._e_specs: VariableSpec = VariableSpec(
             "Eccentricity",
@@ -231,7 +231,7 @@ class VariablesBuilder(Builder):
         )
 
         entry = Entry(frame, width = 10)
-        entry.insert(0, f"{spec.getter(self._da.satellite): 0.{spec.decimal_places}f}".strip())
+        entry.insert(0, f"{spec.getter(self._oda.satellite): 0.{spec.decimal_places}f}".strip())
         entry.configure(state = spec.init_state)
         entry.bind("<Return>", partial(validate_input, variable))
         entry.place(x = 5, y = 20)
@@ -262,7 +262,7 @@ class VariablesBuilder(Builder):
                   )
         )
 
-        slider_var.set(spec.getter(self._da.satellite))
+        slider_var.set(spec.getter(self._oda.satellite))
 
         slider: Scale = self.__getattribute__(slider_name)
         slider.place(x = 5, y = 45, anchor = "nw")

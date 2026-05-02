@@ -21,11 +21,11 @@ class OrbitFigure():
             self,
             root: Tk,
             figure_frame_placement: tuple[str],
-            da : OrbitDataAccess
+            oda : OrbitDataAccess
     ):
         self._root = root
 
-        self._da = da
+        self._da = oda
 
         self._figure_frame: Frame = Frame(root)
         self._figure_frame.pack(

@@ -15,13 +15,13 @@ class OrbitConfigController():
             self,
             figure: OrbitFigure,
             builder: OrbitConfigBuilder,
-            da: OrbitDataAccess
+            oda: OrbitDataAccess
     ):
         self._orbit_fig = figure
         self._builder = builder
 
-        self._variables_controller = VariablesController(figure, builder.variables_builder, da)
-        self._properties_controller = PropertiesController(builder.properties_builder, da)
+        self._variables_controller = VariablesController(figure, builder.variables_builder, oda)
+        self._properties_controller = PropertiesController(builder.properties_builder, oda)
 
 
     def validate_manual_input(

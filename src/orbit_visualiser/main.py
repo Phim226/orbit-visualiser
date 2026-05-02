@@ -21,13 +21,13 @@ class OrbitVisualiser():
         else:
             root.state("normal")
 
-        da: OrbitDataAccess = self._initialise_orbit_objects()
+        oda: OrbitDataAccess = self._initialise_orbit_objects()
 
-        orbit_figure: OrbitFigure = OrbitFigure(root, OrbitVisualiser.FIGURE_GEOMETRY, da)
+        orbit_figure: OrbitFigure = OrbitFigure(root, OrbitVisualiser.FIGURE_GEOMETRY, oda)
         orbit_figure.build()
 
-        orbit_builder: OrbitConfigBuilder = OrbitConfigBuilder(root, OrbitVisualiser.CONFIG_GEOMETRY, da)
-        orbit_controller: OrbitConfigController = OrbitConfigController(orbit_figure, orbit_builder, da)
+        orbit_builder: OrbitConfigBuilder = OrbitConfigBuilder(root, OrbitVisualiser.CONFIG_GEOMETRY, oda)
+        orbit_controller: OrbitConfigController = OrbitConfigController(orbit_figure, orbit_builder, oda)
 
         orbit_builder.build(
             orbit_controller.reset_state,

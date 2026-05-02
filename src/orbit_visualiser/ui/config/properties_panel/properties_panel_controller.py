@@ -8,13 +8,13 @@ from orbit_visualiser.core import OrbitType
 class PropertiesController():
 
 
-    def __init__(self, builder: PropertiesBuilder, da: OrbitDataAccess):
+    def __init__(self, builder: PropertiesBuilder, oda: OrbitDataAccess):
         self._builder = builder
-        self._da = da
+        self._oda = oda
 
     def update_display(self) -> None:
         for property, spec in list(self._builder.property_specs.items()):
-            new_value = spec.getter(self._da.satellite)
+            new_value = spec.getter(self._oda.satellite)
             unit = spec.units
             getattr(self._builder, f"{property}_str").set(self.format_display_value(new_value, unit))
 

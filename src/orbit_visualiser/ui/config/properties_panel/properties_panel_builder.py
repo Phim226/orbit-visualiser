@@ -13,10 +13,10 @@ class PropertiesBuilder(Builder):
     def __init__(
             self,
             config_frame: Frame,
-            da: OrbitDataAccess
+            oda: OrbitDataAccess
     ):
         self._config_frame = config_frame
-        self._da = da
+        self._oda = oda
 
         self._orbital_properties: dict[str, PropertySpec[Satellite]] = {
             "orbit_type" : PropertySpec("Orbit type", None, lambda sat: sat.orbit.orbit_type),
@@ -97,7 +97,7 @@ class PropertiesBuilder(Builder):
             row: int,
             format_value: Callable
     ) -> None:
-        init_value = spec.getter(self._da.satellite)
+        init_value = spec.getter(self._oda.satellite)
 
         var = StringVar(value = format_value(init_value, spec.units))
         self.__setattr__(f"{property}_str", var)
