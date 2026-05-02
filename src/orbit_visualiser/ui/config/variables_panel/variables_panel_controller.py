@@ -106,7 +106,7 @@ class VariablesController():
             slider_var: DoubleVar = getattr(self._builder, f"{variable}_var")
             slider_var.set(new_val)
 
-        if variable == "nu":
+        if variable in ["nu", "raan", "i", "omega"]:
             new_val = np.deg2rad(float(new_val))
 
         new_values = {
