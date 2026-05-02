@@ -33,13 +33,9 @@ class OrbitDataAccess():
 
         if ref_frame == "perifocal":
             return pf_pos_data
-        raan = orb.right_ascen_of_ascend_node
-        i = orb.inclination
-        omega = orb.argument_of_periapsis
-        nu = self._satellite.true_anomaly
+
         eci_trans = perifocal_to_eci_trans_mat(orb.right_ascen_of_ascend_node, orb.inclination,
                                                     orb.argument_of_periapsis)
-        print(f"raan, i, omega, nu in access object: {raan, i, omega, nu}\n")
         return np.matmul(eci_trans, pf_pos_data)
 
     def get_sat_position(self, ref_frame: Literal["eci", "perifocal"] = "eci") -> NDArray[np.float64]:
