@@ -57,14 +57,48 @@ class VariablesBuilder(Builder):
             np.degrees(initial_config.true_anomaly),
             (0, 360),
             2,
-            (115, 4)
+            (115, 4),
+            "normal"
+        )
+        self._raan_specs: VariableSpec = VariableSpec(
+            "Right ascension of the ascending node",
+            "°",
+            lambda sat: np.degrees(sat.orbit.right_ascen_of_ascend_node),
+            np.degrees(initial_config.right_ascension_of_the_ascending_node),
+            (0, 360),
+            2,
+            (115, 4),
+            "disabled"
+        )
+        self._i_specs: VariableSpec = VariableSpec(
+            "Inclination",
+            "°",
+            lambda sat: np.degrees(sat.orbit.inclination),
+            np.degrees(initial_config.inclination),
+            (0, 180),
+            2,
+            (115, 4),
+            "normal"
+        )
+        self._omega_specs: VariableSpec = VariableSpec(
+            "Argument of periapsis",
+            "°",
+            lambda sat: np.degrees(sat.orbit.argument_of_periapsis),
+            np.degrees(initial_config.argument_of_periapsis),
+            (0, 360),
+            2,
+            (115, 4),
+            "disabled"
         )
 
         self._variable_specs: dict[str, VariableSpec] = {
             "e" : self._e_specs,
             "rp" : self._rp_specs,
-            "mu" : self._mu_specs,
-            "nu" : self._nu_specs
+            "nu" : self._nu_specs,
+            "raan" : self._raan_specs,
+            "i" : self._i_specs,
+            "omega" : self._omega_specs,
+            "mu" : self._mu_specs
         }
 
     @property
@@ -103,6 +137,30 @@ class VariablesBuilder(Builder):
     def nu_entry(self) -> Entry:
         return self._nu_entry
 
+    @property
+    def raan_slider(self) -> Scale:
+        return self._raan_slider
+
+    @property
+    def raan_entry(self) -> Entry:
+        return self._raan_entry
+
+    @property
+    def i_slider(self) -> Scale:
+        return self._i_slider
+
+    @property
+    def i_entry(self) -> Entry:
+        return self._i_entry
+
+    @property
+    def omega_slider(self) -> Scale:
+        return self._omega_slider
+
+    @property
+    def omega_entry(self) -> Entry:
+        return self._omega_entry
+
     def build_variables_frame(
             self,
             reset: Callable,
@@ -123,6 +181,15 @@ class VariablesBuilder(Builder):
         )
         self._rp_slider, self._rp_entry = self._build_input_frame(
             orbital_geom_frame, "rp", self._variable_specs["rp"], validate_input, slider_changed
+        )
+        self._raan_slider, self._raan_entry = self._build_input_frame(
+            orbital_geom_frame, "raan", self._variable_specs["raan"], validate_input, slider_changed
+        )
+        self._i_slider, self._i_entry = self._build_input_frame(
+            orbital_geom_frame, "i", self._variable_specs["i"], validate_input, slider_changed
+        )
+        self._omega_slider, self._omega_entry = self._build_input_frame(
+            orbital_geom_frame, "omega", self._variable_specs["omega"], validate_input, slider_changed
         )
         orbital_geom_frame.pack(side = "top", anchor = "nw", pady = (4, 0))
 
