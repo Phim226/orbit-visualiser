@@ -4,7 +4,7 @@ class Builder():
 
     _title_font = ("Orbitron", 16, "bold")
     _subtitle_font = ("Orbitron", 13, "normal")
-    _slider_font = ("Fira Mono", 9, "normal")
+    _label_font = ("Fira Mono", 10, "normal")
 
     def _build_separator(self, root: Frame, text: str) -> None:
         frame = Frame(root)
