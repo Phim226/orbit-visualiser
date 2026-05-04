@@ -9,7 +9,6 @@ from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 class PropertiesBuilder(Builder):
 
-# TODO: Change perifocal x, y properties (currently they actually display the x, y ECI positions)
     def __init__(
             self,
             properties_frame: Frame,
@@ -36,16 +35,20 @@ class PropertiesBuilder(Builder):
         }
 
         self._satellite_properties: dict[str, PropertySpec[Satellite]] = {
-            "x_pos" : PropertySpec("Perifocal x position", "km", lambda sat: sat.position[0]),
-            "y_pos" : PropertySpec("Perifocal y position", "km", lambda sat: sat.position[1]),
+            "x_pos" : PropertySpec("ECI x position", "km", lambda sat: sat.position[0]),
+            "y_pos" : PropertySpec("ECI y position", "km", lambda sat: sat.position[1]),
+            "z_pos" : PropertySpec("ECI z position", "km", lambda sat: sat.position[2]),
             "radius" : PropertySpec("Radial distance", "km", lambda sat: sat.radius),
+            "x_vel" : PropertySpec("ECI x speed", "km/s", lambda sat: sat.velocity[0]),
+            "y_vel" : PropertySpec("ECI y speed", "km/s", lambda sat: sat.velocity[1]),
+            "z_vel" : PropertySpec("ECI z speed", "km/s", lambda sat: sat.velocity[2]),
+            "speed" : PropertySpec("Orbital speed", "km/s", lambda sat: sat.speed),
+            "azim_speed" : PropertySpec("Azimuthal speed", "km/s", lambda sat: sat.radial_azimuthal_velocity[1]),
+            "radial_speed" : PropertySpec("Radial speed", "km/s", lambda sat: sat.radial_azimuthal_velocity[0]),
             "e_anomaly" : PropertySpec("Eccentric anomaly", "°", lambda sat: np.degrees(sat.eccentric_anomaly)),
             "m_anomaly" : PropertySpec("Mean anomaly", "°", lambda sat: np.degrees(sat.mean_anomaly)),
             "time_periapsis" : PropertySpec("Time since periapsis", "s", lambda sat: sat.time_since_periapsis),
             "ang_momentum" : PropertySpec("Angular momentum", "km²/s", lambda sat: np.linalg.norm(sat.orbit.specific_angular_momentum)),
-            "speed" : PropertySpec("Orbital speed", "km/s", lambda sat: sat.speed),
-            "azim_speed" : PropertySpec("Azimuthal speed", "km/s", lambda sat: sat.radial_azimuthal_velocity[1]),
-            "radial_speed" : PropertySpec("Radial speed", "km/s", lambda sat: sat.radial_azimuthal_velocity[0]),
             "flight_angle" : PropertySpec("Flight angle", "°", lambda sat: np.degrees(sat.flight_angle)),
             "esc_speed" : PropertySpec("Escape speed", "km/s", lambda sat: sat.escape_speed)
         }
