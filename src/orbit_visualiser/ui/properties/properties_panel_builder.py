@@ -59,10 +59,11 @@ class PropertiesBuilder(Builder):
     def build_properties_frame(self, format_value: Callable) -> None:
         self._build_separator(self._properties_frame, "Properties")
         orbital_props_frame = LabelFrame(
-            self._properties_frame, bd = 1, relief = "sunken", text = "Orbit", font = self._subtitle_font
+            self._properties_frame, bd = 1, relief = "sunken", text = "Orbit",
+            font = self._subtitle_font, width = 244
         )
         self._populate_properties(orbital_props_frame, self._orbital_properties, format_value)
-        orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
+        orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x")
 
         sat_props_frame = LabelFrame(
             self._properties_frame, bd = 1, relief = "sunken", text = "Satellite state",
