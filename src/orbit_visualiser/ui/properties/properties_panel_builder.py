@@ -36,9 +36,9 @@ class PropertiesBuilder(Builder):
         }
 
         self._satellite_properties: dict[str, PropertySpec[Satellite]] = {
-            "radius" : PropertySpec("Radial distance", "km", lambda sat: sat.radius),
             "x_pos" : PropertySpec("Perifocal x position", "km", lambda sat: sat.position[0]),
             "y_pos" : PropertySpec("Perifocal y position", "km", lambda sat: sat.position[1]),
+            "radius" : PropertySpec("Radial distance", "km", lambda sat: sat.radius),
             "e_anomaly" : PropertySpec("Eccentric anomaly", "°", lambda sat: np.degrees(sat.eccentric_anomaly)),
             "m_anomaly" : PropertySpec("Mean anomaly", "°", lambda sat: np.degrees(sat.mean_anomaly)),
             "time_periapsis" : PropertySpec("Time since periapsis", "s", lambda sat: sat.time_since_periapsis),
