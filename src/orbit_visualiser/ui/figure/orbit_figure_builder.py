@@ -1,7 +1,7 @@
 from ttkbootstrap import Frame
 import matplotlib as mpl
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from matplotlib.backend_bases import NavigationToolbar2
+from matplotlib.backend_bases import MouseEvent
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Line3D
@@ -114,8 +114,8 @@ class OrbitFigureBuilder():
         toolbar.pack(side = "bottom", fill = "x")
 
     @staticmethod
-    def _zoom_factory(ax: Axes3D, base_scale = 2.):
-        def zoom_fun(event):
+    def _zoom_factory(ax: Axes3D, base_scale: float = 2.):
+        def zoom_fun(event: MouseEvent):
             cur_xlim = ax.get_xlim()
             cur_ylim = ax.get_ylim()
             cur_zlim = ax.get_zlim()
@@ -147,7 +147,7 @@ class OrbitFigureBuilder():
             ax.figure.canvas.draw_idle()
 
         fig = ax.get_figure()
-        fig.canvas.mpl_connect('scroll_event',zoom_fun)
+        fig.canvas.mpl_connect('scroll_event', zoom_fun)
 
         return zoom_fun
 
