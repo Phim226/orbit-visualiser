@@ -1,26 +1,25 @@
 from tkinter import Event
 from typing import Callable
-from orbit_visualiser.ui.config.config_builder import OrbitConfigBuilder
-from orbit_visualiser.ui.config.variables_panel.variables_panel_controller import VariablesController
-from orbit_visualiser.ui.config.properties_panel.properties_panel_controller import PropertiesController
+from orbit_visualiser.ui.input.input_panel_controller import InputController
+from orbit_visualiser.ui.properties.properties_panel_controller import PropertiesController
+from orbit_visualiser.ui.figure.orbit_figure_controller import OrbitFigureController
 #from orbit_visualiser.ui.config.display_panel.display_panel_controller import DisplayController
-from orbit_visualiser.ui.figure.orbit_figure import OrbitFigure
 from orbit_visualiser.ui.data_access import OrbitDataAccess
+from orbit_visualiser.ui.ui_builder import UIBuilder
 
 
-class OrbitConfigController():
+class UIController():
 
 
     def __init__(
             self,
-            figure: OrbitFigure,
-            builder: OrbitConfigBuilder,
+            builder: UIBuilder,
             oda: OrbitDataAccess
     ):
-        self._orbit_fig = figure
         self._builder = builder
 
-        self._variables_controller = VariablesController(figure, builder.variables_builder, oda)
+        self._figure_controller = OrbitFigureController(builder.figure_builder, oda)
+        self._variables_controller = InputController(self._figure_controller, builder.input_builder, oda)
         self._properties_controller = PropertiesController(builder.properties_builder, oda)
 
 
