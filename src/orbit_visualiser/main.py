@@ -1,17 +1,15 @@
 import sys
 from tkinter import Tk
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
-from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, OrbitConfigController
-from orbit_visualiser.ui.common.presets import initial_config
-from orbit_visualiser.ui.data_access import OrbitDataAccess
+from orbit_visualiser.ui import UIController, UIBuilder, OrbitDataAccess, initial_config
 
-# TODO: Redesign layout geometry
 # TODO: Fix broken tests
 
 class OrbitVisualiser():
 
+    INPUT_GEOMETRY = ("left", "nw")
     FIGURE_GEOMETRY = ("left", "nw")
-    CONFIG_GEOMETRY = ("right", "ne")
+    PROPS_GEOMETRY = ("left", "nw")
 
     def __init__(self, root: Tk):
         root.title("2D Orbit Visualiser")
@@ -23,17 +21,13 @@ class OrbitVisualiser():
 
         oda: OrbitDataAccess = self._initialise_orbit_objects()
 
-        orbit_figure: OrbitFigure = OrbitFigure(root, OrbitVisualiser.FIGURE_GEOMETRY, oda)
-        orbit_figure.build()
-
-        orbit_builder: OrbitConfigBuilder = OrbitConfigBuilder(root, OrbitVisualiser.CONFIG_GEOMETRY, oda)
-        orbit_controller: OrbitConfigController = OrbitConfigController(orbit_figure, orbit_builder, oda)
-
-        orbit_builder.build(
-            orbit_controller.reset_state,
-            orbit_controller.validate_manual_input,
-            orbit_controller.slider_changed,
-            orbit_controller.format_display_value
+        builder = UIBuilder(root, oda)
+        controller = UIController(builder, oda)
+        builder.build(
+            controller.reset_state,
+            controller.validate_manual_input,
+            controller.slider_changed,
+            controller.format_display_value
         )
 
     def _initialise_orbit_objects(self) -> OrbitDataAccess:
