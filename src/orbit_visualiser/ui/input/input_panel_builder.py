@@ -8,14 +8,14 @@ from orbit_visualiser.ui.common.presets import initial_config
 from orbit_visualiser.ui.data_access import OrbitDataAccess
 
 
-class VariablesBuilder(Builder):
+class InputBuilder(Builder):
 
     def __init__(
             self,
-            options_frame: Frame,
+            input_frame: Frame,
             oda: OrbitDataAccess
     ):
-        self._options_frame = options_frame
+        self._input_frame = input_frame
 
         self._oda = oda
 
@@ -153,13 +153,13 @@ class VariablesBuilder(Builder):
     def omega_entry(self) -> Entry:
         return self._omega_entry
 
-    def build_variables_frame(
+    def build_input_frame(
             self,
             reset: Callable,
             validate_input: Callable,
             slider_changed: Callable
     ) -> None:
-        var_frame = Frame(self._options_frame)
+        var_frame = Frame(self._input_frame)
         self._variables_frame = var_frame
 
         self._build_separator(var_frame, "Variables")
@@ -207,7 +207,7 @@ class VariablesBuilder(Builder):
         reset_button = Button(var_frame, text = "Reset", command = reset)
         reset_button.pack(side = "top", anchor = "nw", pady = (4, 0))
 
-        var_frame.pack(side = "top", anchor = "ne", pady = (2, 0))
+        var_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
 
     def _build_input_frame(
             self,
@@ -236,7 +236,7 @@ class VariablesBuilder(Builder):
         entry.bind("<Return>", partial(validate_input, variable))
         entry.place(x = 5, y = 20)
 
-        frame.pack(side = "top", anchor = "n", pady = 2)
+        frame.pack(side = "top", anchor = "nw", pady = 2)
 
         return slider, entry
 

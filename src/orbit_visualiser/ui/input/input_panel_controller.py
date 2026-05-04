@@ -1,8 +1,8 @@
 from tkinter import Entry, Event, messagebox, DoubleVar
 from decimal import Decimal
 import numpy as np
-from orbit_visualiser.ui.figure.orbit_figure import OrbitFigure
-from orbit_visualiser.ui.config.variables_panel.variables_panel_builder import  VariablesBuilder
+from orbit_visualiser.ui.figure.orbit_figure_controller import OrbitFigureController
+from orbit_visualiser.ui.input.input_panel_builder import  InputBuilder
 from orbit_visualiser.core import Orbit, Satellite, asymptote_anomaly
 from orbit_visualiser.ui.common.utils import floor_float
 from orbit_visualiser.ui.data_access import OrbitDataAccess
@@ -12,16 +12,16 @@ from orbit_visualiser.ui.data_access import OrbitDataAccess
 # TODO: Remove any leading 0s from manual inputs.
 # TODO: Refactor to a lazy/cached recalculation model. Currently everything is recalculated on every variable change.
 
-class VariablesController():
+class InputController():
 
 
     def __init__(
             self,
-            figure: OrbitFigure,
-            builder: VariablesBuilder,
+            figure_cont: OrbitFigureController,
+            builder: InputBuilder,
             oda: OrbitDataAccess
     ):
-        self._orbit_fig = figure
+        self._orbit_fig_cont = figure_cont
         self._builder = builder
 
         self._oda = oda
@@ -41,9 +41,9 @@ class VariablesController():
 
         self._update_satellite_state(*init_values)
 
-        self._orbit_fig.redraw_orbit()
-        self._orbit_fig.redraw_satellite()
-        self._orbit_fig.reset_axes()
+        self._orbit_fig_cont.redraw_orbit()
+        self._orbit_fig_cont.redraw_satellite()
+        self._orbit_fig_cont.reset_axes()
 
     def validate_manual_input(
             self,
@@ -123,8 +123,8 @@ class VariablesController():
             messagebox.showwarning("Warning", "State cannot be evaluated at infinity")
             return
 
-        self._orbit_fig.redraw_orbit()
-        self._orbit_fig.redraw_satellite()
+        self._orbit_fig_cont.redraw_orbit()
+        self._orbit_fig_cont.redraw_satellite()
 
     def _update_satellite_state(self, e: float, rp: float, nu: float, raan: float,
                                 i: float, omega: float, mu: float) -> None:
