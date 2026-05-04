@@ -1,8 +1,7 @@
 from time import time
+from typing import Callable, Any
 
-def timer_func(func):
-    # This function shows the execution time of
-    # the function object passed
+def timer_func(func: Callable[[Any], Any]):
     def wrap_func(*args, **kwargs):
         t1 = time()
         result = func(*args, **kwargs)
