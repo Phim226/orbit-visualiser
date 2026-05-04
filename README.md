@@ -129,8 +129,6 @@ deactivate
 ```
 to deactivate the virtual environment. When returning to the program, activate venv again using the commands above. So long as the project folder or .venv folder hasn't changed then you shouldn't need to reinstall any dependencies.
 
-**Note**: The current GUI layout hasn't been optimised for Linux, so there is overlapping of certain GUI elements due to differences in widget rendering and layout handling.
-
 ## Using Orbit Propagation
 As of the current version (v0.4.5) there is no CLI or GUI functionality for the orbit propagation. Navigate to src/orbit_visualiser/core/propagation.py, and go to the bottom of the file to the code snippet:
 ```python
