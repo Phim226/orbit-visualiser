@@ -57,9 +57,11 @@ class OrbitFigureBuilder():
     def _configure_axes(self) -> None:
         axis_colour = "#4D4D4DFF"
 
-        self._ax.xaxis.set_ticks_position('lower')
-        self._ax.yaxis.set_ticks_position('lower')
-        self._ax.zaxis.set_ticks_position('lower')
+        self._ax.set_facecolor(axis_colour)
+
+        self._ax.xaxis.set_ticklabels([])
+        self._ax.yaxis.set_ticklabels([])
+        self._ax.zaxis.set_ticklabels([])
         self._ax.tick_params(colors = axis_colour)
 
         self._ax.set_xlim(-100_000, 100_000)
@@ -87,7 +89,7 @@ class OrbitFigureBuilder():
     def _initialise_plot(self) -> None:
         # Plot the initial orbit
         x, y, z = self._da.get_orbit_data(OrbitFigureBuilder.NUM_POINTS)
-        self._line: Line3D = self._ax.plot(x, y, z, color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)[0]
+        self._line: Line3D = self._ax.plot(x, y, z, color = "#000000", alpha = 0.5, linewidth = 1.5)[0]
 
         # Plot the central body
         self._plot_central_body()
