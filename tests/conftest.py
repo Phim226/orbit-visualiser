@@ -30,9 +30,10 @@ def orbit_factory_from_state() -> Callable[[NDArray[np.float64], NDArray[np.floa
     return _create
 
 @pytest.fixture
-def orbit_factory_from_elements() -> Callable[[float, float, float, float], Orbit]:
-    def _create(e: float = 0.0, rp: float = 50_000.0, mu: float = 398_600.0, nu: float = 0.0) -> Orbit:
-        return Orbit.from_orbital_elements(e, rp, mu, nu)
+def orbit_factory_from_elements() -> Callable[[float, float, float, float, float, float, float], Orbit]:
+    def _create(e: float = 0.0, rp: float = 50_000.0, nu: float = 0.0, raan: float = 0.0,
+                i: float = 0.0, omega: float = 0.0, mu: float = 398_600.0, ) -> Orbit:
+        return Orbit.from_orbital_elements(e, rp, nu, raan, i, omega, mu)
     return _create
 
 @pytest.fixture
@@ -56,11 +57,12 @@ def satellite_factory_from_state(
 
 @pytest.fixture
 def satellite_factory_from_elements(
-    orbit_factory_from_elements: Callable[[float, float, float, float], Orbit],
+    orbit_factory_from_elements: Callable[[float, float, float, float, float, float, float], Orbit],
     central_body_factory: Callable[[float], CentralBody]
-) -> Callable[[float, float, float, float], Satellite]:
-    def _create(e: float = 0.0, rp: float = 50_000.0, mu: float = 398_600.0, nu: float = 0.0) -> Satellite:
-        orbit: Orbit = orbit_factory_from_elements(e, rp, mu, nu)
+) -> Callable[[float, float, float, float, float, float, float], Satellite]:
+    def _create(e: float = 0.0, rp: float = 50_000.0, mu: float = 398_600.0, nu: float = 0.0,
+                raan: float = 0.0, i: float = 0.0, omega: float = 0.0) -> Satellite:
+        orbit: Orbit = orbit_factory_from_elements(e, rp, nu, raan, i, omega, mu)
         r = orbit.position
         v = orbit.velocity
         central_body: CentralBody = central_body_factory(mu)

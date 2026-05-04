@@ -33,7 +33,7 @@ def test_satellite_orbital_speed_sanity(
 
 @pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_satellite_azimuthal_velocity_sanity(
-    satellite_factory_from_elements: Callable[[float, float, float, float], Satellite],
+    satellite_factory_from_elements: Callable[[float, float, float, float, float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
     open_anomaly_grid: Callable[[float, int], NDArray[np.float64]],
     e: float,
