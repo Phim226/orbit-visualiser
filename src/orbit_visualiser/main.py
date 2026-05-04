@@ -1,5 +1,5 @@
 import sys
-from tkinter import Tk
+from ttkbootstrap import Window
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui import UIController, UIBuilder, OrbitDataAccess, initial_config
 
@@ -10,7 +10,7 @@ class OrbitVisualiser():
     FIGURE_GEOMETRY = ("left", "nw")
     PROPS_GEOMETRY = ("left", "nw")
 
-    def __init__(self, root: Tk):
+    def __init__(self, root: Window):
         root.title("3D Orbit Visualiser")
 
         if sys.platform.startswith("win"):
@@ -52,7 +52,7 @@ class OrbitVisualiser():
 # TODO: Add variable presets (Earth - ISS, Earth - Geostationary, Mars - Phobos etc).
 # TODO: Write proper docstrings
 if __name__ == "__main__":
-    root = Tk()
+    root = Window(themename = "darkly")
 
     app: OrbitVisualiser = OrbitVisualiser(root)
 
