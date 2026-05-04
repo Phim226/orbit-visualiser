@@ -1,14 +1,17 @@
 # Orbit Visualiser
 
-The Orbit Visualiser is a 2D Keplerian orbit visualisation tool for modelling the motion of a satellite around a central body, written in Python. The focus of this tool is on orbital geometry and satellite kinematics. Has basic orbital propagation (currently no GUI functionality).
+The Orbit Visualiser is a 3D Keplerian orbit visualisation tool for modelling the motion of a satellite around a central body, written in Python. The focus of this tool is on orbital geometry and satellite kinematics. Has basic orbital propagation (currently no GUI functionality).
 
 <img width="800" height="420" alt="Demo1-ezgif com-crop" src="https://github.com/user-attachments/assets/d75366a7-2294-46dc-bc30-6b1840a3a49b" />
 
 ## Features
 
-Orbits are modelled and visualised in the perifocal frame (the central body remains fixed at the origin of the coordinate frame, and the x axis represents the apse line), with the orbital geometry parametrised using:
+Orbits are modelled and visualised in the Earth Centred Equatorial (ECI) frame, with the orbital geometry parametrised using:
   - Eccentricity
   - Radius of periapsis
+  - Right ascension of the ascending node
+  - Inclination
+  - Argument of periapsis
 
 The central body has a radius of 6738km and an adjustable gravitational parameter. The radius of periapsis has therefore been given a lower limit of 6739km (meaning that we are assuming this Earth sized body has no atmosphere, or at least that any atmosphere has no effect on orbital motion). The true anomaly of the orbiting satellite is also adjustable to evaluate the kinematic state at different orbital positions. Various orbital and kinematic quantities are
 calculated and displayed, including (but not limited to):
@@ -26,7 +29,12 @@ See the gif above for the full list of displayed orbital and kinematic propertie
 
 ## Planned Features
 
-Some GUI elements such as additional display options are currently commented out in the source code because they are under development. These will be implemented in future updates.
+There are several features that are in development or planned:
+
+  - Additional display options
+  - A web interface
+  - Option to change reference frame
+  - Option to change parametrisation of orbital geometry
 
 ## Notes on the physical model
 
@@ -34,13 +42,10 @@ The orbiting satellite is assumed to have negligible mass. All higher-order pert
 
 ## Potential future improvements
 
-- Introduce argument of periapsis as an orbital geometry parameter
 - Improve simulation of orbital motion
-- Expand orbital modelling to 3 dimensions
 - Include perturbations into the model
 - Expand modelling to R3BP or N-body system
 - Visualise gravitational field
-- Allow for different parametrisations of the orbit
 
 ## Requirements
 
