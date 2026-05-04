@@ -1,5 +1,5 @@
 import numpy as np
-from orbit_visualiser.ui.config.properties_panel.properties_panel_builder import PropertiesBuilder
+from orbit_visualiser.ui.properties.properties_panel_builder import PropertiesBuilder
 from orbit_visualiser.ui.data_access import OrbitDataAccess
 from orbit_visualiser.core import OrbitType
 

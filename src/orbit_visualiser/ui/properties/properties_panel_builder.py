@@ -12,10 +12,10 @@ class PropertiesBuilder(Builder):
 # TODO: Change perifocal x, y properties (currently they actually display the x, y ECI positions)
     def __init__(
             self,
-            config_frame: Frame,
+            properties_frame: Frame,
             oda: OrbitDataAccess
     ):
-        self._config_frame = config_frame
+        self._properties_frame = properties_frame
         self._oda = oda
 
         self._orbital_properties: dict[str, PropertySpec[Satellite]] = {
@@ -57,24 +57,21 @@ class PropertiesBuilder(Builder):
         return self._property_specs
 
     def build_properties_frame(self, format_value: Callable) -> None:
-        props_frame = Frame(self._config_frame, padx = 2)
-        self._properties_frame = props_frame
-
-        self._build_separator(props_frame, "Properties")
+        self._build_separator(self._properties_frame, "Properties")
         orbital_props_frame = LabelFrame(
-            props_frame, bd = 1, relief = "sunken", text = "Orbit", font = self._subtitle_font
+            self._properties_frame, bd = 1, relief = "sunken", text = "Orbit", font = self._subtitle_font
         )
         self._populate_properties(orbital_props_frame, self._orbital_properties, format_value)
         orbital_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0))
 
         sat_props_frame = LabelFrame(
-            props_frame, bd = 1, relief = "sunken", text = "Current satellite state",
+            self._properties_frame, bd = 1, relief = "sunken", text = "Current satellite state",
             font = self._subtitle_font, width = 244
         )
         self._populate_properties(sat_props_frame, self._satellite_properties, format_value)
         sat_props_frame.pack(side = "top", anchor = "nw", pady = (2, 0), fill = "x")
 
-        props_frame.pack(side = "top", anchor = "n", pady = (2, 0))
+        self._properties_frame.pack(side = "top", anchor = "n", pady = (2, 0))
 
     def _populate_properties(
             self,
@@ -102,8 +99,8 @@ class PropertiesBuilder(Builder):
         var = StringVar(value = format_value(init_value, spec.units))
         self.__setattr__(f"{property}_str", var)
 
-        name_label = Label(frame, text = spec.label + ":", anchor = "w", font = self._slider_font)
+        name_label = Label(frame, text = spec.label + ":", anchor = "w", font = self._label_font)
         name_label.grid(row = row, column = 0, sticky = "w", padx = (0, 6))
 
-        value_label = Label(frame, textvariable = var, anchor = "e", width = 13, font = self._slider_font)
+        value_label = Label(frame, textvariable = var, anchor = "e", width = 13, font = self._label_font)
         value_label.grid(row = row, column = 1, sticky = "ew", padx = (0, 6))
