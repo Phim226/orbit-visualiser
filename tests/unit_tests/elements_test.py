@@ -242,5 +242,5 @@ def test_argument_of_periapsis(node_line: NDArray[np.float64], e: NDArray[np.flo
     Test that the formula for the argument of periapsis using the node line and the eccentricity
     gives the expected value.
     """
-    result = argument_of_periapsis(node_line, e)
+    result = argument_of_periapsis(node_line, e, 0.0)
     assert np.isclose(result, expected, equal_nan = True)
