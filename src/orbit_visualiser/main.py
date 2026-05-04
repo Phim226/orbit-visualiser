@@ -3,8 +3,7 @@ from tkinter import Tk
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui import UIController, UIBuilder, OrbitDataAccess, initial_config
 
-# TODO: Fix broken tests
-
+# TODO: Replace gif in README
 class OrbitVisualiser():
 
     INPUT_GEOMETRY = ("left", "nw")
