@@ -1,14 +1,15 @@
-from tkinter import Tk, Frame
+from ttkbootstrap import Frame
 import matplotlib as mpl
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backend_bases import NavigationToolbar2
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Line3D
-from math import pi
 import numpy as np
-from numpy.typing import NDArray
-from orbit_visualiser.core import Orbit, Satellite, OrbitType, perifocal_position
+from orbit_visualiser.ui.data_access import OrbitDataAccess
 
+# TODO: Fix bug where scroll zoom doesn't register as changing the view so the native matplotlib home button has unexpected (and often undesirable) behaviour.
+# TODO: Split into builder and controller
 class OrbitFigureBuilder():
 
     DISPLAY_TEXT_OFFSET = (1.5, 1.5)
@@ -16,23 +17,32 @@ class OrbitFigureBuilder():
 
     def __init__(
             self,
-            root: Tk,
-            figure_frame_placement: tuple[str],
-            satellite : Satellite
+            figure_frame: Frame,
+            oda : OrbitDataAccess
     ):
-        self._root = root
+        self._figure_frame = figure_frame
+        self._da = oda
 
-        self._satellite = satellite
+    @property
+    def line(self) -> Line3D:
+        return self._line
 
-        self._figure_frame: Frame = Frame(root)
-        self._figure_frame.pack(
-            side = figure_frame_placement[0], anchor = figure_frame_placement[1],
-            padx = 8, pady = 6, fill = "both", expand = True
-        )
+    @property
+    def satellite_point(self) -> Line3D:
+        return self._sat_point
+
+    @property
+    def canvas(self) -> FigureCanvasTkAgg:
+        return self._canvas
+
+    @property
+    def axis(self) -> Axes3D:
+        return self._ax
 
     def build(self) -> None:
         self._create_figure()
         self._configure_axes()
+        self._configure_figure_parameters()
         self._initialise_plot()
 
         self._build_canvas()
@@ -41,19 +51,11 @@ class OrbitFigureBuilder():
     def _create_figure(self) -> None:
         self._fig = Figure(figsize = (7, 6), dpi = 100)
         self._fig.subplots_adjust(left = 0, right = 1.1, bottom = -0.1, top = 1.1)
-        self._ax = self._fig.add_subplot(projection = "3d")
+        self._ax: Axes3D = self._fig.add_subplot(projection = "3d")
         self._ax.set_aspect("equal", adjustable = "datalim")
 
     def _configure_axes(self) -> None:
         axis_colour = "#4D4D4DFF"
-
-        self._ax.spines['left'].set_position(('data', 0))
-        self._ax.spines['bottom'].set_position(('data', 0))
-
-        self._ax.spines['left'].set_color(axis_colour)
-        self._ax.spines['bottom'].set_color(axis_colour)
-        self._ax.spines['right'].set_color('none')
-        self._ax.spines['top'].set_color('none')
 
         self._ax.xaxis.set_ticks_position('lower')
         self._ax.yaxis.set_ticks_position('lower')
@@ -64,31 +66,27 @@ class OrbitFigureBuilder():
         self._ax.set_ylim(-100_000, 100_000)
         self._ax.set_zlim(-100_000, 100_000)
 
+    @staticmethod
+    def _configure_figure_parameters() -> None:
         mpl.rcParams['axes3d.mouserotationstyle'] = 'azel'
 
-        self._ax.text(
-            0.98, 0.02, 0.02,
-            r"$\mathrm{km}$",
-            transform = self._ax.transAxes,
-            ha = "right",
-            va = "bottom",
-            fontsize = 9,
-            color = "gray"
+        NavigationToolbar2.toolitems = (
+            ('Home', 'Reset original view', 'home', 'home'),
+            ('Pan', 'Pan axes with left mouse, zoom with right', 'move', 'pan'),
+            ('Save', 'Save the figure', 'filesave', 'save_figure'),
         )
 
     def _plot_central_body(self) -> None:
-        u, v = np.meshgrid(np.linspace(0, 2*np.pi, 35), np.linspace(0, np.pi, 35))
-        r = self._satellite.central_body.r
+        u, v = np.meshgrid(np.linspace(0, 2*np.pi, 25), np.linspace(0, np.pi, 25))
+        r = self._da.satellite.central_body.r
         x = r*np.cos(u)*np.sin(v)
         y = r*np.sin(u)*np.sin(v)
         z = r*np.cos(v)
-        self._ax.plot_wireframe(x, y, z, zorder = 10, facecolor = "#4C6A92", edgecolor = "#3C5474")
+        self._ax.plot_wireframe(x, y, z, zorder = 10, edgecolor = "#3C5474")
 
     def _initialise_plot(self) -> None:
         # Plot the initial orbit
-        orbit = self._satellite.orbit
-        nu = self._get_anomaly_data(orbit)
-        x, y, z = perifocal_position(orbit.eccentricity, orbit.semi_parameter, nu)
+        x, y, z = self._da.get_orbit_data(OrbitFigureBuilder.NUM_POINTS)
         self._line: Line3D = self._ax.plot(x, y, z, color = "#2F2F2F", alpha = 0.5, linewidth = 1.5)[0]
 
         # Plot the central body
@@ -96,7 +94,7 @@ class OrbitFigureBuilder():
 
         # Plot the satellite
         self._sat_point: Line3D = self._ax.plot(
-            self._satellite.orbit.radius_of_periapsis, 0, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B"
+            self._da.satellite.orbit.radius_of_periapsis, 0, 0, ms = 5, marker = "o", zorder = 10, color = "#F28E2B"
         )[0]
 
         #self.plot_periapsis_point()
@@ -150,3 +148,4 @@ class OrbitFigureBuilder():
         fig.canvas.mpl_connect('scroll_event',zoom_fun)
 
         return zoom_fun
+
