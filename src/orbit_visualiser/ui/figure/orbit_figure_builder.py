@@ -14,7 +14,7 @@ class OrbitToolbar(NavigationToolbar2Tk):
     function.
     """
 
-    def __init__(self, canvas: FigureCanvasTkAgg, ax: Axes3D, window: Frame = None, *, pack_toolbar: bool = True):
+    def __init__(self, canvas: FigureCanvasTkAgg, ax: Axes3D, lim: int, window: Frame = None, *, pack_toolbar: bool = True):
         self.toolitems = (
             ('Home', 'Reset original view', 'home', 'home'),
             ('Pan', 'Pan axes with left mouse, zoom with right', 'move', 'pan'),
@@ -22,15 +22,17 @@ class OrbitToolbar(NavigationToolbar2Tk):
         )
         super().__init__(canvas, window, pack_toolbar = pack_toolbar)
         self._ax = ax
+        self._lim = lim
 
     def set_message(self, msg):
         pass
 
     def home(self, *args):
-        self._ax.set_xlim(-100_000, 100_000)
-        self._ax.set_ylim(-100_000, 100_000)
-        self._ax.set_zlim(-100_000, 100_000)
         super().home()
+        self._ax.set_xlim(-self._lim, self._lim)
+        self._ax.set_ylim(-self._lim, self._lim)
+        self._ax.set_zlim(-self._lim, self._lim)
+
 
 
 class OrbitFigureBuilder():
