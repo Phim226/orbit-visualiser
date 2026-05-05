@@ -3,7 +3,6 @@ from ttkbootstrap import Window
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
 from orbit_visualiser.ui import UIController, UIBuilder, OrbitDataAccess, GeometryManager, initial_config
 
-# TODO: Update propagation code and README description
 class OrbitVisualiser():
 
     def __init__(self, root: Window, geo_manager: GeometryManager):
