@@ -7,6 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Line3D
 import numpy as np
 from orbit_visualiser.ui.data_access import OrbitDataAccess
+from orbit_visualiser.ui.common.geometry import GeometryManager
 
 class OrbitToolbar(NavigationToolbar2Tk):
     """
@@ -41,13 +42,10 @@ class OrbitFigureBuilder():
     NUM_POINTS = 100_000
     LIM: int = 200_000
 
-    def __init__(
-            self,
-            figure_frame: Frame,
-            oda : OrbitDataAccess
-    ):
+    def __init__(self, figure_frame: Frame, oda : OrbitDataAccess, geo_manager: GeometryManager):
         self._figure_frame = figure_frame
         self._da = oda
+        self._geo_manager = geo_manager
 
     @property
     def line(self) -> Line3D:
@@ -75,8 +73,8 @@ class OrbitFigureBuilder():
         self._build_toolbar()
 
     def _create_figure(self) -> None:
-        self._fig = Figure(figsize = (7, 7), dpi = 100)
-        self._fig.subplots_adjust(left = 0, right = 1.1, bottom = -0.1, top = 1.1)
+        self._fig = Figure(figsize = self._geo_manager.figsize, dpi = 100)
+        self._fig.subplots_adjust(left = -0.7, right = 1.7, bottom = -0.7, top = 1.7)
         self._ax: Axes3D = self._fig.add_subplot(projection = "3d")
         self._ax.set_aspect("equal", adjustable = "datalim")
 
