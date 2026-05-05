@@ -39,6 +39,7 @@ class OrbitFigureBuilder():
 
     DISPLAY_TEXT_OFFSET = (1.5, 1.5)
     NUM_POINTS = 100_000
+    LIM: int = 200_000
 
     def __init__(
             self,
@@ -89,9 +90,9 @@ class OrbitFigureBuilder():
         self._ax.zaxis.set_ticklabels([])
         self._ax.tick_params(colors = axis_colour)
 
-        self._ax.set_xlim(-100_000, 100_000)
-        self._ax.set_ylim(-100_000, 100_000)
-        self._ax.set_zlim(-100_000, 100_000)
+        self._ax.set_xlim(-self.LIM, self.LIM)
+        self._ax.set_ylim(-self.LIM, self.LIM)
+        self._ax.set_zlim(-self.LIM, self.LIM)
 
     @staticmethod
     def _configure_figure_parameters() -> None:
@@ -107,7 +108,7 @@ class OrbitFigureBuilder():
 
     def _initialise_plot(self) -> None:
         # Plot the initial orbit
-        x, y, z = self._da.get_orbit_data(OrbitFigureBuilder.NUM_POINTS)
+        x, y, z = self._da.get_orbit_data(self.NUM_POINTS)
         self._line: Line3D = self._ax.plot(x, y, z, color = "#000000", alpha = 0.5, linewidth = 1.5)[0]
 
         # Plot the central body
@@ -128,7 +129,7 @@ class OrbitFigureBuilder():
         self._canvas.get_tk_widget().pack(side = "top", fill = "both", expand = True)
 
     def _build_toolbar(self) -> None:
-        toolbar = OrbitToolbar(self._canvas, self._ax, self._figure_frame, pack_toolbar = False)
+        toolbar = OrbitToolbar(self._canvas, self._ax, self.LIM, self._figure_frame, pack_toolbar = False)
         toolbar.update()
         toolbar.pack(side = "bottom", fill = "x")
 
