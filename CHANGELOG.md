@@ -4,11 +4,14 @@ All notable changes to this project will be documented here.
 
 # Unreleased
 - Certain orbital parameters can now be displayed in the plot
+
+# 0.5.0
 - 3D orbits now implemented
 - UI overhauled to variables | plot | properties
 - UI now built based on OS being used
 - Fixed figure home button bug where it sometimes didn't return plot to original view
 - Fixed issue where certain UI elements in Linux overlapped
+- Caching introduced to some astrodynamics calculations
 
 # 0.4.5
 - Refactored the design architecture of the core objects
