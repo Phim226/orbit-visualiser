@@ -89,7 +89,8 @@ def run_orbit_prop(orbit: Orbit, t_end: float, period_frac_per_step: int = 500):
 
 if __name__ == "__main__":
 
-    orbit = Orbit.from_orbital_elements(e = 0.0, rp = 50_000.0, mu = 398_600.0, nu = 0.0)
+    orbit = Orbit.from_orbital_elements(e = 0.0, rp = 50_000.0, nu = 0.0, raan = 0.0, i = 0.0,
+                                        omega = 0.0, mu = 398_600.0,)
 
     sol = run_orbit_prop(orbit, orbit.orbital_period)
 
@@ -97,7 +98,7 @@ if __name__ == "__main__":
     print(init_conditions)
     print(sol.y[:, -1])
 
-    r0 = np.linalg.norm(init_conditions[:2])
-    rf = np.linalg.norm(sol.y[:2, -1])
+    r0 = np.linalg.norm(init_conditions[:3])
+    rf = np.linalg.norm(sol.y[:3, -1])
 
     print(f"Difference in radius after propagating: {rf - r0}")

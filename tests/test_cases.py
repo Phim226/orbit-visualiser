@@ -1,6 +1,7 @@
 import itertools
+from math import pi
 from typing import Any
-from orbit_visualiser.core import OrbitType
+from orbit_visualiser.core import OrbitType, OrbitMotion, orbit_type
 
 # Tests to implement
 # TODO: Magnitude of angular momentum vector
@@ -14,22 +15,7 @@ def _create_test_cases(values_dict: dict[str, list[float]], tag_orbits: bool = T
     if "e" in values_dict and tag_orbits:
         for values in test_cases:
             e = values[0]
-
-            ECC_TOL = 1e-8
-
-            if e <= ECC_TOL:
-                orbit_type = OrbitType.CIRCULAR
-
-            elif abs(e - 1.0) <= ECC_TOL :
-                orbit_type = OrbitType.PARABOLIC
-
-            elif e < 1.0:
-                orbit_type = OrbitType.ELLIPTICAL
-
-            else:
-                orbit_type = OrbitType.HYPERBOLIC
-
-            values.append(orbit_type)
+            values.append(orbit_type(e))
 
     return test_cases
 
@@ -78,6 +64,14 @@ rp_mu_test_cases = _create_test_cases({"rp": rp_test_cases, "mu": mu_test_cases}
 
 # Test cases for variable eccentricity with orbit type tags
 e_tagged_test_cases = _create_test_cases({"e": e_test_cases})
+
+# Test cases for the orbit classification tests
+orbit_type_test_cases = [[0, OrbitType.CIRCULAR], [0.0001, OrbitType.ELLIPTICAL], [0.5, OrbitType.ELLIPTICAL],
+                         [0.99999, OrbitType.ELLIPTICAL], [1, OrbitType.PARABOLIC], [1.00001, OrbitType.HYPERBOLIC],
+                         [1.5, OrbitType.HYPERBOLIC]]
+
+motion_type_test_cases = [[0.0, OrbitMotion.PROGRADE], [pi/2, OrbitMotion.PROGRADE], [3*pi/4, OrbitMotion.RETROGRADE],
+                          [pi, OrbitMotion.RETROGRADE]]
 
 # Test cases for typical values
 typical_test_cases = _create_test_cases({"e": e_typical_cases, "rp": rp_typical_cases, "mu": mu_typical_cases})

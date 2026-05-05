@@ -34,8 +34,6 @@ def test_circular_orbit_flight_angle(
     """
     For circular orbits the flight angle of a satellite at any true anomaly should be 0.
     """
-
-
     for nu in closed_anomaly_grid:
         satellite: Satellite = satellite_factory_from_elements(rp = rp, mu = mu, nu = nu)
 
@@ -51,8 +49,6 @@ def test_circular_orbit_radial_velocity(
     """
     For circular orbits the radial velocity of a satellite at any true anomaly should be 0.
     """
-
-
     for nu in closed_anomaly_grid:
         satellite: Satellite = satellite_factory_from_elements(rp = rp, mu = mu, nu = nu)
 
@@ -68,8 +64,6 @@ def test_circular_orbit_anomalies(
     """
     For circular orbits the eccentric, mean and true anomalies should always be equivalent.
     """
-
-
     for nu in closed_anomaly_grid:
         satellite: Satellite = satellite_factory_from_elements(rp = rp, mu = mu, nu = nu)
 

@@ -2,18 +2,20 @@ from .orbit import Orbit, CentralBody
 from .satellite import Satellite
 from .propagation import get_init_conditions_from_orbit, run_orbit_prop
 
-from .astrodynamics.types import OrbitType
-from .astrodynamics.keplerian.classification import orbit_type
+from .astrodynamics.types import OrbitType, OrbitMotion
+from .astrodynamics.keplerian.classification import orbit_type, orbit_motion_type
 from .astrodynamics.keplerian.anomalies import mean_anomaly, eccentric_anomaly
 from .astrodynamics.keplerian.elements import (eccentricity_vector_from_state, eccentricity_from_state,
-                                               true_anomaly_from_state, semi_parameter_from_momentum,
+                                               true_anomaly, semi_parameter_from_momentum,
                                                semi_parameter_from_eccentricity, semimajor_axis,
                                                semiminor_axis, radius_of_periapsis, radius_of_apoapsis,
                                                asymptote_anomaly, turning_angle, aiming_radius,
-                                               orbital_period, mean_motion)
+                                               orbital_period, mean_motion, inclination, node_line,
+                                               right_ascen_of_ascending_node, argument_of_periapsis)
 from .astrodynamics.keplerian.dynamics import (specific_ang_momentum_from_state, specific_ang_momentum,
                                                specific_orbital_energy, characteristic_energy,
-                                               excess_velocity, vis_viva_speed)
+                                               excess_speed, vis_viva_speed)
 from .astrodynamics.keplerian.state import (perifocal_position, perifocal_velocity, radial_azimuthal_velocity,
-                                            speed, radius_from_state, radius_from_orbit_eq, escape_velocity,
+                                            speed, radius_from_state, radius_from_orbit_eq, escape_speed,
                                             flight_angle, time_since_periapsis)
+from .astrodynamics.transformations import eci_to_perifocal_trans_mat, perifocal_to_eci_trans_mat

@@ -1,27 +1,31 @@
 import sys
-from tkinter import Tk
+from ttkbootstrap import Window
 from orbit_visualiser.core import Orbit, Satellite, CentralBody
-from orbit_visualiser.ui import OrbitFigure, OrbitConfigBuilder, OrbitConfigController
-from orbit_visualiser.ui.common.presets import initial_config
+from orbit_visualiser.ui import UIController, UIBuilder, OrbitDataAccess, GeometryManager, initial_config
 
 class OrbitVisualiser():
 
-    FIGURE_GEOMETRY = ("left", "nw")
-    CONFIG_GEOMETRY = ("right", "ne")
+    def __init__(self, root: Window, geo_manager: GeometryManager):
+        oda: OrbitDataAccess = self._initialise_orbit_objects()
 
-    def __init__(self, root: Tk):
-        root.title("2D Orbit Visualiser")
+        builder = UIBuilder(root, oda, geo_manager)
+        controller = UIController(builder, oda)
+        builder.build(
+            controller.reset_state,
+            controller.validate_manual_input,
+            controller.slider_changed,
+            controller.format_display_value
+        )
 
-        if sys.platform.startswith("win"):
-            root.state("zoomed")
-        else:
-            root.state("normal")
-
+    def _initialise_orbit_objects(self) -> OrbitDataAccess:
         orbit: Orbit = Orbit.from_orbital_elements(
             initial_config.eccentricity,
             initial_config.radius_of_periapsis,
-            initial_config.gravitational_parameter,
-            initial_config.true_anomaly
+            initial_config.true_anomaly,
+            initial_config.right_ascension_of_the_ascending_node,
+            initial_config.inclination,
+            initial_config.argument_of_periapsis,
+            initial_config.gravitational_parameter
         )
 
         central_body: CentralBody = CentralBody(
@@ -30,30 +34,16 @@ class OrbitVisualiser():
         )
         satellite: Satellite = Satellite(orbit.position, orbit.velocity, central_body)
 
-        orbit_figure: OrbitFigure = OrbitFigure(
-            root, OrbitVisualiser.FIGURE_GEOMETRY, satellite
-        )
-        orbit_figure.build()
-
-        orbit_builder: OrbitConfigBuilder = OrbitConfigBuilder(
-            root, OrbitVisualiser.CONFIG_GEOMETRY, orbit, central_body, satellite
-        )
-        orbit_controller: OrbitConfigController = OrbitConfigController(
-            orbit_figure, orbit_builder, orbit, satellite, central_body
-        )
-        orbit_builder.build(
-            orbit_controller.reset_state,
-            orbit_controller.validate_manual_input,
-            orbit_controller.slider_changed,
-            orbit_controller.format_display_value
-        )
+        return OrbitDataAccess(satellite)
 
 # TODO: Write tests as I go.
 # TODO: Add variable presets (Earth - ISS, Earth - Geostationary, Mars - Phobos etc).
 # TODO: Write proper docstrings
 if __name__ == "__main__":
-    root = Tk()
+    root = Window(title = "3D Orbit Visualiser", themename = "darkly", position = (0, 0))
 
-    app: OrbitVisualiser = OrbitVisualiser(root)
+    geo_manager = GeometryManager(sys.platform, root)
+
+    app: OrbitVisualiser = OrbitVisualiser(root, geo_manager)
 
     root.mainloop()

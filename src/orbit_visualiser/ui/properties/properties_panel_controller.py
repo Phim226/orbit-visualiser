@@ -1,19 +1,20 @@
 import numpy as np
-from orbit_visualiser.ui.config.properties_panel.properties_panel_builder import PropertiesBuilder
-from orbit_visualiser.core import Satellite, OrbitType
+from orbit_visualiser.ui.properties.properties_panel_builder import PropertiesBuilder
+from orbit_visualiser.ui.data_access import OrbitDataAccess
+from orbit_visualiser.core import OrbitType
 
 # TODO: Properly display very large values in the properties panel without them being cut off.
 
 class PropertiesController():
 
 
-    def __init__(self, builder: PropertiesBuilder, satellite: Satellite):
+    def __init__(self, builder: PropertiesBuilder, oda: OrbitDataAccess):
         self._builder = builder
-        self._satellite = satellite
+        self._oda = oda
 
     def update_display(self) -> None:
         for property, spec in list(self._builder.property_specs.items()):
-            new_value = spec.getter(self._satellite)
+            new_value = spec.getter(self._oda.satellite)
             unit = spec.units
             getattr(self._builder, f"{property}_str").set(self.format_display_value(new_value, unit))
 
@@ -34,7 +35,7 @@ class PropertiesController():
             return formatted_value
 
         elif np.isnan(value):
-            formatted_value = "n/a"
+            formatted_value = "N/A"
             return formatted_value
 
 

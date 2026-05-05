@@ -1,11 +1,11 @@
 import numpy as np
 from numpy.typing import NDArray
 from typing import Sequence
-from orbit_visualiser.core.astrodynamics.keplerian.state import (speed, radial_azimuthal_velocity, escape_velocity,
-                                                                 radius_from_state, flight_angle, time_since_periapsis)
+from orbit_visualiser.core.astrodynamics.keplerian.state import (speed, radial_azimuthal_velocity, escape_speed,
+                                                                 radius_from_state, flight_angle, time_since_periapsis,
+                                                                 radial_speed_from_state)
 from orbit_visualiser.core.astrodynamics.keplerian.anomalies import mean_anomaly, eccentric_anomaly
-from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum_from_state
-from orbit_visualiser.core.astrodynamics.keplerian.elements import true_anomaly_from_state
+from orbit_visualiser.core.astrodynamics.keplerian.elements import true_anomaly
 from orbit_visualiser.core.orbit import CentralBody, Orbit
 
 class Satellite():
@@ -15,9 +15,9 @@ class Satellite():
     Parameters
     ----------
     position : Sequence | NDArray[np.float64]
-        The initial position vector of the satellite (km)
+        The initial ECI position vector of the satellite (km)
     velocity : float
-        The initial velocity vector of the satellite (km/s)
+        The initial ECI velocity vector of the satellite (km/s)
     central_body: CentralBody
         The CentralBody object representing the body that the satellite is orbiting
     """
@@ -38,12 +38,12 @@ class Satellite():
     @property
     def position(self) -> Sequence | NDArray[np.float64]:
         """
-        Perifocal position of the satellite.
+        ECI position of the satellite.
 
         Returns
         -------
         Sequence | NDArray[np.float64]
-            Perifocal position vector (km)
+            ECI position vector (km)
         """
         return self._pos
 
@@ -54,12 +54,12 @@ class Satellite():
     @property
     def velocity(self) -> Sequence | NDArray[np.float64]:
         """
-        Perifocal velocity of the satellite.
+        ECI velocity of the satellite.
 
         Returns
         -------
         Sequence | NDArray[np.float64]
-            Perifocal velocity vector (km/s)
+            ECI velocity vector (km/s)
         """
         return self._vel
 
@@ -81,7 +81,8 @@ class Satellite():
 
     @property
     def true_anomaly(self) -> float:
-        return true_anomaly_from_state(self.position)
+        return true_anomaly(self.position, self.orbit.eccentricity_vector,
+                            self.orbit.eccentricity, radial_speed_from_state(self.position, self.velocity))
 
     @property
     def speed(self) -> float:
@@ -93,7 +94,7 @@ class Satellite():
         return radial_azimuthal_velocity(
             self.true_anomaly,
             self.central_body.mu,
-            np.linalg.norm(self.specific_angular_momentum),
+            np.linalg.norm(orbit.specific_angular_momentum),
             orbit.eccentricity,
             orbit.asymptote_anomaly
         )
@@ -104,18 +105,14 @@ class Satellite():
         return flight_angle(self.true_anomaly, orbit.asymptote_anomaly, orbit.eccentricity)
 
     @property
-    def escape_velocity(self) -> float:
+    def escape_speed(self) -> float:
         orbit = self.orbit
-        return escape_velocity(
+        return escape_speed(
             self.true_anomaly,
             orbit.asymptote_anomaly,
             self.central_body.mu,
             self.radius
         )
-
-    @property
-    def specific_angular_momentum(self) -> float:
-        return specific_ang_momentum_from_state(self._pos, self._vel)
 
     @property
     def eccentric_anomaly(self) -> float:
@@ -141,6 +138,6 @@ class Satellite():
             self.mean_anomaly,
             orbit.orbital_period,
             orbit.semi_parameter,
-            np.linalg.norm(self.specific_angular_momentum),
+            np.linalg.norm(orbit.specific_angular_momentum),
             orbit.eccentricity
         )

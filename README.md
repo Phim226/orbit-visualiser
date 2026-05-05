@@ -1,14 +1,17 @@
 # Orbit Visualiser
 
-The Orbit Visualiser is a 2D Keplerian orbit visualisation tool for modelling the motion of a satellite around a central body, written in Python. The focus of this tool is on orbital geometry and satellite kinematics. Has basic orbital propagation (currently no GUI functionality).
+The Orbit Visualiser is a 3D Keplerian orbit visualisation tool for modelling the motion of a satellite around a central body, written in Python. The focus of this tool is on orbital geometry and satellite kinematics. Has basic orbital propagation (currently no GUI functionality).
 
-<img width="800" height="420" alt="Demo1-ezgif com-crop" src="https://github.com/user-attachments/assets/d75366a7-2294-46dc-bc30-6b1840a3a49b" />
+<img width="547" height="310" alt="3d-demo-2" src="https://github.com/user-attachments/assets/85f96859-3ba7-43a7-bb8a-a56d92fa4a3d" />
 
 ## Features
 
-Orbits are modelled and visualised in the perifocal frame (the central body remains fixed at the origin of the coordinate frame, and the x axis represents the apse line), with the orbital geometry parametrised using:
+Orbits are modelled and visualised in the Earth Centred Equatorial (ECI) frame, with the orbital geometry parametrised using:
   - Eccentricity
   - Radius of periapsis
+  - Right ascension of the ascending node
+  - Inclination
+  - Argument of periapsis
 
 The central body has a radius of 6738km and an adjustable gravitational parameter. The radius of periapsis has therefore been given a lower limit of 6739km (meaning that we are assuming this Earth sized body has no atmosphere, or at least that any atmosphere has no effect on orbital motion). The true anomaly of the orbiting satellite is also adjustable to evaluate the kinematic state at different orbital positions. Various orbital and kinematic quantities are
 calculated and displayed, including (but not limited to):
@@ -26,7 +29,12 @@ See the gif above for the full list of displayed orbital and kinematic propertie
 
 ## Planned Features
 
-Some GUI elements such as additional display options are currently commented out in the source code because they are under development. These will be implemented in future updates.
+There are several features that are in development or planned:
+
+  - Additional display options
+  - A web interface
+  - Option to change reference frame
+  - Option to change parametrisation of orbital geometry
 
 ## Notes on the physical model
 
@@ -34,13 +42,10 @@ The orbiting satellite is assumed to have negligible mass. All higher-order pert
 
 ## Potential future improvements
 
-- Introduce argument of periapsis as an orbital geometry parameter
 - Improve simulation of orbital motion
-- Expand orbital modelling to 3 dimensions
 - Include perturbations into the model
 - Expand modelling to R3BP or N-body system
 - Visualise gravitational field
-- Allow for different parametrisations of the orbit
 
 ## Requirements
 
@@ -129,14 +134,13 @@ deactivate
 ```
 to deactivate the virtual environment. When returning to the program, activate venv again using the commands above. So long as the project folder or .venv folder hasn't changed then you shouldn't need to reinstall any dependencies.
 
-**Note**: The current GUI layout hasn't been optimised for Linux, so there is overlapping of certain GUI elements due to differences in widget rendering and layout handling.
-
 ## Using Orbit Propagation
 As of the current version (v0.4.5) there is no CLI or GUI functionality for the orbit propagation. Navigate to src/orbit_visualiser/core/propagation.py, and go to the bottom of the file to the code snippet:
 ```python
 if __name__ == "__main__":
 
-    orbit = Orbit.from_orbital_elements(e = 0.0, rp = 50_000.0, mu = 398_600.0, nu = 0.0)
+    orbit = Orbit.from_orbital_elements(e = 0.0, rp = 50_000.0, nu = 0.0, raan = 0.0, i = 0.0,
+                                        omega = 0.0, mu = 398_600.0,)
 
     sol = run_orbit_prop(orbit, orbit.orbital_period)
 
@@ -144,12 +148,12 @@ if __name__ == "__main__":
     print(init_conditions)
     print(sol.y[:, -1])
 
-    r0 = np.linalg.norm(init_conditions[:2])
-    rf = np.linalg.norm(sol.y[:2, -1])
+    r0 = np.linalg.norm(init_conditions[:3])
+    rf = np.linalg.norm(sol.y[:3, -1])
 
     print(f"Difference in radius after propagating: {rf - r0}")
 ```
-The orbit propagation function takes the Orbit object and propagation end time (the start time is always 0, and begins the propagation at the true anomaly (nu) set in the constructor Orbit.from_orbital_elements). The values set in the code snippet above result in the propagation of a circular orbit of radius 50,000km, starting at the perifocal position (50000, 0) lasting for one orbital period. For non-circular orbits nu = 0.0 is periapsis. The true anomaly is in radians, so nu = pi is apoapsis.
+The orbit propagation function takes the Orbit object and propagation end time (the start time is always 0, and begins the propagation at the true anomaly (nu) set in the constructor Orbit.from_orbital_elements). The values set in the code snippet above result in the propagation of a circular orbit of radius 50,000km, starting at the perifocal position (50000, 0, 0) lasting for one orbital period. For non-circular orbits nu = 0.0 is periapsis. The true anomaly is in radians, so nu = pi is apoapsis.
 
 In order to get accurate results you should keep the end time on the order of 10 or at most 100 periods. The integrators used by scipy aren't symplectic, so there is significant energy drift over longer propagations.
 
@@ -160,9 +164,11 @@ The current print statements are just quick sanity checks to show that after a w
 As an example if you wanted to propagate the ISS then you might edit the above code snippet to:
 ```python
 if __name__ == "__main__":
-    # Approximate eccentricity and radius of periapsis (in km) for the ISS, with mu representing
-    # the gravitational parameter of earth in km^3/s^2
-    iss_orbit = Orbit.from_orbital_elements(e = 0.0002267, rp = 6778, mu = 398_600.0, nu = 0.0)
+    # Approximate eccentricity, radius of periapsis (km), right ascension of the ascending node (rad),
+    # inclination (rad) and argument of perigee (rad) for the ISS, with mu representing the
+    # gravitational parameter of earth in km^3/s^2
+    iss_orbit = Orbit.from_orbital_elements(e = 0.0002267, rp = 6778, nu = 0.0, raan = 4.319,
+                                            i = 0.901, omega = 2.278, mu = 398_600.0)
 
     # Runs the propagation for 1 period, returning the ISS back to periapsis
     sol = run_orbit_prop(iss_orbit, iss_orbit.orbital_period)
@@ -173,19 +179,9 @@ if __name__ == "__main__":
     # Grabs the array of solutions (sol.y) and prints the last entry
     print(sol.y[:, -1])
 
-    r0 = np.linalg.norm(init_conditions[:2])
-    rf = np.linalg.norm(sol.y[:2, -1])
+    r0 = np.linalg.norm(init_conditions[:3])
+    rf = np.linalg.norm(sol.y[:3, -1])
 
     print(f"Difference in radius after propagating: {rf - r0}")
 ```
 Then running the script will run the propagation and print out the results.
-
-Alternatively, you can pass the initial position, velocity and gravitational parameter directly to Orbit by using
-```python
-orbit = Orbit(position = np.array([50_000.0, 0.0]), velocity = np.array([0.0, 2.82]), mu = 398600.0)
-```
-Since we are in the perifocal frame then all orbits are oriented with the periapsis and apoapsis on the x-axis, so the true anomaly is calculated from
-```python
-np.atan2(0.0, 50_000.0) = 0.0
-```
-You can pass this Orbit object into run_orbit_prop (as well as your desired run time) just as before.

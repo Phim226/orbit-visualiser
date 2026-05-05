@@ -25,7 +25,7 @@ def test_satellite_orbital_speed_sanity(
         satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
 
         v_vals = [
-            np.hypot(satellite.orbit.hyperbolic_excess_velocity, satellite.escape_velocity),
+            np.hypot(satellite.orbit.hyperbolic_excess_speed, satellite.escape_speed),
             np.linalg.norm(satellite.radial_azimuthal_velocity)
         ]
 
@@ -33,7 +33,7 @@ def test_satellite_orbital_speed_sanity(
 
 @pytest.mark.parametrize("e, rp, mu, orbit_type", full_test_cases)
 def test_satellite_azimuthal_velocity_sanity(
-    satellite_factory_from_elements: Callable[[float, float, float, float], Satellite],
+    satellite_factory_from_elements: Callable[[float, float, float, float, float, float, float], Satellite],
     closed_anomaly_grid: NDArray[np.float64],
     open_anomaly_grid: Callable[[float, int], NDArray[np.float64]],
     e: float,
@@ -53,7 +53,7 @@ def test_satellite_azimuthal_velocity_sanity(
         satellite: Satellite = satellite_factory_from_elements(e = e, rp = rp, mu = mu, nu = nu)
 
         v_azim_vals = [
-            np.linalg.norm(satellite.specific_angular_momentum)/satellite.radius,
+            np.linalg.norm(satellite.orbit.specific_angular_momentum)/satellite.radius,
             satellite.speed*np.cos(satellite.flight_angle)
         ]
 

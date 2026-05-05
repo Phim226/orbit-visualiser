@@ -2,16 +2,18 @@ from math import pi
 import numpy as np
 from numpy.typing import NDArray
 from typing import Literal
+from functools import cache
 from orbit_visualiser.core.astrodynamics.types import OrbitType
 from orbit_visualiser.core.astrodynamics.keplerian.elements import semi_parameter_from_eccentricity
 from orbit_visualiser.core.astrodynamics.keplerian.dynamics import specific_ang_momentum
 from orbit_visualiser.core.astrodynamics.keplerian.classification import orbit_type
 
+@cache
 def state_pf_from_e_rp(
         e: float,
         rp: float,
-        mu: float,
         nu: float,
+        mu: float,
         state: Literal["pos", "vel", "both"] = "both"
     ) -> list[NDArray[np.float64]]:
     """
@@ -25,10 +27,10 @@ def state_pf_from_e_rp(
         Eccentricity
     rp : float
         Radius of periapsis (km)
-    mu : float
-        Gravitational parameter (km^3/s^2)
     nu : float
         True anomaly (rads)
+    mu : float
+        Gravitational parameter (km^3/s^2)
     state : Literal["pos", "vel", "both"]
         String literal indicating the state vector(s) being returned, default = both
     Returns
@@ -93,7 +95,25 @@ def perifocal_velocity(e: float, mu: float, h: float, nu: float | NDArray[np.flo
     z = 0 if isinstance(nu, float) else np.zeros(nu.shape)
     return (mu/h)*np.array([-np.sin(nu), e + np.cos(nu), z])
 
+def radial_speed_from_state(r: NDArray[np.float64], v: NDArray[np.float64]) -> float:
+    """
+    Calculates the radial speed from the position and velocity vectors.
 
+    Parameters
+    ----------
+    r : NDArray[np.float64]
+        Position vector (km)
+    v : NDArray[np.float64]
+        Velocity vector (km/s)
+
+    Returns
+    -------
+    float
+        Radial speed (km/s)
+    """
+    return np.dot(r, v)/np.linalg.norm(r)
+
+@cache
 def radial_azimuthal_velocity(
         nu: float,
         mu: float,
@@ -161,6 +181,7 @@ def radius_from_state(r: NDArray[np.float64]) -> float:
     """
     return np.linalg.norm(r)
 
+@cache
 def radius_from_orbit_eq(nu: float, asymp_anomaly: float, p: float, e: float) -> float:
     """
     Calculates the magnitude of the radius using the orbit equation and the semi-parameter.
@@ -186,7 +207,8 @@ def radius_from_orbit_eq(nu: float, asymp_anomaly: float, p: float, e: float) ->
 
     return p/(1 + e*np.cos(nu))
 
-def escape_velocity(nu: float, asymp_anomaly: float, mu: float, r: float) -> float:
+@cache
+def escape_speed(nu: float, asymp_anomaly: float, mu: float, r: float) -> float:
     """
     Calculates escape velocity at the given orbital radius and gravitational parameter.
 
@@ -211,6 +233,7 @@ def escape_velocity(nu: float, asymp_anomaly: float, mu: float, r: float) -> flo
 
     return np.sqrt(2*mu/r)
 
+@cache
 def flight_angle(nu: float, asymp_anomaly: float, e: float) -> float:
     """
     Calculates the flight angle of a satellite at the given true anomaly and eccentricity.
@@ -234,6 +257,7 @@ def flight_angle(nu: float, asymp_anomaly: float, e: float) -> float:
 
     return np.arctan2(e*np.sin(nu), 1 + e*np.cos(nu))
 
+@cache
 def time_since_periapsis(m_anomaly: float, period: float, p: float, h: float, e: float) -> float:
     """
     Calculates the time since periapsis, using different formulae based on orbit type.
