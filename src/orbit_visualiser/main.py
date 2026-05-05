@@ -41,8 +41,7 @@ class OrbitVisualiser():
 # TODO: Add variable presets (Earth - ISS, Earth - Geostationary, Mars - Phobos etc).
 # TODO: Write proper docstrings
 if __name__ == "__main__":
-    root = Window(themename = "darkly", position = (0, 0))
-    root.title("3D Orbit Visualiser")
+    root = Window(title = "3D Orbit Visualiser", themename = "darkly", position = (0, 0))
 
     geo_manager = GeometryManager(sys.platform, root)
 
