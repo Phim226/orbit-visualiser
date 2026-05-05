@@ -2,7 +2,7 @@
 
 The Orbit Visualiser is a 3D Keplerian orbit visualisation tool for modelling the motion of a satellite around a central body, written in Python. The focus of this tool is on orbital geometry and satellite kinematics. Has basic orbital propagation (currently no GUI functionality).
 
-<img width="700" height="394" alt="3d-demo" src="https://github.com/user-attachments/assets/dde04d12-3549-4596-a241-e29b0a16e9d8" />
+<img width="547" height="310" alt="3d-demo-2" src="https://github.com/user-attachments/assets/85f96859-3ba7-43a7-bb8a-a56d92fa4a3d" />
 
 ## Features
 
