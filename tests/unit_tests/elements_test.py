@@ -42,6 +42,7 @@ def test_eccentricity_from_state(
     result = eccentricity_from_state(r, v, mu)
     assert result > expected_mag
 
+# TODO: Expand test cases into more types of orbits
 @pytest.mark.parametrize("r, e_vect, e, v_r, expected", [
     (np.array([50_000.0, 0.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0, 0.0, 0.0),
     (np.array([0.0, 50_000.0, 0.0]), np.array([1.0, 0.0, 0.0]), 0.0, 1.0, pi/2),
