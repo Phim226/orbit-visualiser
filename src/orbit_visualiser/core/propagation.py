@@ -41,7 +41,7 @@ def get_init_conditions_from_orbit(orbit: Orbit) -> NDArray[np.float64]:
 
     Parameters
     ----------
-    orbit: NewOrbit
+    orbit: Orbit
         Orbit object to get the initial conditions from
 
     Returns
@@ -57,7 +57,7 @@ def run_orbit_prop(orbit: Orbit, t_end: float, period_frac_per_step: int = 500):
 
     Parameters
     ----------
-    orbit: NewOrbit
+    orbit: Orbit
         The orbit on which the satellite is being propagated.
     t_end : float
         The end time of the propagation. It should be on the order of at most 10 orbital periods
