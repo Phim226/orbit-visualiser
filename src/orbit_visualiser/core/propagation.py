@@ -7,20 +7,20 @@ from orbit_visualiser.core.orbit import Orbit
 
 # TODO: Implement CLI input.
 
-def two_body_pf_ode(mu: float, t: float, state: NDArray[np.float64], ) -> NDArray[np.float64]:
+def two_body_pf_ode(t: float, state: NDArray[np.float64], mu: float) -> NDArray[np.float64]:
     """
     The second order ordinary differential equation describing the relative motion of a body in a
     two body problem.
 
     Parameters
     ----------
-    mu : float
-        The gravitational parameter of the system. For satellites around a planet we use the
-        gravitational parameter of the planet.
     t : float
         Unused time argument. Necessary for the way scipy uses functions to numerically integrate.
     state : NDArray[np.float64]
         The current state [x, dx], with x in km and dx in km/s.
+    mu : float
+        The gravitational parameter of the system. For satellites around a planet we use the
+        gravitational parameter of the planet.
 
     Returns
     -------
@@ -78,9 +78,10 @@ def run_orbit_prop(orbit: Orbit, t_end: float, period_frac_per_step: int = 500):
     init_conditions = get_init_conditions_from_orbit(orbit)
 
     result = solve_ivp(
-        partial(two_body_pf_ode, orbit.mu),
+        two_body_pf_ode,
         [0, t_end],
         init_conditions,
+        args = (orbit.mu,),
         t_eval = t,
         rtol=1e-10,
         atol=1e-12
