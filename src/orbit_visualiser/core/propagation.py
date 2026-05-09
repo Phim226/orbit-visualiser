@@ -50,29 +50,39 @@ def get_init_conditions_from_orbit(orbit: Orbit) -> NDArray[np.float64]:
     """
     return np.concatenate((orbit.position, orbit.velocity))
 
-def run_orbit_prop(orbit: Orbit, t_end: float, period_frac_per_step: int = 500):
+def run_orbit_prop(
+        orbit: Orbit, t_end: float, adaptive_step_size: bool = True, period_frac_per_step: int = 500
+) -> list[tuple[float, NDArray[np.float64]]]:
     """
     Run the orbit propagation for the satellite. Uses the RK45 algorithm.
 
     Parameters
     ----------
-    orbit: Orbit
+    orbit : Orbit
         The orbit on which the satellite is being propagated.
     t_end : float
         The end time of the propagation. It should be on the order of at most 10 orbital periods
         since the integrator (RK45) isn't symplectic, so will suffer from energy drift over long
         propagations.
+    adaptive_step_size: bool, optional
+        Boolean flag deciding whether to use adaptive step sizes. If set to false then the step size
+        is determined by the period_frac_per_step optional argument, by default True.
     period_frac_per_step : int, optional
         The time step size as a fraction of the orbital period. So with the default value of 500, each
         time step is 1/500 of the orbital period, by default 500.
 
     Returns
     -------
-    OdeResult (see scipy documentation)
-        The object containing the results of the numerical integration. The array containing the
-        [x, dx] values can be accessed by calling result.y
+    list[tuple[float, NDArray[np.float64]]]
+        List with each element containing propagation time and the propagated state vector at that
+        time. Extracting the last element of this list will give the state vector at the end of
+        the propagation interval.
     """
-    t = np.linspace(0, t_end, ceil((t_end/orbit.orbital_period)*period_frac_per_step))
+    if not adaptive_step_size:
+        step_size = max(100, ceil((t_end/orbit.orbital_period)*period_frac_per_step))
+        t = np.linspace(0, t_end, step_size)
+    else:
+        t = None
 
     init_conditions = get_init_conditions_from_orbit(orbit)
 
@@ -85,7 +95,9 @@ def run_orbit_prop(orbit: Orbit, t_end: float, period_frac_per_step: int = 500):
         rtol=1e-10,
         atol=1e-12
     )
-    return result
+
+    print(result.message)
+    return [(t, y) for t, y in zip(result.t, result.y.T)]
 
 if __name__ == "__main__":
 
