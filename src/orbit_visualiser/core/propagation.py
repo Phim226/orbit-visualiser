@@ -97,7 +97,7 @@ def run_orbit_prop(
     )
 
     print(result.message)
-    return [(t, y) for t, y in zip(result.t, result.y.T)]
+    return list(zip(result.t, result.y.T))
 
 if __name__ == "__main__":
 
